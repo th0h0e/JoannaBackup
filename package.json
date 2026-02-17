@@ -10,7 +10,7 @@
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "convert-images": "node scripts/convert-images.cjs",
-    "typegen": "pnpm dlx pocketbase-typegen --url https://admin.kontext.site --email $PB_EMAIL --password $PB_PASSWORD --out ./src/types/pocketbase-types.ts"
+    "typegen": "pnpm dlx pocketbase-typegen --url https://pocketbase-j0ososc8ckcw48sos8w0ccok.kontext.icu --email $PB_EMAIL --password $PB_PASSWORD --out ./src/types/pocketbase-types.ts"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "^1.1.15",

@@ -8,7 +8,7 @@ import type {
 import PocketBase from 'pocketbase'
 
 // PocketBase client configuration
-const pb = new PocketBase('https://admin.kontext.site')
+const pb = new PocketBase('https://pocketbase-j0ososc8ckcw48sos8w0ccok.kontext.icu')
 
 export default pb
 
