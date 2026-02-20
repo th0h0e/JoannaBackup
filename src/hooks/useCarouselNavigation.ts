@@ -85,6 +85,7 @@ export function useKeyboardNavigation(emblaApi: EmblaApi | undefined) {
 export function useWheelGesturesNavigation(emblaApi: EmblaApi | undefined) {
   const isScrolling = useRef(false)
   const wheelGesturesRef = useRef<ReturnType<typeof WheelGestures> | null>(null)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (!emblaApi)
@@ -118,20 +119,23 @@ export function useWheelGesturesNavigation(emblaApi: EmblaApi | undefined) {
       if (direction === 'next' && canScrollNext) {
         emblaApi.scrollNext()
         isScrolling.current = true
-        setTimeout(() => {
+        timeoutRef.current = setTimeout(() => {
           isScrolling.current = false
-        }, 400)
+        }, 500)
       }
       else if (direction === 'prev' && canScrollPrev) {
         emblaApi.scrollPrev()
         isScrolling.current = true
-        setTimeout(() => {
+        timeoutRef.current = setTimeout(() => {
           isScrolling.current = false
-        }, 400)
+        }, 500)
       }
     })
 
     return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
       wheelGestures.disconnect()
       wheelGesturesRef.current = null
     }
