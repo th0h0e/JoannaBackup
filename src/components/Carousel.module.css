@@ -1,0 +1,242 @@
+/* ============================================
+   Carousel CSS Module
+   Extracted from MotionCarouselEmbla component
+   ============================================ */
+
+/* ============================================
+   CSS Custom Properties (Font Sizes)
+   Set these via inline styles from component
+   ============================================ */
+:root {
+  --font-size-mobile: 1.5rem;
+  --font-size-tablet: 2rem;
+  --font-size-desktop: 2.5rem;
+  --font-size-large-desktop: 3rem;
+}
+
+/* ============================================
+   Mobile Carousel Styles
+   ============================================ */
+
+/* Main container */
+.emblaMobile {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+/* Viewport */
+.emblaMobileViewport {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+}
+
+/* Container */
+.emblaMobileContainer {
+  position: relative;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  touch-action: pan-y pinch-zoom;
+  z-index: 10;
+}
+
+/* Slide */
+.emblaMobileSlide {
+  position: relative;
+  flex: 0 0 100%;
+  min-width: 0;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-color: black;
+}
+
+/* Blur slide variant */
+.emblaMobileSlideBlur {
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Background layer */
+.emblaMobileBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 5;
+}
+
+/* Blur overlay */
+.emblaMobileBlurOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Title styling */
+.emblaMobileTitle {
+  font-family: 'EnduroWeb', sans-serif;
+  letter-spacing: 0.03em;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+/* Progress bar transitions */
+.emblaMobileProgress {
+  transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+}
+
+/* Project title with responsive font sizes */
+.emblaProjectTitleMobile {
+  font-size: var(--font-size-mobile);
+}
+
+@media (min-width: 768px) {
+  .emblaProjectTitleMobile {
+    font-size: var(--font-size-tablet);
+  }
+}
+
+@media (min-width: 1024px) {
+  .emblaProjectTitleMobile {
+    font-size: var(--font-size-desktop);
+  }
+}
+
+@media (min-width: 1280px) {
+  .emblaProjectTitleMobile {
+    font-size: var(--font-size-large-desktop);
+  }
+}
+
+/* ============================================
+   Desktop Carousel Styles
+   ============================================ */
+
+/* Main container */
+.emblaDesktop {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+/* Viewport */
+.emblaDesktopViewport {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  scroll-snap-align: none;
+  z-index: 10;
+}
+
+/* Container */
+.emblaDesktopContainer {
+  position: relative;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  touch-action: pan-y pinch-zoom;
+  z-index: 10;
+}
+
+/* Slide */
+.emblaDesktopSlide {
+  position: relative;
+  flex: 0 0 50vw;
+  min-width: 0;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-color: black;
+}
+
+/* Blur slide variant */
+.emblaDesktopSlideBlur {
+  flex: 0 0 100vw;
+  min-width: 100vw;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Background layer */
+.emblaDesktopBackground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  z-index: 5;
+}
+
+/* Blur overlay */
+.emblaDesktopBlurOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Title styling */
+.emblaDesktopTitle {
+  font-family: 'EnduroWeb', sans-serif;
+  letter-spacing: 0.03em;
+  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+/* Progress bar transitions */
+.emblaDesktopProgress {
+  transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+}
+
+/* Project title with responsive font sizes */
+.emblaProjectTitleDesktop {
+  font-size: var(--font-size-desktop);
+}
+
+@media (min-width: 1280px) {
+  .emblaProjectTitleDesktop {
+    font-size: var(--font-size-large-desktop);
+  }
+}
+
+/* ============================================
+   Keyframes
+   ============================================ */
+
+@keyframes fadeInMobile {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes fadeInDesktop {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
