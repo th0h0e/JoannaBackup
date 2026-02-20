@@ -29,10 +29,9 @@
 import type { Settings } from '../config/pocketbase'
 import type { ProjectImage } from '../types/project'
 import useEmblaCarousel from 'embla-carousel-react'
-import { WheelGesturesPlugin } from 'embla-carousel-wheel-gestures'
 import { useCallback, useMemo } from 'react'
 import { getResponsiveFontSizes } from '../config/pocketbase'
-import { useKeyboardNavigation } from '../hooks/useCarouselNavigation'
+import { useKeyboardNavigation, useWheelGesturesNavigation } from '../hooks/useCarouselNavigation'
 import { useEmblaCarouselLogic } from '../hooks/useEmblaCarouselLogic'
 import { projectTitleClasses, projectTitleContainerClasses } from '../utils/sharedStyles'
 import styles from './Carousel.module.css'
@@ -249,16 +248,15 @@ function CarouselCore({
 }: CarouselCoreProps) {
   const isMobile = variant === 'mobile'
 
-  const [emblaRef, emblaApi] = useEmblaCarousel(
-    {
-      align: 'center',
-      loop: false,
-      containScroll: 'trimSnaps',
-      duration: 25,
-      dragThreshold: 10,
-    },
-    [WheelGesturesPlugin()],
-  )
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: 'center',
+    loop: false,
+    containScroll: 'trimSnaps',
+    duration: 45,
+    dragThreshold: 5,
+    skipSnaps: false,
+    inViewThreshold: 0,
+  })
 
   const { scrollProgress, currentSlide, isOnBlurSlide, blurIntensity } = useEmblaCarouselLogic({
     emblaApi,
@@ -266,6 +264,7 @@ function CarouselCore({
   })
 
   useKeyboardNavigation(emblaApi)
+  useWheelGesturesNavigation(emblaApi)
 
   const fontSizes = getResponsiveFontSizes(settingsData ?? null)
   const lastImage = images[images.length - 1]

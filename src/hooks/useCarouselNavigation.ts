@@ -1,17 +1,19 @@
 /**
- * @fileoverview Navigation hook for Embla Carousel components.
+ * @fileoverview Navigation hooks for Embla Carousel components.
  *
- * This module provides a hook for keyboard navigation within carousels.
- * Wheel/trackpad navigation is handled by the embla-carousel-wheel-gestures plugin.
+ * This module provides hooks for keyboard and wheel/trackpad navigation
+ * within carousels. The wheel navigation uses the wheel-gestures library
+ * for accurate gesture detection and maps gestures to scrollNext/scrollPrev.
  *
  * @module hooks/useCarouselNavigation
- * @see {@link ../components/MotionCarouselEmbla.tsx} - Primary consumer of this hook
- * @see {@link https://github.com/xiel/embla-carousel-wheel-gestures Wheel Gestures Plugin}
+ * @see {@link ../components/MotionCarouselEmbla.tsx} - Primary consumer of these hooks
+ * @see {@link https://github.com/xiel/wheel-gestures wheel-gestures library}
  */
 
 import type useEmblaCarousel from 'embla-carousel-react'
-import { useCallback } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { useEventListener } from 'usehooks-ts'
+import { WheelGestures } from 'wheel-gestures'
 
 /** Type alias for the Embla Carousel API instance */
 type EmblaApi = NonNullable<ReturnType<typeof useEmblaCarousel>[1]>
@@ -54,4 +56,84 @@ export function useKeyboardNavigation(emblaApi: EmblaApi | undefined) {
   }, [emblaApi])
 
   useEventListener('keydown', handleKeyDown)
+}
+
+/**
+ * Custom hook for wheel/trackpad navigation within the carousel.
+ *
+ * Uses the wheel-gestures library for accurate gesture detection and maps
+ * horizontal swipe gestures to scrollNext/scrollPrev calls. This provides
+ * clean, predictable navigation without the bounce effect of physics-based
+ * drag handling.
+ *
+ * **Behavior:**
+ * - Horizontal swipe right: Previous slide
+ * - Horizontal swipe left: Next slide
+ * - One slide per gesture (no momentum multi-slide scrolling)
+ * - Respects carousel boundaries
+ *
+ * @function useWheelGesturesNavigation
+ * @param {EmblaApi | undefined} emblaApi - The Embla carousel API instance
+ * @returns {void}
+ *
+ * @example
+ * ```tsx
+ * const [emblaRef, emblaApi] = useEmblaCarousel()
+ * useWheelGesturesNavigation(emblaApi) // Enable trackpad navigation
+ * ```
+ */
+export function useWheelGesturesNavigation(emblaApi: EmblaApi | undefined) {
+  const isScrolling = useRef(false)
+  const wheelGesturesRef = useRef<ReturnType<typeof WheelGestures> | null>(null)
+
+  useEffect(() => {
+    if (!emblaApi)
+      return
+
+    const containerNode = emblaApi.containerNode()
+    if (!containerNode)
+      return
+
+    const wheelGestures = WheelGestures({
+      preventWheelAction: 'x',
+    })
+
+    wheelGesturesRef.current = wheelGestures
+    wheelGestures.observe(containerNode)
+
+    wheelGestures.on('wheel', (state) => {
+      if (isScrolling.current)
+        return
+
+      const [deltaX] = state.axisDelta
+
+      if (Math.abs(deltaX) < 10)
+        return
+
+      const canScrollNext = emblaApi.canScrollNext()
+      const canScrollPrev = emblaApi.canScrollPrev()
+
+      const direction = deltaX < 0 ? 'next' : 'prev'
+
+      if (direction === 'next' && canScrollNext) {
+        emblaApi.scrollNext()
+        isScrolling.current = true
+        setTimeout(() => {
+          isScrolling.current = false
+        }, 400)
+      }
+      else if (direction === 'prev' && canScrollPrev) {
+        emblaApi.scrollPrev()
+        isScrolling.current = true
+        setTimeout(() => {
+          isScrolling.current = false
+        }, 400)
+      }
+    })
+
+    return () => {
+      wheelGestures.disconnect()
+      wheelGesturesRef.current = null
+    }
+  }, [emblaApi])
 }
