@@ -71,6 +71,8 @@ export function useKeyboardNavigation(emblaApi: EmblaApi | undefined) {
  * - Horizontal swipe left: Next slide
  * - One slide per gesture (no momentum multi-slide scrolling)
  * - Respects carousel boundaries
+ * - Uses Embla's 'settle' event for accurate animation completion detection
+ * - Safety timeout (800ms) as fallback for edge cases
  *
  * @function useWheelGesturesNavigation
  * @param {EmblaApi | undefined} emblaApi - The Embla carousel API instance
@@ -83,9 +85,9 @@ export function useKeyboardNavigation(emblaApi: EmblaApi | undefined) {
  * ```
  */
 export function useWheelGesturesNavigation(emblaApi: EmblaApi | undefined) {
-  const isScrolling = useRef(false)
+  const isSettling = useRef(false)
   const wheelGesturesRef = useRef<ReturnType<typeof WheelGestures> | null>(null)
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const safetyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useEffect(() => {
     if (!emblaApi)
@@ -102,8 +104,30 @@ export function useWheelGesturesNavigation(emblaApi: EmblaApi | undefined) {
     wheelGesturesRef.current = wheelGestures
     wheelGestures.observe(containerNode)
 
+    const clearSafetyTimeout = () => {
+      if (safetyTimeoutRef.current) {
+        clearTimeout(safetyTimeoutRef.current)
+        safetyTimeoutRef.current = null
+      }
+    }
+
+    const handleSettle = () => {
+      isSettling.current = false
+      clearSafetyTimeout()
+    }
+
+    const startSettling = () => {
+      isSettling.current = true
+      clearSafetyTimeout()
+      safetyTimeoutRef.current = setTimeout(() => {
+        isSettling.current = false
+      }, 800)
+    }
+
+    emblaApi.on('settle', handleSettle)
+
     wheelGestures.on('wheel', (state) => {
-      if (isScrolling.current)
+      if (isSettling.current)
         return
 
       const [deltaX] = state.axisDelta
@@ -118,24 +142,17 @@ export function useWheelGesturesNavigation(emblaApi: EmblaApi | undefined) {
 
       if (direction === 'next' && canScrollNext) {
         emblaApi.scrollNext()
-        isScrolling.current = true
-        timeoutRef.current = setTimeout(() => {
-          isScrolling.current = false
-        }, 500)
+        startSettling()
       }
       else if (direction === 'prev' && canScrollPrev) {
         emblaApi.scrollPrev()
-        isScrolling.current = true
-        timeoutRef.current = setTimeout(() => {
-          isScrolling.current = false
-        }, 500)
+        startSettling()
       }
     })
 
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
+      clearSafetyTimeout()
+      emblaApi.off('settle', handleSettle)
       wheelGestures.disconnect()
       wheelGesturesRef.current = null
     }
