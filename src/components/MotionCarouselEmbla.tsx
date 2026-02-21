@@ -132,7 +132,7 @@ interface DesktopCarouselProps extends BaseCarouselProps { }
  */
 type EmblaCarouselProps
   = | (MobileCarouselProps & { variant?: 'mobile' })
-    | (DesktopCarouselProps & { variant: 'desktop' })
+  | (DesktopCarouselProps & { variant: 'desktop' })
 
 /**
  * Scrolls the main container to the next vertical section.
@@ -252,7 +252,7 @@ function CarouselCore({
     align: 'center',
     loop: false,
     containScroll: 'trimSnaps',
-    duration: 45,
+    duration: 25,
     dragThreshold: 5,
     skipSnaps: false,
     inViewThreshold: 0,
