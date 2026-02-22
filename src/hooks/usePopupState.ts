@@ -122,18 +122,32 @@ interface UsePopupStateReturn {
  * ```
  */
 export function usePopupState(projectsData: ProjectData[]): UsePopupStateReturn {
-  const { value: showPopup, setTrue: setShowPopupTrue, setFalse: setShowPopupFalse } = useBoolean(false)
+  const {
+    value: showPopup,
+    setTrue: setShowPopupTrue,
+    setFalse: setShowPopupFalse,
+  } = useBoolean(false)
   const [popupProjectTitle, setPopupProjectTitle] = useState('')
   const [popupProjectDescription, setPopupProjectDescription] = useState('')
-  const [popupProjectResponsibility, setPopupProjectResponsibility] = useState<string[]>([])
-  const { value: showAboutPopup, setTrue: setShowAboutPopupTrue, setFalse: setShowAboutPopupFalse } = useBoolean(false)
+  const [popupProjectResponsibility, setPopupProjectResponsibility] = useState<
+    string[]
+  >([])
+  const {
+    value: showAboutPopup,
+    setTrue: setShowAboutPopupTrue,
+    setFalse: setShowAboutPopupFalse,
+  } = useBoolean(false)
 
   /**
    * Debounce flag for about popup opening.
    * Set to false when project popup closes, reset to true after 100ms.
    * Prevents accidental about popup triggering when closing project popup.
    */
-  const { value: canOpenAboutPopup, setTrue: setCanOpenAboutPopupTrue, setFalse: setCanOpenAboutPopupFalse } = useBoolean(true)
+  const {
+    value: canOpenAboutPopup,
+    setTrue: setCanOpenAboutPopupTrue,
+    setFalse: setCanOpenAboutPopupFalse,
+  } = useBoolean(true)
 
   /**
    * Opens the project popup with data for the specified project.
@@ -144,14 +158,17 @@ export function usePopupState(projectsData: ProjectData[]): UsePopupStateReturn 
    * 3. Closes the about popup (mutual exclusion)
    * 4. Opens the project popup
    */
-  const handleShowPopup = useCallback((projectTitle: string) => {
-    const project = projectsData.find(p => p.title === projectTitle)
-    setPopupProjectTitle(projectTitle)
-    setPopupProjectDescription(project?.description || '')
-    setPopupProjectResponsibility(project?.responsibility || [])
-    setShowAboutPopupFalse()
-    setShowPopupTrue()
-  }, [projectsData, setShowAboutPopupFalse, setShowPopupTrue])
+  const handleShowPopup = useCallback(
+    (projectTitle: string) => {
+      const project = projectsData.find(p => p.title === projectTitle)
+      setPopupProjectTitle(projectTitle)
+      setPopupProjectDescription(project?.description || '')
+      setPopupProjectResponsibility(project?.responsibility || [])
+      setShowAboutPopupFalse()
+      setShowPopupTrue()
+    },
+    [projectsData, setShowAboutPopupFalse, setShowPopupTrue],
+  )
 
   /**
    * Closes the project popup and triggers the debounce mechanism.

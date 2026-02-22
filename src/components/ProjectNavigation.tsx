@@ -1,6 +1,10 @@
 import type { Settings } from '../config/pocketbase'
 import { getResponsiveFontSizes } from '../config/pocketbase'
-import { navigationContainerClasses, navigationLinkClasses, navigationListClasses } from '../utils/sharedStyles'
+import {
+  navigationContainerClasses,
+  navigationLinkClasses,
+  navigationListClasses,
+} from '../utils/sharedStyles'
 
 interface ProjectNavigationProps {
   projectTitles: string[]
@@ -8,7 +12,11 @@ interface ProjectNavigationProps {
   settingsData?: Settings | null
 }
 
-export default function ProjectNavigation({ projectTitles, onLinkClick, settingsData = null }: ProjectNavigationProps) {
+export default function ProjectNavigation({
+  projectTitles,
+  onLinkClick,
+  settingsData = null,
+}: ProjectNavigationProps) {
   // Get dynamic font sizes from settings
   const fontSizes = getResponsiveFontSizes(settingsData)
 

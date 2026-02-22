@@ -9,14 +9,20 @@ interface LogoTopProps {
   isMobile: boolean
 }
 
-export default function LogoTop({ onClick, isHero, showAboutPopup, showPopup, isMobile }: LogoTopProps) {
+export default function LogoTop({
+  onClick,
+  isHero,
+  showAboutPopup,
+  showPopup,
+  isMobile,
+}: LogoTopProps) {
   // Fixed container dimensions - same for both logos
   const containerWidth = isMobile ? '160px' : '200px'
   const containerHeight = isMobile ? '60px' : '80px'
 
   return (
     <motion.div
-      className="fixed cursor-pointer flex items-center justify-center"
+      className="fixed flex cursor-pointer items-center justify-center"
       style={{
         left: '50%',
         transform: 'translateX(-50%)',
@@ -25,8 +31,10 @@ export default function LogoTop({ onClick, isHero, showAboutPopup, showPopup, is
         width: containerWidth,
         height: containerHeight,
         opacity: showAboutPopup || (showPopup && isMobile) ? 0 : 1,
-        pointerEvents: showAboutPopup || (showPopup && isMobile) ? 'none' : 'auto',
-        transition: 'opacity 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out',
+        pointerEvents:
+          showAboutPopup || (showPopup && isMobile) ? 'none' : 'auto',
+        transition:
+          'opacity 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out',
       }}
       initial={{ top: isHero ? 'calc(50% - 18lvh)' : '60px' }}
       animate={{ top: '60px' }}

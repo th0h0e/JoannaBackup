@@ -6,13 +6,17 @@ interface ProjectPopupPreviewProps {
   projectResponsibility: string[]
 }
 
-export default function ProjectPopupPreview({ projectTitle, projectDescription, projectResponsibility }: ProjectPopupPreviewProps) {
+export default function ProjectPopupPreview({
+  projectTitle,
+  projectDescription,
+  projectResponsibility,
+}: ProjectPopupPreviewProps) {
   return (
     <div className="relative" style={{ width: '280px' }}>
       <img
         src={ProjectCardSVG}
         alt="Project Card"
-        className="w-full h-auto"
+        className="h-auto w-full"
         style={{
           width: '280px',
           height: 'auto',
@@ -23,7 +27,7 @@ export default function ProjectPopupPreview({ projectTitle, projectDescription, 
       {/* Project Content Overlay */}
       <div className="absolute inset-0 flex flex-col justify-center px-4 py-8">
         <h2
-          className="text-black uppercase text-center leading-tight"
+          className="text-center leading-tight text-black uppercase"
           style={{
             fontFamily: 'EnduroWeb, sans-serif',
             letterSpacing: '0.03em',
@@ -35,7 +39,7 @@ export default function ProjectPopupPreview({ projectTitle, projectDescription, 
         </h2>
 
         <div
-          className="text-black uppercase text-center leading-tight"
+          className="text-center leading-tight text-black uppercase"
           style={{
             fontFamily: 'EnduroWeb, sans-serif',
             letterSpacing: '0.03em',
@@ -52,7 +56,7 @@ export default function ProjectPopupPreview({ projectTitle, projectDescription, 
         </div>
 
         <p
-          className="text-black text-center leading-tight"
+          className="text-center leading-tight text-black"
           style={{
             fontFamily: 'EnduroWeb, sans-serif',
             letterSpacing: '0.03em',

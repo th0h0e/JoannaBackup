@@ -42,18 +42,21 @@ type EmblaApi = NonNullable<ReturnType<typeof useEmblaCarousel>[1]>
  * ```
  */
 export function useKeyboardNavigation(emblaApi: EmblaApi | undefined) {
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (!emblaApi)
-      return
-    if (e.key === 'ArrowRight') {
-      e.preventDefault()
-      emblaApi.scrollNext()
-    }
-    else if (e.key === 'ArrowLeft') {
-      e.preventDefault()
-      emblaApi.scrollPrev()
-    }
-  }, [emblaApi])
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (!emblaApi)
+        return
+      if (e.key === 'ArrowRight') {
+        e.preventDefault()
+        emblaApi.scrollNext()
+      }
+      else if (e.key === 'ArrowLeft') {
+        e.preventDefault()
+        emblaApi.scrollPrev()
+      }
+    },
+    [emblaApi],
+  )
 
   useEventListener('keydown', handleKeyDown)
 }

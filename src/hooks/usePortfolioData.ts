@@ -19,9 +19,18 @@
  * @see {@link ../config/pocketbase.ts} - PocketBase configuration and utilities
  */
 
-import type { About, Homepage, PortfolioProject, Settings } from '../config/pocketbase'
+import type {
+  About,
+  Homepage,
+  PortfolioProject,
+  Settings,
+} from '../config/pocketbase'
 import { useEffect, useState } from 'react'
-import pb, { getCachedData, getImageUrl, setCachedData } from '../config/pocketbase'
+import pb, {
+  getCachedData,
+  getImageUrl,
+  setCachedData,
+} from '../config/pocketbase'
 
 /**
  * Converted project data structure for use in components.
@@ -192,7 +201,8 @@ export function usePortfolioData(): UsePortfolioDataReturn {
       try {
         setLoading(true)
 
-        const cachedProjects = getCachedData<PortfolioProject[]>('Portfolio_Projects')
+        const cachedProjects
+          = getCachedData<PortfolioProject[]>('Portfolio_Projects')
         const cachedHomepage = getCachedData<Homepage[]>('Homepage')
         const cachedAbout = getCachedData<About[]>('About')
         const cachedSettings = getCachedData<Settings[]>('Settings')
@@ -210,21 +220,30 @@ export function usePortfolioData(): UsePortfolioDataReturn {
           return
         }
 
-        const [projectsResponse, homepageResponse, aboutResponse, settingsResponse] = await Promise.all([
-          pb.collection('Portfolio_Projects').getFullList<PortfolioProject>({
-            sort: 'Order',
-          }),
-          pb.collection('Homepage').getFullList<Homepage>({
-            filter: 'Is_Active = true',
-            sort: '-created',
-          }),
-          pb.collection('About').getFullList<About>({
-            filter: 'Is_Active = true',
-            sort: '-created',
-          }),
-          pb.collection('Settings').getFullList<Settings>({
-            sort: '-created',
-          }),
+        const [
+          projectsResponse,
+          homepageResponse,
+          aboutResponse,
+          settingsResponse,
+        ] = await Promise.all([
+          pb.collection('Portfolio_Projects')
+            .getFullList<PortfolioProject>({
+              sort: 'Order',
+            }),
+          pb.collection('Homepage')
+            .getFullList<Homepage>({
+              filter: 'Is_Active = true',
+              sort: '-created',
+            }),
+          pb.collection('About')
+            .getFullList<About>({
+              filter: 'Is_Active = true',
+              sort: '-created',
+            }),
+          pb.collection('Settings')
+            .getFullList<Settings>({
+              sort: '-created',
+            }),
         ])
 
         setCachedData('Portfolio_Projects', projectsResponse)
@@ -276,58 +295,73 @@ export function usePortfolioData(): UsePortfolioDataReturn {
   useEffect(() => {
     let isCancelled = false
 
-    pb.collection('Portfolio_Projects').subscribe('*', async () => {
-      const freshProjects = await pb.collection('Portfolio_Projects').getFullList<PortfolioProject>({
-        sort: 'Order',
+    pb.collection('Portfolio_Projects')
+      .subscribe('*', async () => {
+        const freshProjects = await pb
+          .collection('Portfolio_Projects')
+          .getFullList<PortfolioProject>({
+            sort: 'Order',
+          })
+
+        if (!isCancelled) {
+          setCachedData('Portfolio_Projects', freshProjects)
+          setProjectsData(freshProjects.map(convertPocketBaseProject))
+        }
       })
 
-      if (!isCancelled) {
-        setCachedData('Portfolio_Projects', freshProjects)
-        setProjectsData(freshProjects.map(convertPocketBaseProject))
-      }
-    })
+    pb.collection('Homepage')
+      .subscribe('*', async () => {
+        const freshHomepage = await pb
+          .collection('Homepage')
+          .getFullList<Homepage>({
+            filter: 'Is_Active = true',
+            sort: '-created',
+          })
 
-    pb.collection('Homepage').subscribe('*', async () => {
-      const freshHomepage = await pb.collection('Homepage').getFullList<Homepage>({
-        filter: 'Is_Active = true',
-        sort: '-created',
+        if (!isCancelled) {
+          setCachedData('Homepage', freshHomepage)
+          setHomepageData(freshHomepage[0] || null)
+        }
       })
 
-      if (!isCancelled) {
-        setCachedData('Homepage', freshHomepage)
-        setHomepageData(freshHomepage[0] || null)
-      }
-    })
+    pb.collection('About')
+      .subscribe('*', async () => {
+        const freshAbout = await pb.collection('About')
+          .getFullList<About>({
+            filter: 'Is_Active = true',
+            sort: '-created',
+          })
 
-    pb.collection('About').subscribe('*', async () => {
-      const freshAbout = await pb.collection('About').getFullList<About>({
-        filter: 'Is_Active = true',
-        sort: '-created',
+        if (!isCancelled) {
+          setCachedData('About', freshAbout)
+          setAboutData(freshAbout[0] || null)
+        }
       })
 
-      if (!isCancelled) {
-        setCachedData('About', freshAbout)
-        setAboutData(freshAbout[0] || null)
-      }
-    })
+    pb.collection('Settings')
+      .subscribe('*', async () => {
+        const freshSettings = await pb
+          .collection('Settings')
+          .getFullList<Settings>({
+            sort: '-created',
+          })
 
-    pb.collection('Settings').subscribe('*', async () => {
-      const freshSettings = await pb.collection('Settings').getFullList<Settings>({
-        sort: '-created',
+        if (!isCancelled) {
+          setCachedData('Settings', freshSettings)
+          setSettingsData(freshSettings[0] || null)
+        }
       })
-
-      if (!isCancelled) {
-        setCachedData('Settings', freshSettings)
-        setSettingsData(freshSettings[0] || null)
-      }
-    })
 
     return () => {
       isCancelled = true
-      pb.collection('Portfolio_Projects').unsubscribe()
-      pb.collection('Homepage').unsubscribe()
-      pb.collection('About').unsubscribe()
-      pb.collection('Settings').unsubscribe()
+      pb.collection('Portfolio_Projects')
+        .unsubscribe()
+      pb.collection('Homepage')
+        .unsubscribe()
+      pb.collection('About')
+        .unsubscribe()
+      pb.collection('Settings')
+        .unsubscribe()
     }
   }, [])
 

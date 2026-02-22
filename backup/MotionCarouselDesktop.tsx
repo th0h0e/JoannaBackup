@@ -2,7 +2,10 @@ import type { Settings } from '../config/pocketbase'
 import type { ProjectImage } from '../types/project'
 import { useEffect, useRef, useState } from 'react'
 import { getResponsiveFontSizes } from '../config/pocketbase'
-import { projectTitleClasses, projectTitleContainerClasses } from '../utils/sharedStyles'
+import {
+  projectTitleClasses,
+  projectTitleContainerClasses,
+} from '../utils/sharedStyles'
 import ChevronDown from './icons/ChevronDown'
 import ChevronRight from './icons/ChevronRight'
 
@@ -77,9 +80,10 @@ export default function MotionCarouselDesktop({
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't handle keyboard navigation when user is typing in an input
       const activeElement = document.activeElement
-      const isTyping = activeElement instanceof HTMLInputElement
-        || activeElement instanceof HTMLTextAreaElement
-        || activeElement?.getAttribute('contenteditable') === 'true'
+      const isTyping
+        = activeElement instanceof HTMLInputElement
+          || activeElement instanceof HTMLTextAreaElement
+          || activeElement?.getAttribute('contenteditable') === 'true'
 
       if (isTyping)
         return
@@ -249,17 +253,18 @@ export default function MotionCarouselDesktop({
             onClick={scrollToNextSection}
             style={{ cursor: 'pointer' }}
           >
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              background: 'rgba(0, 0, 0, 0.3)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              zIndex: 1,
-            }}
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: 'rgba(0, 0, 0, 0.3)',
+                backdropFilter: 'blur(12px)',
+                WebkitBackdropFilter: 'blur(12px)',
+                zIndex: 1,
+              }}
             />
           </div>
         </div>
@@ -267,7 +272,7 @@ export default function MotionCarouselDesktop({
 
       {/* Project Title - Centered overlay */}
       <div
-        className={`absolute top-1/2 left-1/2 z-[200] text-center w-full ${projectTitleContainerClasses}`}
+        className={`absolute top-1/2 left-1/2 z-[200] w-full text-center ${projectTitleContainerClasses}`}
         style={{ transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}
       >
         <h1
@@ -278,7 +283,8 @@ export default function MotionCarouselDesktop({
             pointerEvents: 'auto',
             cursor: 'pointer',
             opacity: isPopupVisible || isAboutPopupVisible ? 0 : 1,
-            visibility: isPopupVisible || isAboutPopupVisible ? 'hidden' : 'visible',
+            visibility:
+              isPopupVisible || isAboutPopupVisible ? 'hidden' : 'visible',
             transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
           }}
           onClick={() => {
@@ -308,13 +314,17 @@ export default function MotionCarouselDesktop({
           <div
             style={{
               opacity: currentSlide > 0 && !isOnBlurSlide ? 1 : 0,
-              transform: !isOnBlurSlide ? 'translateY(0) translateZ(0)' : 'translateY(10px) translateZ(0)',
-              transition: 'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
-              pointerEvents: currentSlide > 0 && !isOnBlurSlide ? 'auto' : 'none',
+              transform: !isOnBlurSlide
+                ? 'translateY(0) translateZ(0)'
+                : 'translateY(10px) translateZ(0)',
+              transition:
+                'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
+              pointerEvents:
+                currentSlide > 0 && !isOnBlurSlide ? 'auto' : 'none',
               width: '100%',
             }}
           >
-            <div className="h-0.5 bg-gray-500/50 rounded-full overflow-hidden backdrop-blur-sm">
+            <div className="h-0.5 overflow-hidden rounded-full bg-gray-500/50 backdrop-blur-sm">
               <div
                 className="h-full bg-gray-50"
                 style={{
@@ -329,7 +339,7 @@ export default function MotionCarouselDesktop({
       {/* Chevron Down - Desktop */}
       {images.length > 1 && (
         <div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20"
+          className="absolute bottom-10 left-1/2 z-20 -translate-x-1/2"
           style={{
             transform: 'translate(-50%, 0) translateZ(0)',
             willChange: 'transform',
@@ -339,8 +349,11 @@ export default function MotionCarouselDesktop({
           <div
             style={{
               opacity: isOnBlurSlide ? 1 : 0,
-              transform: isOnBlurSlide ? 'translateY(0) translateZ(0)' : 'translateY(-10px) translateZ(0)',
-              transition: 'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
+              transform: isOnBlurSlide
+                ? 'translateY(0) translateZ(0)'
+                : 'translateY(-10px) translateZ(0)',
+              transition:
+                'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
               pointerEvents: isOnBlurSlide ? 'auto' : 'none',
               cursor: 'pointer',
             }}
@@ -350,7 +363,7 @@ export default function MotionCarouselDesktop({
               width={28}
               height={28}
               color="white"
-              className="drop-shadow-2xl hover:opacity-70 transition-opacity duration-300"
+              className="drop-shadow-2xl transition-opacity duration-300 hover:opacity-70"
             />
           </div>
         </div>
@@ -359,7 +372,7 @@ export default function MotionCarouselDesktop({
       {/* Right Chevron - Desktop */}
       {images.length > 1 && currentSlide < images.length - 1 && (
         <button
-          className="absolute right-6 top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer z-[250] transition-opacity duration-150 hover:opacity-70"
+          className="absolute top-1/2 right-6 z-[250] -translate-y-1/2 cursor-pointer border-none bg-none transition-opacity duration-150 hover:opacity-70"
           style={{ opacity: 1 }}
           aria-label="Next slide"
           onClick={() => {
@@ -384,7 +397,7 @@ export default function MotionCarouselDesktop({
             width={28}
             height={28}
             color="white"
-            className="drop-shadow-2xl pointer-events-none"
+            className="pointer-events-none drop-shadow-2xl"
           />
         </button>
       )}

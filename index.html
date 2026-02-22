@@ -5,7 +5,7 @@
     <!-- Favicon loaded dynamically from PocketBase -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="format-detection" content="telephone=no" />
-    
+
     <!-- Hide address bar on mobile for immersive experience -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -16,32 +16,33 @@
 
     <!-- Web App Manifest -->
     <link rel="manifest" href="/manifest.json" />
-    
+
     <!-- Browser Detection - Set CSS Variables Immediately -->
     <script>
-      (function() {
+      ;(function () {
         // Browser detection
-        const userAgent = navigator.userAgent.toLowerCase();
-        const isSafari = userAgent.includes('safari') && !userAgent.includes('chrome') && !userAgent.includes('chromium');
-        const isWebKit = 'webkitAppearance' in document.documentElement.style;
-        const hasSafariFeatures = window.safari !== undefined;
-        const isSafariBrowser = isSafari || (isWebKit && hasSafariFeatures);
-        
+        const userAgent = navigator.userAgent.toLowerCase()
+        const isSafari =
+          userAgent.includes('safari') && !userAgent.includes('chrome') && !userAgent.includes('chromium')
+        const isWebKit = 'webkitAppearance' in document.documentElement.style
+        const hasSafariFeatures = window.safari !== undefined
+        const isSafariBrowser = isSafari || (isWebKit && hasSafariFeatures)
+
         // Feature detection
-        const supportsScrollState = CSS && CSS.supports && CSS.supports('container-type', 'scroll-state');
-        
+        const supportsScrollState = CSS && CSS.supports && CSS.supports('container-type', 'scroll-state')
+
         // Set CSS custom properties on :root immediately
-        const root = document.documentElement;
-        root.style.setProperty('--is-safari', isSafariBrowser ? '1' : '0');
-        root.style.setProperty('--supports-scroll-state', supportsScrollState ? '1' : '0');
-        root.style.setProperty('--use-css-scroll-detection', !isSafariBrowser && supportsScrollState ? '1' : '0');
-        
+        const root = document.documentElement
+        root.style.setProperty('--is-safari', isSafariBrowser ? '1' : '0')
+        root.style.setProperty('--supports-scroll-state', supportsScrollState ? '1' : '0')
+        root.style.setProperty('--use-css-scroll-detection', !isSafariBrowser && supportsScrollState ? '1' : '0')
+
         // Set data attributes for JavaScript access
-        root.setAttribute('data-browser-safari', isSafariBrowser.toString());
-        root.setAttribute('data-supports-scroll-state', supportsScrollState.toString());
-      })();
+        root.setAttribute('data-browser-safari', isSafariBrowser.toString())
+        root.setAttribute('data-supports-scroll-state', supportsScrollState.toString())
+      })()
     </script>
-    
+
     <title>Joanna van der Werf - Creative Strategy</title>
   </head>
   <body>

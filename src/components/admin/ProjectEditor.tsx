@@ -33,7 +33,12 @@ interface ProjectFormValues {
 
 const MIN_IMAGES = 3
 
-export default function ProjectEditor({ project, onSave, onCancel, onShowToast }: ProjectEditorProps) {
+export default function ProjectEditor({
+  project,
+  onSave,
+  onCancel,
+  onShowToast,
+}: ProjectEditorProps) {
   const [images, setImages] = useState<ImageItem[]>([])
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
@@ -89,7 +94,8 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
       title: project?.Title || '',
       description: project?.Description || '',
       order: project?.Order || 0,
-      responsibilities: project?.Responsibility_json || project?.Responsibility || [],
+      responsibilities:
+        project?.Responsibility_json || project?.Responsibility || [],
     } as ProjectFormValues,
     onSubmit: async ({ value }) => {
       setLoading(true)
@@ -119,7 +125,9 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
               try {
                 const response = await fetch(img.url)
                 const blob = await response.blob()
-                const file = new File([blob], img.filename, { type: blob.type })
+                const file = new File([blob], img.filename, {
+                  type: blob.type,
+                })
                 formData.append('Images', file)
               }
               catch (error) {
@@ -138,10 +146,12 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
         }
 
         if (project) {
-          await pb.collection('Portfolio_Projects').update(project.id, formData)
+          await pb.collection('Portfolio_Projects')
+            .update(project.id, formData)
         }
         else {
-          await pb.collection('Portfolio_Projects').create(formData)
+          await pb.collection('Portfolio_Projects')
+            .create(formData)
         }
 
         onSave()
@@ -157,7 +167,10 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
           return
         }
 
-        onShowToast(`Failed to save project: ${error?.message || 'Unknown error'}`, 'error')
+        onShowToast(
+          `Failed to save project: ${error?.message || 'Unknown error'}`,
+          'error',
+        )
       }
       finally {
         setLoading(false)
@@ -167,14 +180,21 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
 
   const handleAddResponsibility = () => {
     if (newResponsibility.trim()) {
-      form.setFieldValue('responsibilities', [...form.getFieldValue('responsibilities'), newResponsibility.trim().toUpperCase()])
+      form.setFieldValue('responsibilities', [
+        ...form.getFieldValue('responsibilities'),
+        newResponsibility.trim()
+          .toUpperCase(),
+      ])
       setNewResponsibility('')
     }
   }
 
   const handleRemoveResponsibility = (index: number) => {
     const current = form.getFieldValue('responsibilities')
-    form.setFieldValue('responsibilities', current.filter((_, i) => i !== index))
+    form.setFieldValue(
+      'responsibilities',
+      current.filter((_, i) => i !== index),
+    )
   }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -182,13 +202,14 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
     if (!files)
       return
 
-    const newImages: ImageItem[] = Array.from(files).map((file, index) => ({
-      id: `new-${Date.now()}-${index}`,
-      file,
-      url: URL.createObjectURL(file),
-      filename: file.name,
-      isExisting: false,
-    }))
+    const newImages: ImageItem[] = Array.from(files)
+      .map((file, index) => ({
+        id: `new-${Date.now()}-${index}`,
+        file,
+        url: URL.createObjectURL(file),
+        filename: file.name,
+        isExisting: false,
+      }))
 
     setImages([...images, ...newImages])
   }
@@ -219,7 +240,9 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
     if (!files || files.length === 0)
       return
 
-    const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'))
+    const imageFiles = Array.from(files)
+      .filter(file =>
+        file.type.startsWith('image/'))
 
     const newImages: ImageItem[] = imageFiles.map((file, index) => ({
       id: `new-${Date.now()}-${index}`,
@@ -274,7 +297,7 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
     <AnimatePresence>
       <>
         <motion.div
-          className="fixed inset-0 bg-muted/70 backdrop-blur-md z-40"
+          className="bg-muted/70 fixed inset-0 z-40 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -301,7 +324,7 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
         )}
 
         <motion.div
-          className="fixed right-0 top-0 w-3/4 md:w-2/3 lg:w-1/2 bg-popover backdrop-blur-xl border-l border-border z-50 flex flex-col"
+          className="bg-popover border-border fixed top-0 right-0 z-50 flex w-3/4 flex-col border-l backdrop-blur-xl md:w-2/3 lg:w-1/2"
           initial={{ x: '100%' }}
           animate={{ x: 0 }}
           exit={{ x: '100%' }}
@@ -314,20 +337,22 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
               e.stopPropagation()
               form.handleSubmit()
             }}
-            className="flex flex-col h-full"
+            className="flex h-full flex-col"
           >
-            <div className="flex-shrink-0 p-8 border-b border-border backdrop-blur-sm">
-              <h2 className="text-xl font-medium text-foreground tracking-tight">
+            <div className="border-border flex-shrink-0 border-b p-8 backdrop-blur-sm">
+              <h2 className="text-foreground text-xl font-medium tracking-tight">
                 {project ? 'Edit Project' : 'New Project'}
               </h2>
-              <p className="text-xs text-muted-foreground mt-1 tracking-wide uppercase">
-                {project ? 'Update project details and images' : 'Create a new portfolio project'}
+              <p className="text-muted-foreground mt-1 text-xs tracking-wide uppercase">
+                {project
+                  ? 'Update project details and images'
+                  : 'Create a new portfolio project'}
               </p>
             </div>
 
-            <div className="flex-1 overflow-y-auto p-8 space-y-8">
+            <div className="flex-1 space-y-8 overflow-y-auto p-8">
               <div>
-                <Label className="block text-xs mb-3 uppercase tracking-wider">
+                <Label className="mb-3 block text-xs tracking-wider uppercase">
                   Images (Drag to reorder)
                 </Label>
 
@@ -336,28 +361,35 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
                   onDragLeave={handleFileDragLeave}
                   onDragOver={handleFileDragOver}
                   onDrop={handleFileDrop}
-                  className={`relative border-2 border-dashed rounded-sm transition-all ${
+                  className={`relative rounded-sm border-2 border-dashed transition-all ${
                     isDraggingFile
                       ? 'border-ring/50 bg-accent/50'
                       : 'border-border bg-muted/30'
-                  } ${images.length === 0 ? 'cursor-pointer hover:border-ring/50 hover:bg-muted/50' : ''}`}
+                  } ${images.length === 0 ? 'hover:border-ring/50 hover:bg-muted/50 cursor-pointer' : ''}`}
                 >
                   <input
                     type="file"
                     multiple
                     accept="image/*"
                     onChange={handleImageUpload}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0"
                     id="image-upload"
-                    style={{ pointerEvents: images.length > 0 ? 'none' : 'auto' }}
+                    style={{
+                      pointerEvents: images.length > 0 ? 'none' : 'auto',
+                    }}
                   />
 
                   {images.length === 0 && (
-                    <label htmlFor="image-upload" className="block py-12 px-6 text-center cursor-pointer">
+                    <label
+                      htmlFor="image-upload"
+                      className="block cursor-pointer px-6 py-12 text-center"
+                    >
                       <div className="flex flex-col items-center gap-3">
                         <svg
-                          className={`w-12 h-12 transition-colors ${
-                            isDraggingFile ? 'text-foreground' : 'text-muted-foreground'
+                          className={`h-12 w-12 transition-colors ${
+                            isDraggingFile
+                              ? 'text-foreground'
+                              : 'text-muted-foreground'
                           }`}
                           fill="none"
                           stroke="currentColor"
@@ -371,13 +403,18 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
                           />
                         </svg>
                         <div>
-                          <p className={`text-sm font-medium transition-colors ${
-                            isDraggingFile ? 'text-foreground' : 'text-card-foreground'
-                          } uppercase tracking-wide`}
+                          <p
+                            className={`text-sm font-medium transition-colors ${
+                              isDraggingFile
+                                ? 'text-foreground'
+                                : 'text-card-foreground'
+                            } tracking-wide uppercase`}
                           >
-                            {isDraggingFile ? 'Drop images here' : 'Drag & drop images'}
+                            {isDraggingFile
+                              ? 'Drop images here'
+                              : 'Drag & drop images'}
                           </p>
-                          <p className="text-xs text-muted-foreground mt-1 tracking-wide">
+                          <p className="text-muted-foreground mt-1 text-xs tracking-wide">
                             or click to browse
                           </p>
                         </div>
@@ -387,7 +424,7 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
 
                   {images.length > 0 && (
                     <div className="p-4">
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
                         {images.map((image, index) => (
                           <div
                             key={image.id}
@@ -395,31 +432,33 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
                             onDragStart={() => handleDragStart(index)}
                             onDragOver={e => handleDragOver(e, index)}
                             onDragEnd={handleDragEnd}
-                            className={`relative group cursor-move border rounded-sm overflow-hidden ${
-                              draggedIndex === index ? 'border-ring opacity-50' : 'border-border'
+                            className={`group relative cursor-move overflow-hidden rounded-sm border ${
+                              draggedIndex === index
+                                ? 'border-ring opacity-50'
+                                : 'border-border'
                             } hover:border-ring/50 transition-all`}
                           >
-                            <div className="aspect-square bg-muted">
+                            <div className="bg-muted aspect-square">
                               <img
                                 src={image.url}
                                 alt={image.filename}
-                                className="w-full h-full object-cover"
+                                className="h-full w-full object-cover"
                               />
                             </div>
 
-                            <div className="absolute top-2 left-2 bg-popover/80 backdrop-blur-sm text-foreground px-2 py-1 rounded-sm text-xs font-medium">
+                            <div className="bg-popover/80 text-foreground absolute top-2 left-2 rounded-sm px-2 py-1 text-xs font-medium backdrop-blur-sm">
                               {index + 1}
                             </div>
 
                             <button
                               type="button"
                               onClick={() => handleDeleteImage(image)}
-                              className="absolute top-2 right-2 bg-destructive/10 backdrop-blur-md text-destructive px-2.5 py-1 rounded-sm text-xs hover:bg-destructive/20 hover:text-destructive/80 opacity-0 group-hover:opacity-100 transition-all font-medium uppercase tracking-wide border border-destructive/20 hover:border-destructive/30"
+                              className="bg-destructive/10 text-destructive hover:bg-destructive/20 hover:text-destructive/80 border-destructive/20 hover:border-destructive/30 absolute top-2 right-2 rounded-sm border px-2.5 py-1 text-xs font-medium tracking-wide uppercase opacity-0 backdrop-blur-md transition-all group-hover:opacity-100"
                             >
                               Delete
                             </button>
 
-                            <div className="absolute bottom-0 left-0 right-0 bg-popover/80 backdrop-blur-sm text-foreground px-2 py-1.5 text-xs truncate">
+                            <div className="bg-popover/80 text-foreground absolute right-0 bottom-0 left-0 truncate px-2 py-1.5 text-xs backdrop-blur-sm">
                               {image.filename}
                             </div>
                           </div>
@@ -430,12 +469,15 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
                 </div>
               </div>
 
-              <div className="border-t border-border"></div>
+              <div className="border-border border-t"></div>
 
               <form.Field name="title">
                 {field => (
                   <div className="space-y-2">
-                    <Label htmlFor="title" className="text-xs uppercase tracking-wider">
+                    <Label
+                      htmlFor="title"
+                      className="text-xs tracking-wider uppercase"
+                    >
                       Project Title *
                     </Label>
                     <Input
@@ -453,7 +495,10 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
               <form.Field name="description">
                 {field => (
                   <div className="space-y-2">
-                    <Label htmlFor="description" className="text-xs uppercase tracking-wider">
+                    <Label
+                      htmlFor="description"
+                      className="text-xs tracking-wider uppercase"
+                    >
                       Description *
                     </Label>
                     <textarea
@@ -463,7 +508,7 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
                       onBlur={field.handleBlur}
                       required
                       rows={6}
-                      className="flex min-h-[120px] w-full rounded-md border border-input bg-transparent px-4 py-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                      className="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[120px] w-full resize-none rounded-md border bg-transparent px-4 py-3 text-sm focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                       placeholder="Project description..."
                     />
                   </div>
@@ -473,14 +518,18 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
               <form.Field name="order">
                 {field => (
                   <div className="space-y-2">
-                    <Label htmlFor="order" className="text-xs uppercase tracking-wider">
+                    <Label
+                      htmlFor="order"
+                      className="text-xs tracking-wider uppercase"
+                    >
                       Position in Portfolio *
                     </Label>
                     <Input
                       id="order"
                       type="number"
                       value={field.state.value}
-                      onChange={e => field.handleChange(Number.parseInt(e.target.value))}
+                      onChange={e =>
+                        field.handleChange(Number.parseInt(e.target.value))}
                       onBlur={field.handleBlur}
                       required
                       min="0"
@@ -492,14 +541,16 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
               <form.Field name="responsibilities">
                 {field => (
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase tracking-wider">
+                    <Label className="text-xs tracking-wider uppercase">
                       Responsibilities
                     </Label>
-                    <div className="flex gap-2 mb-3">
+                    <div className="mb-3 flex gap-2">
                       <Input
                         value={newResponsibility}
                         onChange={e => setNewResponsibility(e.target.value)}
-                        onKeyPress={e => e.key === 'Enter' && (e.preventDefault(), handleAddResponsibility())}
+                        onKeyPress={e =>
+                          e.key === 'Enter'
+                          && (e.preventDefault(), handleAddResponsibility())}
                         placeholder="e.g., CREATIVE PRODUCTION"
                       />
                       <Button
@@ -514,7 +565,7 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
                       {field.state.value.map((resp, idx) => (
                         <span
                           key={`${resp}-${idx}`}
-                          className="inline-flex items-center gap-2 bg-muted border border-border text-foreground px-3 py-1.5 rounded-sm text-xs tracking-wide"
+                          className="bg-muted border-border text-foreground inline-flex items-center gap-2 rounded-sm border px-3 py-1.5 text-xs tracking-wide"
                         >
                           {resp}
                           <button
@@ -530,10 +581,9 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
                   </div>
                 )}
               </form.Field>
-
             </div>
 
-            <div className="flex-shrink-0 p-8 border-t border-border flex gap-3 backdrop-blur-sm">
+            <div className="border-border flex flex-shrink-0 gap-3 border-t p-8 backdrop-blur-sm">
               <Button
                 type="button"
                 variant="outline"
@@ -542,14 +592,20 @@ export default function ProjectEditor({ project, onSave, onCancel, onShowToast }
               >
                 Cancel
               </Button>
-              <form.Subscribe selector={state => [state.canSubmit, state.isSubmitting]}>
+              <form.Subscribe
+                selector={state => [state.canSubmit, state.isSubmitting]}
+              >
                 {([canSubmit, isSubmitting]) => (
                   <Button
                     type="submit"
                     disabled={!canSave || !canSubmit || isSubmitting}
                     className="flex-1"
                   >
-                    {isSubmitting || loading ? 'Saving...' : project ? 'Update Project' : 'Create Project'}
+                    {isSubmitting || loading
+                      ? 'Saving...'
+                      : project
+                        ? 'Update Project'
+                        : 'Create Project'}
                   </Button>
                 )}
               </form.Subscribe>

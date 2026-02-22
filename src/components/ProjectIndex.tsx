@@ -6,14 +6,20 @@ interface ProjectIndexProps {
   settingsData?: Settings | null
 }
 
-export default function ProjectIndex({ projectTitles, settingsData = null }: ProjectIndexProps) {
+export default function ProjectIndex({
+  projectTitles,
+  settingsData = null,
+}: ProjectIndexProps) {
   return (
     <section
       id="project-index"
-      className="w-full snap-center bg-white flex items-center justify-center"
+      className="flex w-full snap-center items-center justify-center bg-white"
       style={{ height: '100lvh' }}
     >
-      <ProjectNavigation projectTitles={projectTitles} settingsData={settingsData} />
+      <ProjectNavigation
+        projectTitles={projectTitles}
+        settingsData={settingsData}
+      />
     </section>
   )
 }

@@ -31,7 +31,7 @@ export function AnimatedRoutes() {
           element={(
             <Suspense
               fallback={(
-                <div className="min-h-screen bg-black flex items-center justify-center">
+                <div className="flex min-h-screen items-center justify-center bg-black">
                   <div className="text-xl text-white">Loading...</div>
                 </div>
               )}
@@ -45,7 +45,7 @@ export function AnimatedRoutes() {
           element={(
             <Suspense
               fallback={(
-                <div className="min-h-screen bg-black flex items-center justify-center">
+                <div className="flex min-h-screen items-center justify-center bg-black">
                   <div className="text-xl text-white">Loading...</div>
                 </div>
               )}
@@ -59,10 +59,11 @@ export function AnimatedRoutes() {
   )
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <AnimatedRoutes />
-    </BrowserRouter>
-  </React.StrictMode>,
-)
+ReactDOM.createRoot(document.getElementById('root')!)
+  .render(
+    <React.StrictMode>
+      <BrowserRouter>
+        <AnimatedRoutes />
+      </BrowserRouter>
+    </React.StrictMode>,
+  )

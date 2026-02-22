@@ -10,7 +10,11 @@ interface AboutPopupProps {
   aboutData: About | null
 }
 
-export default function AboutPopup({ isVisible, onClose, aboutData }: AboutPopupProps) {
+export default function AboutPopup({
+  isVisible,
+  onClose,
+  aboutData,
+}: AboutPopupProps) {
   return (
     <AnimatePresence>
       {isVisible && (
@@ -52,7 +56,7 @@ export default function AboutPopup({ isVisible, onClose, aboutData }: AboutPopup
               <img
                 src={ProjectCardSVG}
                 alt="About Card"
-                className="w-full h-auto"
+                className="h-auto w-full"
                 style={{
                   width: '280px',
                   height: 'auto',
@@ -76,10 +80,10 @@ export default function AboutPopup({ isVisible, onClose, aboutData }: AboutPopup
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 flex flex-col justify-center">
+                <div className="flex flex-1 flex-col justify-center">
                   <h2
                     id="about-popup-title"
-                    className="text-black uppercase text-center leading-tight"
+                    className="text-center leading-tight text-black uppercase"
                     style={{
                       fontFamily: 'EnduroWeb, sans-serif',
                       letterSpacing: '0.03em',
@@ -90,7 +94,7 @@ export default function AboutPopup({ isVisible, onClose, aboutData }: AboutPopup
                     {aboutData?.Portfolio_Title || 'Story Driven Strategy'}
                   </h2>
                   <p
-                    className="text-black text-center leading-tight"
+                    className="text-center leading-tight text-black"
                     style={{
                       fontFamily: 'EnduroWeb, sans-serif',
                       letterSpacing: '0.03em',
@@ -98,11 +102,12 @@ export default function AboutPopup({ isVisible, onClose, aboutData }: AboutPopup
                       marginBottom: '18px',
                     }}
                   >
-                    {aboutData?.About_Description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mattis ipsum vel nulla blandit, eu porta ligula mattis. Phasellus mattis rutrum elit, sed cursus risus tempus quis. Mauris sed ante et lectus consectetur aliquet. Sed in orci a metus aliquam porttitor.'}
+                    {aboutData?.About_Description
+                      || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mattis ipsum vel nulla blandit, eu porta ligula mattis. Phasellus mattis rutrum elit, sed cursus risus tempus quis. Mauris sed ante et lectus consectetur aliquet. Sed in orci a metus aliquam porttitor.'}
                   </p>
 
                   <h3
-                    className="text-black uppercase text-center leading-tight"
+                    className="text-center leading-tight text-black uppercase"
                     style={{
                       fontFamily: 'EnduroWeb, sans-serif',
                       letterSpacing: '0.03em',
@@ -113,7 +118,7 @@ export default function AboutPopup({ isVisible, onClose, aboutData }: AboutPopup
                     {aboutData?.Expertise_Title || 'Expertise'}
                   </h3>
                   <p
-                    className="text-black text-center leading-tight"
+                    className="text-center leading-tight text-black"
                     style={{
                       fontFamily: 'EnduroWeb, sans-serif',
                       letterSpacing: '0.03em',
@@ -121,11 +126,12 @@ export default function AboutPopup({ isVisible, onClose, aboutData }: AboutPopup
                       marginBottom: '18px',
                     }}
                   >
-                    {aboutData?.Expertise_Description || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mattis ipsum vel nulla blandit.'}
+                    {aboutData?.Expertise_Description
+                      || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mattis ipsum vel nulla blandit.'}
                   </p>
 
                   <h3
-                    className="text-black uppercase text-center leading-tight"
+                    className="text-center leading-tight text-black uppercase"
                     style={{
                       fontFamily: 'EnduroWeb, sans-serif',
                       letterSpacing: '0.03em',
@@ -136,7 +142,7 @@ export default function AboutPopup({ isVisible, onClose, aboutData }: AboutPopup
                     {aboutData?.Selected_Clients_Title || 'Selected Clients'}
                   </h3>
                   <p
-                    className="text-black text-center leading-tight"
+                    className="text-center leading-tight text-black"
                     style={{
                       fontFamily: 'EnduroWeb, sans-serif',
                       letterSpacing: '0.03em',
@@ -144,11 +150,14 @@ export default function AboutPopup({ isVisible, onClose, aboutData }: AboutPopup
                       marginBottom: '18px',
                     }}
                   >
-                    {(aboutData?.Client_List_Json || aboutData?.Client_List)?.join(', ') || 'Ipsum, Dolor, Sit Amet, Consectetur, Adipiscing, Aenean, Mattis, Blandit.'}
+                    {(
+                      aboutData?.Client_List_Json || aboutData?.Client_List
+                    )?.join(', ')
+                    || 'Ipsum, Dolor, Sit Amet, Consectetur, Adipiscing, Aenean, Mattis, Blandit.'}
                   </p>
 
                   <button
-                    className="text-black text-center leading-tight cursor-pointer hover:opacity-70 transition-opacity duration-300"
+                    className="cursor-pointer text-center leading-tight text-black transition-opacity duration-300 hover:opacity-70"
                     style={{
                       fontFamily: 'EnduroWeb, sans-serif',
                       letterSpacing: '0.03em',
@@ -159,7 +168,8 @@ export default function AboutPopup({ isVisible, onClose, aboutData }: AboutPopup
                       width: '100%',
                     }}
                     onClick={() => {
-                      const email = aboutData?.Contact_Email || 'hello@joannavanderwerf.com'
+                      const email
+                        = aboutData?.Contact_Email || 'hello@joannavanderwerf.com'
                       window.location.href = `mailto:${email}`
                     }}
                   >

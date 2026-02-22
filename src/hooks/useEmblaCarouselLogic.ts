@@ -168,9 +168,10 @@ export function useEmblaCarouselLogic({
         const blurRange = blurSnapEnd - blurSnapStart
 
         // Calculate how far into the blur transition we are (0-1)
-        const blurProgress = blurRange > 0
-          ? Math.max(0, Math.min(1, (progress - blurSnapStart) / blurRange))
-          : 0
+        const blurProgress
+          = blurRange > 0
+            ? Math.max(0, Math.min(1, (progress - blurSnapStart) / blurRange))
+            : 0
 
         setBlurIntensity(blurProgress)
       }

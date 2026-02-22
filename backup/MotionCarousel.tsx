@@ -2,7 +2,10 @@ import type { Settings } from '../config/pocketbase'
 import type { ProjectImage } from '../types/project'
 import { useEffect, useRef, useState } from 'react'
 import { getResponsiveFontSizes } from '../config/pocketbase'
-import { projectTitleClasses, projectTitleContainerClasses } from '../utils/sharedStyles'
+import {
+  projectTitleClasses,
+  projectTitleContainerClasses,
+} from '../utils/sharedStyles'
 import ChevronDown from './icons/ChevronDown'
 
 interface MotionCarouselProps {
@@ -95,7 +98,7 @@ export default function MotionCarousel({
         // Calculate progress: 0 when entering, 1 when centered
         let visibility = 0
         if (maxDistance > 0) {
-          const rawProgress = 1 - (distanceFromCenter / maxDistance)
+          const rawProgress = 1 - distanceFromCenter / maxDistance
 
           // Add delay: blur only starts after slide is 50% scrolled in
           const delayThreshold = 0.5
@@ -274,15 +277,16 @@ export default function MotionCarousel({
         {/* Carousel slides container */}
         <div className="motion-carousel__container">
           {/* Regular image slides (all except last) */}
-          {images.slice(0, -1).map((image, idx) => (
-            <div
-              key={image.src}
-              className="motion-carousel__slide motion-carousel__slide--image"
-              style={{ backgroundImage: `url(${image.src})` }}
-              role="group"
-              aria-label={`Slide ${idx + 1}`}
-            />
-          ))}
+          {images.slice(0, -1)
+            .map((image, idx) => (
+              <div
+                key={image.src}
+                className="motion-carousel__slide motion-carousel__slide--image"
+                style={{ backgroundImage: `url(${image.src})` }}
+                role="group"
+                aria-label={`Slide ${idx + 1}`}
+              />
+            ))}
 
           {/* Transparent slide (shows last image on desktop) */}
           <div
@@ -313,7 +317,7 @@ export default function MotionCarousel({
               >
                 {/* Down Chevron */}
                 <div
-                  className="absolute bottom-5 left-1/2 z-[100] cursor-pointer hover:opacity-70 transition-opacity duration-300 pointer-events-auto"
+                  className="pointer-events-auto absolute bottom-5 left-1/2 z-[100] cursor-pointer transition-opacity duration-300 hover:opacity-70"
                   style={{
                     opacity: blurIntensity ** 2,
                     transform: 'translateX(-50%) translateZ(0)',
@@ -335,7 +339,7 @@ export default function MotionCarousel({
 
       {/* Project Title - sibling of scroll container, positions relative to section */}
       <div
-        className={`absolute top-1/2 left-1/2 z-[200] text-center w-full ${projectTitleContainerClasses}`}
+        className={`absolute top-1/2 left-1/2 z-[200] w-full text-center ${projectTitleContainerClasses}`}
         style={{ transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}
       >
         <h1
@@ -346,7 +350,8 @@ export default function MotionCarousel({
             pointerEvents: 'auto',
             cursor: 'pointer',
             opacity: isPopupVisible || isAboutPopupVisible ? 0 : 1,
-            visibility: isPopupVisible || isAboutPopupVisible ? 'hidden' : 'visible',
+            visibility:
+              isPopupVisible || isAboutPopupVisible ? 'hidden' : 'visible',
             transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
           }}
           onClick={() => {
@@ -370,12 +375,16 @@ export default function MotionCarousel({
             width: screenWidth ? `${screenWidth * 0.89}px` : '89vw',
             left: screenWidth ? `${screenWidth * 0.055}px` : '5.5vw',
             opacity: currentSlide > 0 && currentSlide <= images.length ? 1 : 0,
-            transform: currentSlide > 0 && currentSlide <= images.length ? 'translateY(0)' : 'translateY(10px)',
-            transition: 'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
+            transform:
+              currentSlide > 0 && currentSlide <= images.length
+                ? 'translateY(0)'
+                : 'translateY(10px)',
+            transition:
+              'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
             pointerEvents: currentSlide > 0 ? 'auto' : 'none',
           }}
         >
-          <div className="h-0.5 bg-gray-500/50 rounded-full overflow-hidden backdrop-blur-sm">
+          <div className="h-0.5 overflow-hidden rounded-full bg-gray-500/50 backdrop-blur-sm">
             <div
               className="h-full bg-gray-50"
               style={{
@@ -394,12 +403,16 @@ export default function MotionCarousel({
             width: screenWidth ? `${screenWidth * 0.89}px` : '89vw',
             left: screenWidth ? `${screenWidth * 0.055}px` : '5.5vw',
             opacity: currentSlide > 0 && currentSlide <= images.length ? 1 : 0,
-            transform: currentSlide > 0 && currentSlide <= images.length ? 'translateY(0)' : 'translateY(-10px)',
-            transition: 'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
+            transform:
+              currentSlide > 0 && currentSlide <= images.length
+                ? 'translateY(0)'
+                : 'translateY(-10px)',
+            transition:
+              'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
             pointerEvents: currentSlide > 0 ? 'auto' : 'none',
           }}
         >
-          <div className="h-0.5 bg-gray-500/50 rounded-full overflow-hidden backdrop-blur-sm">
+          <div className="h-0.5 overflow-hidden rounded-full bg-gray-500/50 backdrop-blur-sm">
             <div
               className="h-full bg-gray-50"
               style={{
@@ -409,7 +422,6 @@ export default function MotionCarousel({
           </div>
         </div>
       )}
-
     </>
   )
 }

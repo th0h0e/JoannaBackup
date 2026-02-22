@@ -2,7 +2,10 @@ import type { Settings } from '../config/pocketbase'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { getResponsiveFontSizes } from '../config/pocketbase'
-import { projectTitleClasses, projectTitleContainerClasses } from '../utils/sharedStyles'
+import {
+  projectTitleClasses,
+  projectTitleContainerClasses,
+} from '../utils/sharedStyles'
 import ChevronDown from './icons/ChevronDown'
 
 interface HeroProps {
@@ -12,7 +15,12 @@ interface HeroProps {
   settingsData: Settings | null
 }
 
-export default function Hero({ heroImage, heroTitle, isAboutPopupVisible, settingsData }: HeroProps) {
+export default function Hero({
+  heroImage,
+  heroTitle,
+  isAboutPopupVisible,
+  settingsData,
+}: HeroProps) {
   const fontSizes = getResponsiveFontSizes(settingsData)
   const [hasAnimatedIn, setHasAnimatedIn] = useState(false)
   const hasTriggeredRef = useRef(false)
@@ -50,7 +58,7 @@ export default function Hero({ heroImage, heroTitle, isAboutPopupVisible, settin
       </style>
       <section
         id="hero-section"
-        className="relative w-full snap-center bg-white flex items-center justify-center overflow-hidden"
+        className="relative flex w-full snap-center items-center justify-center overflow-hidden bg-white"
         style={{ height: '100lvh' }}
       >
         {/* Hero Background Image */}
@@ -66,12 +74,15 @@ export default function Hero({ heroImage, heroTitle, isAboutPopupVisible, settin
         <AnimatePresence>
           {!isAboutPopupVisible && (
             <motion.div
-              className={`absolute top-1/2 left-1/2 z-10 text-center w-full ${projectTitleContainerClasses}`}
+              className={`absolute top-1/2 left-1/2 z-10 w-full text-center ${projectTitleContainerClasses}`}
               style={{
                 transform: 'translate(-50%, -50%)',
               }}
               initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { duration: 0.15, delay: hasAnimatedIn ? 0 : 1.2 } }}
+              animate={{
+                opacity: 1,
+                transition: { duration: 0.15, delay: hasAnimatedIn ? 0 : 1.2 },
+              }}
               exit={{ opacity: 0, transition: { duration: 0.15 } }}
             >
               <h1

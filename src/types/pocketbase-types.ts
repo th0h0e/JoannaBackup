@@ -18,7 +18,7 @@ export const Collections = {
   Users: 'users',
 } as const
 
-export type CollectionName = typeof Collections[keyof typeof Collections]
+export type CollectionName = (typeof Collections)[keyof typeof Collections]
 
 // Alias types for improved usability
 export type IsoDateString = string
@@ -160,16 +160,31 @@ export interface UsersRecord {
 }
 
 // Response types include system fields and match responses from the PocketBase API
-export type AboutResponse<TClient_List_Json = unknown, Texpand = unknown> = Required<AboutRecord<TClient_List_Json>> & BaseSystemFields<Texpand>
-export type HomepageResponse<Texpand = unknown> = Required<HomepageRecord> & BaseSystemFields<Texpand>
-export type PortfolioProjectsResponse<TResponsibility_json = unknown, Texpand = unknown> = Required<PortfolioProjectsRecord<TResponsibility_json>> & BaseSystemFields<Texpand>
-export type SettingsResponse<Texpand = unknown> = Required<SettingsRecord> & BaseSystemFields<Texpand>
-export type AuthoriginsResponse<Texpand = unknown> = Required<AuthoriginsRecord> & BaseSystemFields<Texpand>
-export type ExternalauthsResponse<Texpand = unknown> = Required<ExternalauthsRecord> & BaseSystemFields<Texpand>
-export type MfasResponse<Texpand = unknown> = Required<MfasRecord> & BaseSystemFields<Texpand>
-export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord> & BaseSystemFields<Texpand>
-export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord> & AuthSystemFields<Texpand>
-export type UsersResponse<Texpand = unknown> = Required<UsersRecord> & AuthSystemFields<Texpand>
+export type AboutResponse<
+  TClient_List_Json = unknown,
+  Texpand = unknown,
+> = Required<AboutRecord<TClient_List_Json>> & BaseSystemFields<Texpand>
+export type HomepageResponse<Texpand = unknown> = Required<HomepageRecord>
+  & BaseSystemFields<Texpand>
+export type PortfolioProjectsResponse<
+  TResponsibility_json = unknown,
+  Texpand = unknown,
+> = Required<PortfolioProjectsRecord<TResponsibility_json>>
+  & BaseSystemFields<Texpand>
+export type SettingsResponse<Texpand = unknown> = Required<SettingsRecord>
+  & BaseSystemFields<Texpand>
+export type AuthoriginsResponse<Texpand = unknown>
+  = Required<AuthoriginsRecord> & BaseSystemFields<Texpand>
+export type ExternalauthsResponse<Texpand = unknown>
+  = Required<ExternalauthsRecord> & BaseSystemFields<Texpand>
+export type MfasResponse<Texpand = unknown> = Required<MfasRecord>
+  & BaseSystemFields<Texpand>
+export type OtpsResponse<Texpand = unknown> = Required<OtpsRecord>
+  & BaseSystemFields<Texpand>
+export type SuperusersResponse<Texpand = unknown> = Required<SuperusersRecord>
+  & AuthSystemFields<Texpand>
+export type UsersResponse<Texpand = unknown> = Required<UsersRecord>
+  & AuthSystemFields<Texpand>
 
 // Types containing all Records and Responses, useful for creating typing helper functions
 
@@ -201,16 +216,21 @@ export interface CollectionResponses {
 
 // Utility types for create/update operations
 
-type ProcessCreateAndUpdateFields<T> = Omit<{
-  // Omit AutoDate fields
-  [K in keyof T as Extract<T[K], IsoAutoDateString> extends never ? K : never]:
-  // Convert FileNameString to File
-  T[K] extends infer U
-    ? U extends (FileNameString | FileNameString[])
-      ? U extends any[] ? File[] : File
-      : U
-    : never
-}, 'id'>
+type ProcessCreateAndUpdateFields<T> = Omit<
+  {
+    // Omit AutoDate fields
+    [K in keyof T as Extract<T[K], IsoAutoDateString> extends never
+      ? K
+      : never]: T[K] extends infer U // Convert FileNameString to File
+      ? U extends FileNameString | FileNameString[]
+        ? U extends any[]
+          ? File[]
+          : File
+        : U
+      : never
+  },
+  'id'
+>
 
 // Create type for Auth collections
 export type CreateAuth<T> = {

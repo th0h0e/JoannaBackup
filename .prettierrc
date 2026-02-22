@@ -1,0 +1,25 @@
+{
+  "printWidth": 80,
+  "tabWidth": 2,
+  "useTabs": false,
+  "semi": false,
+  "singleQuote": true,
+  "trailingComma": "es5",
+  "bracketSpacing": true,
+  "overrides": [
+    {
+      "files": ["*.tsx", "*.ts", "*.jsx", "*.js"],
+      "options": {
+        "parser": "babel",
+        "plugins": []
+      }
+    },
+    {
+      "files": ["*.html"],
+      "options": {
+        "parser": "html"
+      }
+    }
+  ],
+  "plugins": ["prettier-plugin-tailwindcss"]
+}

@@ -11,7 +11,12 @@ interface HamburgerMenuProps {
   isMobile?: boolean
 }
 
-export default function HamburgerMenu({ projectTitles, isPopupVisible = false, settingsData = null, isMobile = false }: HamburgerMenuProps) {
+export default function HamburgerMenu({
+  projectTitles,
+  isPopupVisible = false,
+  settingsData = null,
+  isMobile = false,
+}: HamburgerMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   const toggleMenu = () => {
@@ -31,20 +36,20 @@ export default function HamburgerMenu({ projectTitles, isPopupVisible = false, s
       {!isPopupVisible && (
         <button
           onClick={toggleMenu}
-          className="fixed top-[80px] right-5 md:top-[89px] md:right-[40px] z-[10000] cursor-pointer"
+          className="fixed top-[80px] right-5 z-[10000] cursor-pointer md:top-[89px] md:right-[40px]"
           aria-label="Toggle menu"
           aria-expanded={isOpen}
         >
           <motion.div
-            className="block md:w-[18px] md:h-[18px]"
+            className="block md:h-[18px] md:w-[18px]"
             style={{
               mixBlendMode: isOpen ? 'normal' : 'exclusion',
             }}
             animate={{
               rotate: isOpen ? 45 : 0,
               backgroundColor: isOpen ? '#000000' : '#ffffff',
-              width: isOpen ? '18px' : (isMobile ? '17.32px' : '18px'),
-              height: isOpen ? '18px' : (isMobile ? '17.32px' : '18px'),
+              width: isOpen ? '18px' : isMobile ? '17.32px' : '18px',
+              height: isOpen ? '18px' : isMobile ? '17.32px' : '18px',
             }}
             transition={{ duration: 0.3 }}
           />
@@ -58,7 +63,7 @@ export default function HamburgerMenu({ projectTitles, isPopupVisible = false, s
             <>
               {/* Backdrop */}
               <motion.div
-                className="fixed inset-0 bg-white z-[9998]"
+                className="fixed inset-0 z-[9998] bg-white"
                 style={{ height: '100lvh' }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -76,7 +81,7 @@ export default function HamburgerMenu({ projectTitles, isPopupVisible = false, s
                 transition={{ duration: 0.3, ease: 'easeOut' }}
                 style={{ height: '100lvh' }}
               >
-                <div className="w-full flex items-center justify-center">
+                <div className="flex w-full items-center justify-center">
                   <ProjectNavigation
                     projectTitles={projectTitles}
                     settingsData={settingsData}
@@ -89,7 +94,8 @@ export default function HamburgerMenu({ projectTitles, isPopupVisible = false, s
 
                         // Reset all carousels to first slide after navigation
                         setTimeout(() => {
-                          const carousels = document.querySelectorAll('[data-carousel]')
+                          const carousels
+                            = document.querySelectorAll('[data-carousel]')
                           carousels.forEach((carousel) => {
                             if (carousel instanceof HTMLElement) {
                               carousel.scrollLeft = 0

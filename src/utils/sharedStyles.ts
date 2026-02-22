@@ -2,7 +2,12 @@
 export const projectTitleClasses = 'uppercase leading-none block'
 
 // Function to generate dynamic project title styles based on settings
-export function getProjectTitleStyles(fontSizes: { mobile: number, tablet: number, desktop: number, largeDesktop: number }) {
+export function getProjectTitleStyles(fontSizes: {
+  mobile: number
+  tablet: number
+  desktop: number
+  largeDesktop: number
+}) {
   return {
     'fontFamily': 'EnduroWeb, sans-serif',
     'letterSpacing': '0.03em',
@@ -26,10 +31,12 @@ export const projectTitleStyle = {
 }
 
 // Shared navigation container styling for ProjectIndex and HamburgerMenu
-export const navigationContainerClasses = 'w-full md:w-4/5 text-center px-6 md:px-0'
+export const navigationContainerClasses
+  = 'w-full md:w-4/5 text-center px-6 md:px-0'
 
 // Shared navigation link styling (without font sizes - will be dynamic)
-export const navigationLinkClasses = 'text-black uppercase leading-none block no-underline hover:underline transition-all duration-200'
+export const navigationLinkClasses
+  = 'text-black uppercase leading-none block no-underline hover:underline transition-all duration-200'
 
 // Shared navigation list spacing
 export const navigationListClasses = 'space-y-1'

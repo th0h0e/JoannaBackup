@@ -31,9 +31,15 @@ import type { ProjectImage } from '../types/project'
 import useEmblaCarousel from 'embla-carousel-react'
 import { useCallback, useMemo } from 'react'
 import { getResponsiveFontSizes } from '../config/pocketbase'
-import { useKeyboardNavigation, useWheelGesturesNavigation } from '../hooks/useCarouselNavigation'
+import {
+  useKeyboardNavigation,
+  useWheelGesturesNavigation,
+} from '../hooks/useCarouselNavigation'
 import { useEmblaCarouselLogic } from '../hooks/useEmblaCarouselLogic'
-import { projectTitleClasses, projectTitleContainerClasses } from '../utils/sharedStyles'
+import {
+  projectTitleClasses,
+  projectTitleContainerClasses,
+} from '../utils/sharedStyles'
 import styles from './Carousel.module.css'
 import ChevronDown from './icons/ChevronDown'
 import ChevronRight from './icons/ChevronRight'
@@ -119,7 +125,7 @@ interface MobileCarouselProps extends BaseCarouselProps {
  * @interface DesktopCarouselProps
  * @extends {BaseCarouselProps}
  */
-interface DesktopCarouselProps extends BaseCarouselProps { }
+interface DesktopCarouselProps extends BaseCarouselProps {}
 
 /**
  * Union type for the EmblaCarousel component props.
@@ -132,7 +138,7 @@ interface DesktopCarouselProps extends BaseCarouselProps { }
  */
 type EmblaCarouselProps
   = | (MobileCarouselProps & { variant?: 'mobile' })
-  | (DesktopCarouselProps & { variant: 'desktop' })
+    | (DesktopCarouselProps & { variant: 'desktop' })
 
 /**
  * Scrolls the main container to the next vertical section.
@@ -258,10 +264,11 @@ function CarouselCore({
     inViewThreshold: 0,
   })
 
-  const { scrollProgress, currentSlide, isOnBlurSlide, blurIntensity } = useEmblaCarouselLogic({
-    emblaApi,
-    enableBlurIntensity: isMobile,
-  })
+  const { scrollProgress, currentSlide, isOnBlurSlide, blurIntensity }
+    = useEmblaCarouselLogic({
+      emblaApi,
+      enableBlurIntensity: isMobile,
+    })
 
   useKeyboardNavigation(emblaApi)
   useWheelGesturesNavigation(emblaApi)
@@ -298,7 +305,8 @@ function CarouselCore({
   }, [emblaApi])
 
   const titleOpacity = isPopupVisible || isAboutPopupVisible ? 0 : 1
-  const titleVisibility = isPopupVisible || isAboutPopupVisible ? 'hidden' : 'visible'
+  const titleVisibility
+    = isPopupVisible || isAboutPopupVisible ? 'hidden' : 'visible'
   const titleText = isOnBlurSlide ? 'NEXT PROJECT' : projectTitle
 
   if (isMobile) {
@@ -306,7 +314,9 @@ function CarouselCore({
       <div className={styles.emblaMobile} style={cssVars}>
         <div
           className={styles.emblaMobileBackground}
-          style={{ backgroundImage: lastImage ? `url(${lastImage.src})` : undefined }}
+          style={{
+            backgroundImage: lastImage ? `url(${lastImage.src})` : undefined,
+          }}
         />
 
         <div className={styles.emblaMobileViewport} ref={emblaRef}>
@@ -336,7 +346,7 @@ function CarouselCore({
                 }}
               >
                 <div
-                  className="absolute bottom-5 left-1/2 z-[100] cursor-pointer hover:opacity-70 transition-opacity duration-300 pointer-events-auto"
+                  className="pointer-events-auto absolute bottom-5 left-1/2 z-[100] cursor-pointer transition-opacity duration-300 hover:opacity-70"
                   style={{
                     opacity: (blurIntensity ?? 0) ** 2,
                     transform: 'translateX(-50%) translateZ(0)',
@@ -344,7 +354,12 @@ function CarouselCore({
                   }}
                   onClick={scrollToNextSection}
                 >
-                  <ChevronDown width={24} height={24} color="white" className="drop-shadow-2xl" />
+                  <ChevronDown
+                    width={24}
+                    height={24}
+                    color="white"
+                    className="drop-shadow-2xl"
+                  />
                 </div>
               </div>
             </div>
@@ -352,7 +367,7 @@ function CarouselCore({
         </div>
 
         <div
-          className={`absolute top-1/2 left-1/2 z-[200] text-center w-full ${projectTitleContainerClasses}`}
+          className={`absolute top-1/2 left-1/2 z-[200] w-full text-center ${projectTitleContainerClasses}`}
           style={{ transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}
         >
           <h1
@@ -374,12 +389,16 @@ function CarouselCore({
             style={{
               width: screenWidth ? `${screenWidth * 0.89}px` : '89vw',
               left: screenWidth ? `${screenWidth * 0.055}px` : '5.5vw',
-              opacity: currentSlide > 0 && currentSlide <= images.length ? 1 : 0,
-              transform: currentSlide > 0 && currentSlide <= images.length ? 'translateY(0)' : 'translateY(10px)',
+              opacity:
+                currentSlide > 0 && currentSlide <= images.length ? 1 : 0,
+              transform:
+                currentSlide > 0 && currentSlide <= images.length
+                  ? 'translateY(0)'
+                  : 'translateY(10px)',
               pointerEvents: currentSlide > 0 ? 'auto' : 'none',
             }}
           >
-            <div className="h-0.5 bg-gray-500/50 rounded-full overflow-hidden backdrop-blur-sm">
+            <div className="h-0.5 overflow-hidden rounded-full bg-gray-500/50 backdrop-blur-sm">
               <div
                 className="h-full bg-gray-50"
                 style={{ width: `${scrollProgress * 100}%` }}
@@ -394,12 +413,16 @@ function CarouselCore({
             style={{
               width: screenWidth ? `${screenWidth * 0.89}px` : '89vw',
               left: screenWidth ? `${screenWidth * 0.055}px` : '5.5vw',
-              opacity: currentSlide > 0 && currentSlide <= images.length ? 1 : 0,
-              transform: currentSlide > 0 && currentSlide <= images.length ? 'translateY(0)' : 'translateY(-10px)',
+              opacity:
+                currentSlide > 0 && currentSlide <= images.length ? 1 : 0,
+              transform:
+                currentSlide > 0 && currentSlide <= images.length
+                  ? 'translateY(0)'
+                  : 'translateY(-10px)',
               pointerEvents: currentSlide > 0 ? 'auto' : 'none',
             }}
           >
-            <div className="h-0.5 bg-gray-500/50 rounded-full overflow-hidden backdrop-blur-sm">
+            <div className="h-0.5 overflow-hidden rounded-full bg-gray-500/50 backdrop-blur-sm">
               <div
                 className="h-full bg-gray-50"
                 style={{ width: `${scrollProgress * 100}%` }}
@@ -415,7 +438,9 @@ function CarouselCore({
     <div className={styles.emblaDesktop} style={cssVars}>
       <div
         className={styles.emblaDesktopBackground}
-        style={{ backgroundImage: lastImage ? `url(${lastImage.src})` : undefined }}
+        style={{
+          backgroundImage: lastImage ? `url(${lastImage.src})` : undefined,
+        }}
       />
 
       <div className={styles.emblaDesktopViewport} ref={emblaRef}>
@@ -449,7 +474,7 @@ function CarouselCore({
       </div>
 
       <div
-        className={`absolute top-1/2 left-1/2 z-[200] text-center w-full ${projectTitleContainerClasses}`}
+        className={`absolute top-1/2 left-1/2 z-[200] w-full text-center ${projectTitleContainerClasses}`}
         style={{ transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}
       >
         <h1
@@ -468,18 +493,24 @@ function CarouselCore({
       {images.length > 1 && (
         <div
           className="absolute bottom-7 left-1/2 z-20"
-          style={{ transform: 'translate(-50%, 0) translateZ(0)', willChange: 'transform' }}
+          style={{
+            transform: 'translate(-50%, 0) translateZ(0)',
+            willChange: 'transform',
+          }}
         >
           <div
             className={styles.emblaDesktopProgress}
             style={{
               opacity: currentSlide > 0 && !isOnBlurSlide ? 1 : 0,
-              transform: !isOnBlurSlide ? 'translateY(0) translateZ(0)' : 'translateY(10px) translateZ(0)',
-              pointerEvents: currentSlide > 0 && !isOnBlurSlide ? 'auto' : 'none',
+              transform: !isOnBlurSlide
+                ? 'translateY(0) translateZ(0)'
+                : 'translateY(10px) translateZ(0)',
+              pointerEvents:
+                currentSlide > 0 && !isOnBlurSlide ? 'auto' : 'none',
               width: screenWidth ? `${screenWidth * 0.8}px` : '80vw',
             }}
           >
-            <div className="h-0.5 bg-gray-500/50 rounded-full overflow-hidden backdrop-blur-sm">
+            <div className="h-0.5 overflow-hidden rounded-full bg-gray-500/50 backdrop-blur-sm">
               <div
                 className="h-full bg-gray-50"
                 style={{ width: `${scrollProgress * 100}%` }}
@@ -492,30 +523,47 @@ function CarouselCore({
       {images.length > 1 && (
         <div
           className="absolute bottom-10 left-1/2 z-20"
-          style={{ transform: 'translate(-50%, 0) translateZ(0)', willChange: 'transform' }}
+          style={{
+            transform: 'translate(-50%, 0) translateZ(0)',
+            willChange: 'transform',
+          }}
         >
           <div
             className={styles.emblaDesktopProgress}
             style={{
               opacity: isOnBlurSlide ? 1 : 0,
-              transform: isOnBlurSlide ? 'translateY(0) translateZ(0)' : 'translateY(-10px) translateZ(0)',
+              transform: isOnBlurSlide
+                ? 'translateY(0) translateZ(0)'
+                : 'translateY(-10px) translateZ(0)',
               pointerEvents: isOnBlurSlide ? 'auto' : 'none',
               cursor: 'pointer',
             }}
             onClick={scrollToNextSection}
           >
-            <ChevronDown width={28} height={28} color="white" className="drop-shadow-2xl" />
+            <ChevronDown
+              width={28}
+              height={28}
+              color="white"
+              className="drop-shadow-2xl"
+            />
           </div>
         </div>
       )}
 
-      {images.length > 1 && currentSlide < images.length - 1 && !isOnBlurSlide && (
+      {images.length > 1
+        && currentSlide < images.length - 1
+        && !isOnBlurSlide && (
         <button
-          className="absolute right-6 top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer z-[250] transition-opacity duration-150 hover:opacity-70"
+          className="absolute top-1/2 right-6 z-[250] -translate-y-1/2 cursor-pointer border-none bg-none transition-opacity duration-150 hover:opacity-70"
           aria-label="Next slide"
           onClick={handleNextClick}
         >
-          <ChevronRight width={28} height={28} color="white" className="drop-shadow-2xl pointer-events-none" />
+          <ChevronRight
+            width={28}
+            height={28}
+            color="white"
+            className="pointer-events-none drop-shadow-2xl"
+          />
         </button>
       )}
     </div>

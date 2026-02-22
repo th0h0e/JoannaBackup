@@ -41,7 +41,12 @@
 import { useCallback, useEffect, useState } from 'react'
 
 // Libraries
-import { useEventListener, useMediaQuery, useScreen, useWindowSize } from 'usehooks-ts'
+import {
+  useEventListener,
+  useMediaQuery,
+  useScreen,
+  useWindowSize,
+} from 'usehooks-ts'
 
 // Components
 import AboutPopup from './components/AboutPopup'
@@ -50,7 +55,10 @@ import Hero from './components/Hero'
 import HeroMobile from './components/HeroMobile'
 import LogoBottom from './components/LogoBottom'
 import LogoTop from './components/LogoTop'
-import { MotionCarouselDesktopEmbla, MotionCarouselEmbla } from './components/MotionCarouselEmbla'
+import {
+  MotionCarouselDesktopEmbla,
+  MotionCarouselEmbla,
+} from './components/MotionCarouselEmbla'
 import ProjectIndex from './components/ProjectIndex'
 import ProjectPopup from './components/ProjectPopup'
 
@@ -211,26 +219,29 @@ function App() {
    * resetInactiveCarousels('project-2')
    * // Resets carousels for project-0, project-1, project-3, etc.
    */
-  const resetInactiveCarousels = useCallback((currentSectionId: string) => {
-    setTimeout(() => {
-      projectsData.forEach((_, index) => {
-        const sectionId = `project-${index}`
+  const resetInactiveCarousels = useCallback(
+    (currentSectionId: string) => {
+      setTimeout(() => {
+        projectsData.forEach((_, index) => {
+          const sectionId = `project-${index}`
 
-        if (sectionId === currentSectionId)
-          return
+          if (sectionId === currentSectionId)
+            return
 
-        const section = document.getElementById(sectionId)
-        if (!section)
-          return
+          const section = document.getElementById(sectionId)
+          if (!section)
+            return
 
-        const carousel = section.querySelector('.motion-carousel, .motion-carousel-desktop') as HTMLElement
-        if (!carousel)
-          return
+          const carousel = section.querySelector('.motion-carousel, .motion-carousel-desktop') as HTMLElement
+          if (!carousel)
+            return
 
-        carousel.scrollLeft = 0
-      })
-    }, 300)
-  }, [projectsData])
+          carousel.scrollLeft = 0
+        })
+      }, 300)
+    },
+    [projectsData],
+  )
 
   /**
    * Prevents iOS Safari navigation gestures at screen edges.
@@ -270,10 +281,7 @@ function App() {
    * @property {number} currentSectionIndex - Index of visible section (0 = hero)
    * @property {React.RefObject} mainContainerRef - Ref for scroll container
    */
-  const {
-    currentSectionIndex,
-    mainContainerRef,
-  } = useSectionObserver({
+  const { currentSectionIndex, mainContainerRef } = useSectionObserver({
     projectsData,
     resetInactiveCarousels,
   })
@@ -286,7 +294,9 @@ function App() {
    * Prevents browser navigation gestures at edge of page.
    * Uses useEventListener for automatic cleanup on unmount.
    */
-  useEventListener('touchstart', preventEdgeNavigation, undefined, { passive: false })
+  useEventListener('touchstart', preventEdgeNavigation, undefined, {
+    passive: false,
+  })
 
   /**
    * Hides the mobile browser address bar for an immersive experience.
@@ -301,9 +311,9 @@ function App() {
     const timeoutIds: number[] = []
 
     const hideAddressBar = () => {
-      const outerTimeout = window.setTimeout(() => { // eslint-disable-line react-web-api/no-leaked-timeout
+      const outerTimeout = window.setTimeout(() => {
         window.scrollTo(0, 1)
-        const innerTimeout = window.setTimeout(() => { // eslint-disable-line react-web-api/no-leaked-timeout
+        const innerTimeout = window.setTimeout(() => {
           window.scrollTo(0, 0)
         }, 0)
         timeoutIds.push(innerTimeout)
@@ -345,7 +355,11 @@ function App() {
    * the first project section becomes visible.
    */
   useEffect(() => {
-    if (window.innerWidth >= 1024 || hasShownMobileHint || projectsData.length === 0) {
+    if (
+      window.innerWidth >= 1024
+      || hasShownMobileHint
+      || projectsData.length === 0
+    ) {
       return
     }
 
@@ -360,7 +374,7 @@ function App() {
             setHasShownMobileHint(true)
             observer.disconnect()
 
-            const timeout1 = window.setTimeout(() => { // eslint-disable-line react-web-api/no-leaked-timeout
+            const timeout1 = window.setTimeout(() => {
               const firstProjectSection = document.getElementById('project-0')
               const carousel = firstProjectSection?.querySelector('.motion-carousel') as HTMLDivElement
 
@@ -381,8 +395,8 @@ function App() {
                 inline: 'center',
               })
 
-              const timeout2 = window.setTimeout(() => { // eslint-disable-line react-web-api/no-leaked-timeout
-                const timeout3 = window.setTimeout(() => { // eslint-disable-line react-web-api/no-leaked-timeout
+              const timeout2 = window.setTimeout(() => {
+                const timeout3 = window.setTimeout(() => {
                   firstSlide.scrollIntoView({
                     behavior: 'smooth',
                     block: 'nearest',
@@ -425,9 +439,9 @@ function App() {
    */
   if (loading) {
     return (
-      <div className="h-dvh w-full flex items-center justify-center">
+      <div className="flex h-dvh w-full items-center justify-center">
         <div className="text-center">
-          <div className="text-xl mb-4">Loading Portfolio...</div>
+          <div className="mb-4 text-xl">Loading Portfolio...</div>
         </div>
       </div>
     )
@@ -439,15 +453,15 @@ function App() {
    */
   if (error) {
     return (
-      <div className="h-dvh w-full flex items-center justify-center">
+      <div className="flex h-dvh w-full items-center justify-center">
         <div className="text-center text-red-500">
-          <div className="text-xl mb-4">
+          <div className="mb-4 text-xl">
             Error:
             {error}
           </div>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-gray-200 text-black rounded"
+            className="rounded bg-gray-200 px-4 py-2 text-black"
           >
             Retry
           </button>
@@ -512,123 +526,142 @@ function App() {
        * Each section takes 100lvh (logical viewport height) to ensure
        * full coverage on mobile browsers with dynamic address bars.
        */}
-      {isDesktop
-        ? (
-            <main
-              ref={mainContainerRef as React.RefObject<HTMLElement>}
-              className="overflow-y-scroll snap-y snap-mandatory"
-              style={{
-                height: '100lvh',
-                scrollBehavior: 'smooth',
-                scrollSnapType: 'y mandatory',
-              }}
+      {isDesktop ? (
+        <main
+          ref={mainContainerRef as React.RefObject<HTMLElement>}
+          className="snap-y snap-mandatory overflow-y-scroll"
+          style={{
+            height: '100lvh',
+            scrollBehavior: 'smooth',
+            scrollSnapType: 'y mandatory',
+          }}
+        >
+          {/*
+           * Desktop Hero Section
+           * Full-screen intro with animated hero image and title.
+           * ID: "hero-section" - used by IntersectionObserver.
+           */}
+          <Hero
+            heroImage={
+              homepageData
+                ? getImageUrl(homepageData, homepageData.Hero_Image)
+                : ''
+            }
+            heroTitle={
+              homepageData?.Hero_Title || 'Creative Strategy and Communication'
+            }
+            isAboutPopupVisible={showAboutPopup}
+            settingsData={settingsData}
+          />
+
+          {/*
+           * Desktop Project Sections
+           * Each project gets its own full-height section with
+           * a horizontal Embla carousel for image navigation.
+           * IDs follow pattern: "project-0", "project-1", etc.
+           */}
+          {projectsData.map((project, index) => (
+            <section
+              key={project.title}
+              id={`project-${index}`}
+              className="relative w-full snap-center"
+              style={{ height: '100lvh' }}
             >
-              {/*
-               * Desktop Hero Section
-               * Full-screen intro with animated hero image and title.
-               * ID: "hero-section" - used by IntersectionObserver.
-               */}
-              <Hero
-                heroImage={homepageData ? getImageUrl(homepageData, homepageData.Hero_Image) : ''}
-                heroTitle={homepageData?.Hero_Title || 'Creative Strategy and Communication'}
-                isAboutPopupVisible={showAboutPopup}
+              <MotionCarouselDesktopEmbla
+                images={project.images}
+                projectTitle={project.title}
                 settingsData={settingsData}
+                totalSlides={project.images.length + 1}
+                onShowPopup={handleShowPopup}
+                isPopupVisible={showPopup}
+                isAboutPopupVisible={showAboutPopup}
+                screenWidth={windowWidth}
               />
+            </section>
+          ))}
 
-              {/*
-               * Desktop Project Sections
-               * Each project gets its own full-height section with
-               * a horizontal Embla carousel for image navigation.
-               * IDs follow pattern: "project-0", "project-1", etc.
-               */}
-              {projectsData.map((project, index) => (
-                <section
-                  key={project.title}
-                  id={`project-${index}`}
-                  className="relative w-full snap-center"
-                  style={{ height: '100lvh' }}
-                >
-                  <MotionCarouselDesktopEmbla
-                    images={project.images}
-                    projectTitle={project.title}
-                    settingsData={settingsData}
-                    totalSlides={project.images.length + 1}
-                    onShowPopup={handleShowPopup}
-                    isPopupVisible={showPopup}
-                    isAboutPopupVisible={showAboutPopup}
-                    screenWidth={windowWidth}
-                  />
-                </section>
-              ))}
+          {/*
+           * Desktop Project Index
+           * Final section with list of all projects for navigation.
+           * ID: "project-index" - used by IntersectionObserver.
+           */}
+          <ProjectIndex
+            projectTitles={projectTitles}
+            settingsData={settingsData}
+          />
+        </main>
+      ) : (
+        <main
+          ref={mainContainerRef as React.RefObject<HTMLElement>}
+          className="snap-y snap-mandatory overflow-y-scroll"
+          style={{
+            height: '100lvh',
+            scrollBehavior: 'smooth',
+            scrollSnapType: 'y mandatory',
+          }}
+        >
+          {/*
+           * Mobile Main Container (<1024px)
+           * Same structure as desktop but with mobile-optimized components.
+           * Uses 100lvh for consistent sizing with dynamic viewport units.
+           *
+           * Mobile Hero Section
+           * Uses HeroMobile component with touch-optimized interactions
+           * and mobile-specific image (Hero_Image_Mobile if available).
+           */}
+          <HeroMobile
+            heroImage={
+              homepageData
+                ? getImageUrl(
+                    homepageData,
+                    homepageData.Hero_Image_Mobile || homepageData.Hero_Image,
+                  )
+                : ''
+            }
+            heroTitle={
+              homepageData?.Hero_Title || 'Creative Strategy and Communication'
+            }
+            isAboutPopupVisible={showAboutPopup}
+            settingsData={settingsData}
+            isMobile={isMobile}
+          />
 
-              {/*
-               * Desktop Project Index
-               * Final section with list of all projects for navigation.
-               * ID: "project-index" - used by IntersectionObserver.
-               */}
-              <ProjectIndex projectTitles={projectTitles} settingsData={settingsData} />
-            </main>
-          )
-        : (
-            <main
-              ref={mainContainerRef as React.RefObject<HTMLElement>}
-              className="overflow-y-scroll snap-y snap-mandatory"
-              style={{
-                height: '100lvh',
-                scrollBehavior: 'smooth',
-                scrollSnapType: 'y mandatory',
-              }}
+          {/*
+           * Mobile Project Sections
+           * Uses MotionCarouselEmbla with touch-optimized Embla carousel.
+           * totalSlides includes extra slides for blur transition effect.
+           */}
+          {projectsData.map((project, index) => (
+            <section
+              key={project.title}
+              id={`project-${index}`}
+              className="relative w-full snap-center"
+              style={{ height: '100lvh' }}
             >
-              {/*
-               * Mobile Main Container (<1024px)
-               * Same structure as desktop but with mobile-optimized components.
-               * Uses 100lvh for consistent sizing with dynamic viewport units.
-               *
-               * Mobile Hero Section
-               * Uses HeroMobile component with touch-optimized interactions
-               * and mobile-specific image (Hero_Image_Mobile if available).
-               */}
-              <HeroMobile
-                heroImage={homepageData ? getImageUrl(homepageData, homepageData.Hero_Image_Mobile || homepageData.Hero_Image) : ''}
-                heroTitle={homepageData?.Hero_Title || 'Creative Strategy and Communication'}
-                isAboutPopupVisible={showAboutPopup}
+              <MotionCarouselEmbla
+                images={project.images}
+                projectTitle={project.title}
                 settingsData={settingsData}
-                isMobile={isMobile}
+                totalSlides={project.images.length + 2}
+                showTopProgressBar={settingsData?.Show_Top_Progress_Bar ?? true}
+                onShowPopup={handleShowPopup}
+                isPopupVisible={showPopup}
+                isAboutPopupVisible={showAboutPopup}
+                screenWidth={screen?.width}
               />
+            </section>
+          ))}
 
-              {/*
-               * Mobile Project Sections
-               * Uses MotionCarouselEmbla with touch-optimized Embla carousel.
-               * totalSlides includes extra slides for blur transition effect.
-               */}
-              {projectsData.map((project, index) => (
-                <section
-                  key={project.title}
-                  id={`project-${index}`}
-                  className="relative w-full snap-center"
-                  style={{ height: '100lvh' }}
-                >
-                  <MotionCarouselEmbla
-                    images={project.images}
-                    projectTitle={project.title}
-                    settingsData={settingsData}
-                    totalSlides={project.images.length + 2}
-                    showTopProgressBar={settingsData?.Show_Top_Progress_Bar ?? true}
-                    onShowPopup={handleShowPopup}
-                    isPopupVisible={showPopup}
-                    isAboutPopupVisible={showAboutPopup}
-                    screenWidth={screen?.width}
-                  />
-                </section>
-              ))}
-
-              {/*
-               * Mobile Project Index
-               * Same as desktop but with touch-friendly tap targets.
-               */}
-              <ProjectIndex projectTitles={projectTitles} settingsData={settingsData} />
-            </main>
-          )}
+          {/*
+           * Mobile Project Index
+           * Same as desktop but with touch-friendly tap targets.
+           */}
+          <ProjectIndex
+            projectTitles={projectTitles}
+            settingsData={settingsData}
+          />
+        </main>
+      )}
 
       {/*
        * Global Popup Components
@@ -659,7 +692,6 @@ function App() {
         onClose={handleCloseAboutPopup}
         aboutData={aboutData}
       />
-
     </>
   )
 }

@@ -88,12 +88,16 @@
 .emblaMobileTitle {
   font-family: 'EnduroWeb', sans-serif;
   letter-spacing: 0.03em;
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  transition:
+    opacity 0.3s ease-in-out,
+    visibility 0.3s ease-in-out;
 }
 
 /* Progress bar transitions */
 .emblaMobileProgress {
-  transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+  transition:
+    opacity 0.15s ease-in-out,
+    transform 0.15s ease-in-out;
 }
 
 /* Project title with responsive font sizes */
@@ -196,12 +200,16 @@
 .emblaDesktopTitle {
   font-family: 'EnduroWeb', sans-serif;
   letter-spacing: 0.03em;
-  transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+  transition:
+    opacity 0.3s ease-in-out,
+    visibility 0.3s ease-in-out;
 }
 
 /* Progress bar transitions */
 .emblaDesktopProgress {
-  transition: opacity 0.15s ease-in-out, transform 0.15s ease-in-out;
+  transition:
+    opacity 0.15s ease-in-out,
+    transform 0.15s ease-in-out;
 }
 
 /* Project title with responsive font sizes */

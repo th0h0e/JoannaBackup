@@ -145,27 +145,30 @@ export function useSectionObserver({
    *
    * @param sectionId - The DOM element ID of the visible section
    */
-  const handleSectionChange = useCallback((sectionId: string) => {
-    let index: number | undefined
+  const handleSectionChange = useCallback(
+    (sectionId: string) => {
+      let index: number | undefined
 
-    if (sectionId === 'hero-section') {
-      index = 0
-    }
-    else if (sectionId.startsWith('project-')) {
-      index = Number.parseInt(sectionId.replace('project-', '')) + 1
-    }
-    else if (sectionId === 'project-index') {
-      index = projectsData.length + 1
-    }
-
-    if (index !== undefined) {
-      setCurrentSectionIndex(index)
-
-      if (resetInactiveCarousels) {
-        resetInactiveCarousels(sectionId)
+      if (sectionId === 'hero-section') {
+        index = 0
       }
-    }
-  }, [projectsData.length, resetInactiveCarousels])
+      else if (sectionId.startsWith('project-')) {
+        index = Number.parseInt(sectionId.replace('project-', '')) + 1
+      }
+      else if (sectionId === 'project-index') {
+        index = projectsData.length + 1
+      }
+
+      if (index !== undefined) {
+        setCurrentSectionIndex(index)
+
+        if (resetInactiveCarousels) {
+          resetInactiveCarousels(sectionId)
+        }
+      }
+    },
+    [projectsData.length, resetInactiveCarousels],
+  )
 
   /**
    * Sets up the IntersectionObserver for all sections.

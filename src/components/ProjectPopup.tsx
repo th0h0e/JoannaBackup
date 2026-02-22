@@ -9,7 +9,13 @@ interface ProjectPopupProps {
   projectResponsibility: string[]
 }
 
-export default function ProjectPopup({ isVisible, onClose, projectTitle, projectDescription, projectResponsibility }: ProjectPopupProps) {
+export default function ProjectPopup({
+  isVisible,
+  onClose,
+  projectTitle,
+  projectDescription,
+  projectResponsibility,
+}: ProjectPopupProps) {
   return (
     <AnimatePresence>
       {isVisible && (
@@ -46,7 +52,7 @@ export default function ProjectPopup({ isVisible, onClose, projectTitle, project
               <img
                 src={ProjectCardSVG}
                 alt="Project Card"
-                className="w-full h-auto"
+                className="h-auto w-full"
                 style={{
                   width: '280px',
                   height: 'auto',
@@ -58,7 +64,7 @@ export default function ProjectPopup({ isVisible, onClose, projectTitle, project
               <div className="absolute inset-0 flex flex-col justify-center px-4 py-8">
                 <h2
                   id="project-popup-title"
-                  className="text-black uppercase text-center leading-tight"
+                  className="text-center leading-tight text-black uppercase"
                   style={{
                     fontFamily: 'EnduroWeb, sans-serif',
                     letterSpacing: '0.03em',
@@ -69,7 +75,7 @@ export default function ProjectPopup({ isVisible, onClose, projectTitle, project
                   {projectTitle}
                 </h2>
                 <div
-                  className="text-black uppercase text-center leading-tight"
+                  className="text-center leading-tight text-black uppercase"
                   style={{
                     fontFamily: 'EnduroWeb, sans-serif',
                     letterSpacing: '0.03em',
@@ -85,7 +91,7 @@ export default function ProjectPopup({ isVisible, onClose, projectTitle, project
                   ))}
                 </div>
                 <p
-                  className="text-black text-center leading-tight"
+                  className="text-center leading-tight text-black"
                   style={{
                     fontFamily: 'EnduroWeb, sans-serif',
                     letterSpacing: '0.03em',

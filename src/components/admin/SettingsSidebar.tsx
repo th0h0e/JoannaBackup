@@ -13,7 +13,11 @@ interface SettingsSidebarProps {
   onShowToast: (message: string, type: 'success' | 'error') => void
 }
 
-export default function SettingsSidebar({ isOpen, onClose, onShowToast }: SettingsSidebarProps) {
+export default function SettingsSidebar({
+  isOpen,
+  onClose,
+  onShowToast,
+}: SettingsSidebarProps) {
   const [loading, setLoading] = useState(false)
   const [aboutData, setAboutData] = useState<About | null>(null)
   const [homepageData, setHomepageData] = useState<Homepage | null>(null)
@@ -44,7 +48,9 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
       setLoading(true)
 
       // Fetch About data
-      const about = await pb.collection('About').getFirstListItem<About>('Is_Active = true')
+      const about = await pb
+        .collection('About')
+        .getFirstListItem<About>('Is_Active = true')
       setAboutData(about)
       setAboutDescription(about.About_Description)
       setExpertiseDescription(about.Expertise_Description)
@@ -52,12 +58,16 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
       setContactEmail(about.Contact_Email)
 
       // Fetch Homepage data
-      const homepage = await pb.collection('Homepage').getFirstListItem<Homepage>('Is_Active = true')
+      const homepage = await pb
+        .collection('Homepage')
+        .getFirstListItem<Homepage>('Is_Active = true')
       setHomepageData(homepage)
       setHeroTitle(homepage.Hero_Title)
 
       // Fetch Settings data
-      const settings = await pb.collection('Settings').getFirstListItem<Settings>('')
+      const settings = await pb
+        .collection('Settings')
+        .getFirstListItem<Settings>('')
       setSettingsData(settings)
       setShowTopProgressBar(settings.Show_Top_Progress_Bar)
       setMobileFontSize(settings.Mobile_Font_Size)
@@ -88,7 +98,8 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
 
   const handleAddClient = () => {
     if (newClient.trim()) {
-      setClientList([...clientList, newClient.trim().toUpperCase()])
+      setClientList([...clientList, newClient.trim()
+        .toUpperCase()])
       setNewClient('')
     }
   }
@@ -106,21 +117,33 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
       const formData = new FormData()
       formData.append('favicon', file)
 
-      await pb.collection('Settings').update(settingsData.id, formData)
+      await pb.collection('Settings')
+        .update(settingsData.id, formData)
 
       // Refresh favicon URL
-      const updatedSettings = await pb.collection('Settings').getOne<Settings>(settingsData.id)
+      const updatedSettings = await pb
+        .collection('Settings')
+        .getOne<Settings>(settingsData.id)
       if (updatedSettings.favicon) {
-        const faviconImageUrl = getImageUrl(updatedSettings, updatedSettings.favicon)
+        const faviconImageUrl = getImageUrl(
+          updatedSettings,
+          updatedSettings.favicon,
+        )
         setFaviconUrl(faviconImageUrl)
       }
 
-      onShowToast('Favicon updated! Please refresh the page to see the changes.', 'success')
+      onShowToast(
+        'Favicon updated! Please refresh the page to see the changes.',
+        'success',
+      )
     }
     catch (err: unknown) {
       console.error('Error updating favicon:', err)
       const error = err as { message?: string }
-      onShowToast(`Failed to update favicon: ${error?.message || 'Unknown error'}`, 'error')
+      onShowToast(
+        `Failed to update favicon: ${error?.message || 'Unknown error'}`,
+        'error',
+      )
     }
   }
 
@@ -131,30 +154,33 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
     try {
       // Update Homepage
       if (homepageData) {
-        await pb.collection('Homepage').update(homepageData.id, {
-          Hero_Title: heroTitle,
-        })
+        await pb.collection('Homepage')
+          .update(homepageData.id, {
+            Hero_Title: heroTitle,
+          })
       }
 
       // Update About
       if (aboutData) {
-        await pb.collection('About').update(aboutData.id, {
-          About_Description: aboutDescription,
-          Expertise_Description: expertiseDescription,
-          Client_List_Json: clientList,
-          Contact_Email: contactEmail,
-        })
+        await pb.collection('About')
+          .update(aboutData.id, {
+            About_Description: aboutDescription,
+            Expertise_Description: expertiseDescription,
+            Client_List_Json: clientList,
+            Contact_Email: contactEmail,
+          })
       }
 
       // Update Settings
       if (settingsData) {
-        await pb.collection('Settings').update(settingsData.id, {
-          Show_Top_Progress_Bar: showTopProgressBar,
-          Mobile_Font_Size: mobileFontSize,
-          Tablet_Font_Size: tabletFontSize,
-          Desktop_Font_Size: desktopFontSize,
-          Large_Desktop_Font_Size: largeDesktopFontSize,
-        })
+        await pb.collection('Settings')
+          .update(settingsData.id, {
+            Show_Top_Progress_Bar: showTopProgressBar,
+            Mobile_Font_Size: mobileFontSize,
+            Tablet_Font_Size: tabletFontSize,
+            Desktop_Font_Size: desktopFontSize,
+            Large_Desktop_Font_Size: largeDesktopFontSize,
+          })
       }
 
       onShowToast('Settings saved successfully!', 'success')
@@ -163,7 +189,10 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
     catch (err: unknown) {
       console.error('Error saving settings:', err)
       const error = err as { message?: string }
-      onShowToast(`Failed to save settings: ${error?.message || 'Unknown error'}`, 'error')
+      onShowToast(
+        `Failed to save settings: ${error?.message || 'Unknown error'}`,
+        'error',
+      )
     }
     finally {
       setLoading(false)
@@ -187,7 +216,7 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
         <>
           {/* Backdrop */}
           <motion.div
-            className="fixed inset-0 bg-muted/70 backdrop-blur-md z-40"
+            className="bg-muted/70 fixed inset-0 z-40 backdrop-blur-md"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -196,7 +225,14 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
           />
 
           {/* About Popup Preview */}
-          <div className="fixed top-1/2" style={{ left: '25%', transform: 'translate(-50%, -50%)', zIndex: 45 }}>
+          <div
+            className="fixed top-1/2"
+            style={{
+              left: '25%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 45,
+            }}
+          >
             <AboutPopup
               isVisible={true}
               onClose={() => {}}
@@ -206,22 +242,22 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
 
           {/* Sidebar */}
           <motion.div
-            className="fixed right-0 top-0 h-full w-3/4 md:w-1/2 bg-popover backdrop-blur-xl border-l border-border z-50 flex flex-col"
+            className="bg-popover border-border fixed top-0 right-0 z-50 flex h-full w-3/4 flex-col border-l backdrop-blur-xl md:w-1/2"
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
             style={{ fontFamily: 'EnduroWeb, sans-serif' }}
           >
-            <form onSubmit={handleSubmit} className="flex flex-col h-full">
+            <form onSubmit={handleSubmit} className="flex h-full flex-col">
               {/* Sticky Header */}
-              <div className="flex-shrink-0 p-8 border-b border-border flex items-center gap-4 backdrop-blur-sm">
+              <div className="border-border flex flex-shrink-0 items-center gap-4 border-b p-8 backdrop-blur-sm">
                 {/* Header Text */}
                 <div className="flex-1">
-                  <h2 className="text-xl font-medium text-foreground tracking-tight">
+                  <h2 className="text-foreground text-xl font-medium tracking-tight">
                     Settings
                   </h2>
-                  <p className="text-xs text-muted-foreground mt-1 tracking-wide uppercase">
+                  <p className="text-muted-foreground mt-1 text-xs tracking-wide uppercase">
                     Configure site content
                   </p>
                 </div>
@@ -229,7 +265,7 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
                 {/* Favicon Avatar */}
                 <div
                   onClick={() => faviconFileInputRef.current?.click()}
-                  className="flex-shrink-0 w-12 h-12 rounded-sm bg-muted border border-border hover:border-ring/50 cursor-pointer transition-all overflow-hidden group"
+                  className="bg-muted border-border hover:border-ring/50 group h-12 w-12 flex-shrink-0 cursor-pointer overflow-hidden rounded-sm border transition-all"
                   title="Click to update favicon"
                 >
                   {faviconUrl
@@ -237,13 +273,27 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
                         <img
                           src={faviconUrl}
                           alt="Favicon"
-                          className="w-full h-full object-cover"
+                          className="h-full w-full object-cover"
                         />
                       )
                     : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground group-hover:text-foreground transition-colors">
-                          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <div className="text-muted-foreground group-hover:text-foreground flex h-full w-full items-center justify-center transition-colors">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <rect
+                              x="3"
+                              y="3"
+                              width="18"
+                              height="18"
+                              rx="2"
+                              ry="2"
+                            />
                             <circle cx="8.5" cy="8.5" r="1.5" />
                             <polyline points="21 15 16 10 5 21" />
                           </svg>
@@ -262,12 +312,14 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
               </div>
 
               {/* Scrollable Content */}
-              <div className="flex-1 overflow-y-auto p-8 space-y-8">
+              <div className="flex-1 space-y-8 overflow-y-auto p-8">
                 {/* Hero Section */}
                 <div>
-                  <h3 className="text-sm font-medium text-foreground mb-4 uppercase tracking-wider">Hero Section</h3>
+                  <h3 className="text-foreground mb-4 text-sm font-medium tracking-wider uppercase">
+                    Hero Section
+                  </h3>
                   <div className="space-y-2">
-                    <Label className="text-xs uppercase tracking-wider">
+                    <Label className="text-xs tracking-wider uppercase">
                       Hero Title
                     </Label>
                     <Input
@@ -279,47 +331,52 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
                 </div>
 
                 {/* Divider */}
-                <div className="border-t border-border"></div>
+                <div className="border-border border-t"></div>
 
                 {/* About Section */}
                 <div>
-                  <h3 className="text-sm font-medium text-foreground mb-4 uppercase tracking-wider">About Section</h3>
+                  <h3 className="text-foreground mb-4 text-sm font-medium tracking-wider uppercase">
+                    About Section
+                  </h3>
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label className="text-xs uppercase tracking-wider">
+                      <Label className="text-xs tracking-wider uppercase">
                         About Description
                       </Label>
                       <textarea
                         value={aboutDescription}
                         onChange={e => setAboutDescription(e.target.value)}
                         rows={4}
-                        className="flex min-h-[100px] w-full rounded-md border border-input bg-transparent px-4 py-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                        className="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[100px] w-full resize-none rounded-md border bg-transparent px-4 py-3 text-sm focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label className="text-xs uppercase tracking-wider">
+                      <Label className="text-xs tracking-wider uppercase">
                         Expertise Description
                       </Label>
                       <textarea
                         value={expertiseDescription}
-                        onChange={e => setExpertiseDescription(e.target.value)}
+                        onChange={e =>
+                          setExpertiseDescription(e.target.value)}
                         rows={3}
-                        className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-4 py-3 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
+                        className="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full resize-none rounded-md border bg-transparent px-4 py-3 text-sm focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                       />
                     </div>
 
                     <div>
-                      <Label className="text-xs uppercase tracking-wider mb-3">
+                      <Label className="mb-3 text-xs tracking-wider uppercase">
                         Client List
                       </Label>
 
-                      <div className="flex gap-2 mb-3">
+                      <div className="mb-3 flex gap-2">
                         <Input
                           value={newClient}
                           onChange={e => setNewClient(e.target.value)}
-                          onKeyPress={e => e.key === 'Enter' && (e.preventDefault(), handleAddClient())}
+                          onKeyPress={e =>
+                            e.key === 'Enter'
+                            && (e.preventDefault(), handleAddClient())}
                           placeholder="e.g., NIKE"
                         />
                         <Button
@@ -335,7 +392,7 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
                         {clientList.map((client, idx) => (
                           <div
                             key={`${client}-${idx}`}
-                            className="flex items-center gap-2 px-3 py-1.5 bg-muted text-foreground rounded-sm text-xs border border-border"
+                            className="bg-muted text-foreground border-border flex items-center gap-2 rounded-sm border px-3 py-1.5 text-xs"
                           >
                             {client}
                             <button
@@ -353,15 +410,17 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
                 </div>
 
                 {/* Divider */}
-                <div className="border-t border-border"></div>
+                <div className="border-border border-t"></div>
 
                 {/* Global Settings */}
                 <div>
-                  <h3 className="text-sm font-medium text-foreground mb-4 uppercase tracking-wider">Global Settings</h3>
+                  <h3 className="text-foreground mb-4 text-sm font-medium tracking-wider uppercase">
+                    Global Settings
+                  </h3>
 
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label className="text-xs uppercase tracking-wider">
+                      <Label className="text-xs tracking-wider uppercase">
                         Contact Email
                       </Label>
                       <Input
@@ -372,62 +431,75 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
                       />
                     </div>
                     <div>
-                      <Label className="text-xs uppercase tracking-wider mb-2">
+                      <Label className="mb-2 text-xs tracking-wider uppercase">
                         Font Sizes (rem)
                       </Label>
                       <div className="grid grid-cols-4 gap-2">
                         <div className="space-y-2">
-                          <Label className="text-xs text-muted-foreground">Mobile</Label>
+                          <Label className="text-muted-foreground text-xs">
+                            Mobile
+                          </Label>
                           <Input
                             type="number"
                             step="0.125"
                             value={mobileFontSize}
-                            onChange={e => setMobileFontSize(Number.parseFloat(e.target.value))}
+                            onChange={e =>
+                              setMobileFontSize(Number.parseFloat(e.target.value))}
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-xs text-muted-foreground">Tablet</Label>
+                          <Label className="text-muted-foreground text-xs">
+                            Tablet
+                          </Label>
                           <Input
                             type="number"
                             step="0.125"
                             value={tabletFontSize}
-                            onChange={e => setTabletFontSize(Number.parseFloat(e.target.value))}
+                            onChange={e =>
+                              setTabletFontSize(Number.parseFloat(e.target.value))}
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-xs text-muted-foreground">Desktop</Label>
+                          <Label className="text-muted-foreground text-xs">
+                            Desktop
+                          </Label>
                           <Input
                             type="number"
                             step="0.125"
                             value={desktopFontSize}
-                            onChange={e => setDesktopFontSize(Number.parseFloat(e.target.value))}
+                            onChange={e =>
+                              setDesktopFontSize(Number.parseFloat(e.target.value))}
                           />
                         </div>
                         <div className="space-y-2">
-                          <Label className="text-xs text-muted-foreground">Large</Label>
+                          <Label className="text-muted-foreground text-xs">
+                            Large
+                          </Label>
                           <Input
                             type="number"
                             step="0.125"
                             value={largeDesktopFontSize}
-                            onChange={e => setLargeDesktopFontSize(Number.parseFloat(e.target.value))}
+                            onChange={e =>
+                              setLargeDesktopFontSize(Number.parseFloat(e.target.value))}
                           />
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <label className="flex items-center gap-3 cursor-pointer">
+                      <label className="flex cursor-pointer items-center gap-3">
                         <input
                           type="checkbox"
                           checked={showTopProgressBar}
-                          onChange={e => setShowTopProgressBar(e.target.checked)}
-                          className="w-4 h-4 rounded-sm border border-input bg-background"
+                          onChange={e =>
+                            setShowTopProgressBar(e.target.checked)}
+                          className="border-input bg-background h-4 w-4 rounded-sm border"
                         />
-                        <span className="text-xs font-medium text-foreground uppercase tracking-wider">
+                        <span className="text-foreground text-xs font-medium tracking-wider uppercase">
                           Show Top Progress Bar
                         </span>
                       </label>
-                      <p className="text-xs text-muted-foreground mt-1 ml-7">
+                      <p className="text-muted-foreground mt-1 ml-7 text-xs">
                         Display progress bar at top of carousel
                       </p>
                     </div>
@@ -436,7 +508,7 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
               </div>
 
               {/* Sticky Footer */}
-              <div className="flex-shrink-0 p-8 border-t border-border flex gap-3 backdrop-blur-sm">
+              <div className="border-border flex flex-shrink-0 gap-3 border-t p-8 backdrop-blur-sm">
                 <Button
                   type="button"
                   variant="outline"
@@ -445,11 +517,7 @@ export default function SettingsSidebar({ isOpen, onClose, onShowToast }: Settin
                 >
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1"
-                >
+                <Button type="submit" disabled={loading} className="flex-1">
                   {loading ? 'Saving...' : 'Save Changes'}
                 </Button>
               </div>

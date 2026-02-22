@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -135,7 +135,8 @@
 }
 
 /* Prevent browser back/forward navigation gestures */
-html, body {
+html,
+body {
   overscroll-behavior-x: none;
 }
 
@@ -188,14 +189,16 @@ section {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-  
+
   /* Prevent text size adjustment on orientation change */
   html {
     -webkit-text-size-adjust: 100%;
   }
-  
+
   /* Force GPU acceleration for smoother animations */
-  h1, h2, h3 {
+  h1,
+  h2,
+  h3 {
     -webkit-transform: translateZ(0);
     transform: translateZ(0);
     will-change: transform, opacity;
@@ -203,7 +206,8 @@ section {
 }
 
 /* Immersive full-screen experience */
-html, body {
+html,
+body {
   /* Fill the entire viewport including safe areas */
   height: 100vh;
   width: 100%;
@@ -258,8 +262,8 @@ canvas {
 }
 
 /* GPU acceleration for carousel containers */
-[class*="carousel"],
-[class*="Carousel"] {
+[class*='carousel'],
+[class*='Carousel'] {
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
   -webkit-backface-visibility: hidden;
@@ -271,7 +275,7 @@ canvas {
 nav,
 button,
 a,
-[role="button"] {
+[role='button'] {
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
   -webkit-backface-visibility: hidden;
@@ -279,7 +283,13 @@ a,
 }
 
 /* GPU acceleration for text elements and headings */
-h1, h2, h3, h4, h5, h6, p {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
   -webkit-backface-visibility: hidden;
@@ -287,8 +297,8 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 /* GPU acceleration for fixed/absolute positioned elements */
-[style*="position: fixed"],
-[style*="position: absolute"],
+[style*='position: fixed'],
+[style*='position: absolute'],
 .fixed,
 .absolute {
   -webkit-transform: translate3d(0, 0, 0);
@@ -298,7 +308,7 @@ h1, h2, h3, h4, h5, h6, p {
 }
 
 /* GPU acceleration for containers and divs with overflow */
-div[style*="overflow"] {
+div[style*='overflow'] {
   -webkit-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
   -webkit-backface-visibility: hidden;
