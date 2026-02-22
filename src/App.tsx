@@ -55,10 +55,8 @@ import Hero from './components/Hero'
 import HeroMobile from './components/HeroMobile'
 import LogoBottom from './components/LogoBottom'
 import LogoTop from './components/LogoTop'
-import {
-  MotionCarouselDesktopEmbla,
-  MotionCarouselEmbla,
-} from './components/MotionCarouselEmbla'
+import MotionCarousel from './components/MotionCarousel'
+import MotionCarouselDesktop from './components/MotionCarouselDesktop'
 import ProjectIndex from './components/ProjectIndex'
 import ProjectPopup from './components/ProjectPopup'
 
@@ -526,142 +524,144 @@ function App() {
        * Each section takes 100lvh (logical viewport height) to ensure
        * full coverage on mobile browsers with dynamic address bars.
        */}
-      {isDesktop ? (
-        <main
-          ref={mainContainerRef as React.RefObject<HTMLElement>}
-          className="snap-y snap-mandatory overflow-y-scroll"
-          style={{
-            height: '100lvh',
-            scrollBehavior: 'smooth',
-            scrollSnapType: 'y mandatory',
-          }}
-        >
-          {/*
-           * Desktop Hero Section
-           * Full-screen intro with animated hero image and title.
-           * ID: "hero-section" - used by IntersectionObserver.
-           */}
-          <Hero
-            heroImage={
-              homepageData
-                ? getImageUrl(homepageData, homepageData.Hero_Image)
-                : ''
-            }
-            heroTitle={
-              homepageData?.Hero_Title || 'Creative Strategy and Communication'
-            }
-            isAboutPopupVisible={showAboutPopup}
-            settingsData={settingsData}
-          />
-
-          {/*
-           * Desktop Project Sections
-           * Each project gets its own full-height section with
-           * a horizontal Embla carousel for image navigation.
-           * IDs follow pattern: "project-0", "project-1", etc.
-           */}
-          {projectsData.map((project, index) => (
-            <section
-              key={project.title}
-              id={`project-${index}`}
-              className="relative w-full snap-center"
-              style={{ height: '100lvh' }}
+      {isDesktop
+        ? (
+            <main
+              ref={mainContainerRef as React.RefObject<HTMLElement>}
+              className="snap-y snap-mandatory overflow-y-scroll"
+              style={{
+                height: '100lvh',
+                scrollBehavior: 'smooth',
+                scrollSnapType: 'y mandatory',
+              }}
             >
-              <MotionCarouselDesktopEmbla
-                images={project.images}
-                projectTitle={project.title}
-                settingsData={settingsData}
-                totalSlides={project.images.length + 1}
-                onShowPopup={handleShowPopup}
-                isPopupVisible={showPopup}
+              {/*
+             * Desktop Hero Section
+             * Full-screen intro with animated hero image and title.
+             * ID: "hero-section" - used by IntersectionObserver.
+             */}
+              <Hero
+                heroImage={
+                  homepageData
+                    ? getImageUrl(homepageData, homepageData.Hero_Image)
+                    : ''
+                }
+                heroTitle={
+                  homepageData?.Hero_Title || 'Creative Strategy and Communication'
+                }
                 isAboutPopupVisible={showAboutPopup}
-                screenWidth={windowWidth}
+                settingsData={settingsData}
               />
-            </section>
-          ))}
 
-          {/*
-           * Desktop Project Index
-           * Final section with list of all projects for navigation.
-           * ID: "project-index" - used by IntersectionObserver.
-           */}
-          <ProjectIndex
-            projectTitles={projectTitles}
-            settingsData={settingsData}
-          />
-        </main>
-      ) : (
-        <main
-          ref={mainContainerRef as React.RefObject<HTMLElement>}
-          className="snap-y snap-mandatory overflow-y-scroll"
-          style={{
-            height: '100lvh',
-            scrollBehavior: 'smooth',
-            scrollSnapType: 'y mandatory',
-          }}
-        >
-          {/*
-           * Mobile Main Container (<1024px)
-           * Same structure as desktop but with mobile-optimized components.
-           * Uses 100lvh for consistent sizing with dynamic viewport units.
-           *
-           * Mobile Hero Section
-           * Uses HeroMobile component with touch-optimized interactions
-           * and mobile-specific image (Hero_Image_Mobile if available).
-           */}
-          <HeroMobile
-            heroImage={
-              homepageData
-                ? getImageUrl(
-                    homepageData,
-                    homepageData.Hero_Image_Mobile || homepageData.Hero_Image,
-                  )
-                : ''
-            }
-            heroTitle={
-              homepageData?.Hero_Title || 'Creative Strategy and Communication'
-            }
-            isAboutPopupVisible={showAboutPopup}
-            settingsData={settingsData}
-            isMobile={isMobile}
-          />
+              {/*
+             * Desktop Project Sections
+             * Each project gets its own full-height section with
+             * a horizontal scroll-snap carousel for image navigation.
+             * IDs follow pattern: "project-0", "project-1", etc.
+             */}
+              {projectsData.map((project, index) => (
+                <section
+                  key={project.title}
+                  id={`project-${index}`}
+                  className="relative w-full snap-center"
+                  style={{ height: '100lvh' }}
+                >
+                  <MotionCarouselDesktop
+                    images={project.images}
+                    projectTitle={project.title}
+                    settingsData={settingsData}
+                    totalSlides={project.images.length + 1}
+                    onShowPopup={handleShowPopup}
+                    isPopupVisible={showPopup}
+                    isAboutPopupVisible={showAboutPopup}
+                    screenWidth={windowWidth}
+                  />
+                </section>
+              ))}
 
-          {/*
-           * Mobile Project Sections
-           * Uses MotionCarouselEmbla with touch-optimized Embla carousel.
-           * totalSlides includes extra slides for blur transition effect.
-           */}
-          {projectsData.map((project, index) => (
-            <section
-              key={project.title}
-              id={`project-${index}`}
-              className="relative w-full snap-center"
-              style={{ height: '100lvh' }}
+              {/*
+             * Desktop Project Index
+             * Final section with list of all projects for navigation.
+             * ID: "project-index" - used by IntersectionObserver.
+             */}
+              <ProjectIndex
+                projectTitles={projectTitles}
+                settingsData={settingsData}
+              />
+            </main>
+          )
+        : (
+            <main
+              ref={mainContainerRef as React.RefObject<HTMLElement>}
+              className="snap-y snap-mandatory overflow-y-scroll"
+              style={{
+                height: '100lvh',
+                scrollBehavior: 'smooth',
+                scrollSnapType: 'y mandatory',
+              }}
             >
-              <MotionCarouselEmbla
-                images={project.images}
-                projectTitle={project.title}
-                settingsData={settingsData}
-                totalSlides={project.images.length + 2}
-                showTopProgressBar={settingsData?.Show_Top_Progress_Bar ?? true}
-                onShowPopup={handleShowPopup}
-                isPopupVisible={showPopup}
+              {/*
+             * Mobile Main Container (<1024px)
+             * Same structure as desktop but with mobile-optimized components.
+             * Uses 100lvh for consistent sizing with dynamic viewport units.
+             *
+             * Mobile Hero Section
+             * Uses HeroMobile component with touch-optimized interactions
+             * and mobile-specific image (Hero_Image_Mobile if available).
+             */}
+              <HeroMobile
+                heroImage={
+                  homepageData
+                    ? getImageUrl(
+                        homepageData,
+                        homepageData.Hero_Image_Mobile || homepageData.Hero_Image,
+                      )
+                    : ''
+                }
+                heroTitle={
+                  homepageData?.Hero_Title || 'Creative Strategy and Communication'
+                }
                 isAboutPopupVisible={showAboutPopup}
-                screenWidth={screen?.width}
+                settingsData={settingsData}
+                isMobile={isMobile}
               />
-            </section>
-          ))}
 
-          {/*
-           * Mobile Project Index
-           * Same as desktop but with touch-friendly tap targets.
-           */}
-          <ProjectIndex
-            projectTitles={projectTitles}
-            settingsData={settingsData}
-          />
-        </main>
-      )}
+              {/*
+             * Mobile Project Sections
+             * Uses MotionCarousel with native scroll-snap carousel.
+             * totalSlides includes extra slides for blur transition effect.
+             */}
+              {projectsData.map((project, index) => (
+                <section
+                  key={project.title}
+                  id={`project-${index}`}
+                  className="relative w-full snap-center"
+                  style={{ height: '100lvh' }}
+                >
+                  <MotionCarousel
+                    images={project.images}
+                    projectTitle={project.title}
+                    settingsData={settingsData}
+                    totalSlides={project.images.length + 2}
+                    showTopProgressBar={settingsData?.Show_Top_Progress_Bar ?? true}
+                    onShowPopup={handleShowPopup}
+                    isPopupVisible={showPopup}
+                    isAboutPopupVisible={showAboutPopup}
+                    screenWidth={screen?.width}
+                  />
+                </section>
+              ))}
+
+              {/*
+             * Mobile Project Index
+             * Same as desktop but with touch-friendly tap targets.
+             */}
+              <ProjectIndex
+                projectTitles={projectTitles}
+                settingsData={settingsData}
+              />
+            </main>
+          )}
 
       {/*
        * Global Popup Components
