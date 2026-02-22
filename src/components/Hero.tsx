@@ -45,7 +45,11 @@ export default function Hero({
       >
         <motion.div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${heroImage})` }}
+          style={{
+            backgroundImage: `url(${heroImage})`,
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
+          }}
           initial={{ scale: 0.3 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.2, ease: 'easeOut' }}

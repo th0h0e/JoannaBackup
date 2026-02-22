@@ -52,7 +52,9 @@ describe('adminLogin', () => {
       </BrowserRouter>,
     )
 
-    expect(screen.getByRole('heading', { name: /admin login/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: /admin login/i }),
+    ).toBeInTheDocument()
   })
 
   it('should have correct input types', () => {
@@ -63,7 +65,10 @@ describe('adminLogin', () => {
     )
 
     expect(screen.getByLabelText(/email/i)).toHaveAttribute('type', 'email')
-    expect(screen.getByLabelText(/password/i)).toHaveAttribute('type', 'password')
+    expect(screen.getByLabelText(/password/i)).toHaveAttribute(
+      'type',
+      'password',
+    )
   })
 
   it('should render back to portfolio link', () => {
@@ -73,7 +78,9 @@ describe('adminLogin', () => {
       </BrowserRouter>,
     )
 
-    expect(screen.getByRole('link', { name: /back to portfolio/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('link', { name: /back to portfolio/i }),
+    ).toBeInTheDocument()
   })
 
   it('should have required attributes on inputs', () => {
@@ -127,6 +134,8 @@ describe('adminLogin', () => {
     await user.type(screen.getByLabelText(/password/i), 'password123')
     await user.click(screen.getByRole('button', { name: /login/i }))
 
-    expect(screen.getByRole('button', { name: /logging in/i })).toBeInTheDocument()
+    expect(
+      screen.getByRole('button', { name: /logging in/i }),
+    ).toBeInTheDocument()
   })
 })

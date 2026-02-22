@@ -140,8 +140,10 @@ main {
   scrollbar-width: none;
   -ms-overflow-style: none;
 
-  /* DO NOT add transform here - can interfere with scroll-snap behavior */
+  /* GPU acceleration for smooth scrolling */
+  transform: translateZ(0);
   will-change: scroll-position;
+  backface-visibility: hidden;
 }
 
 main::-webkit-scrollbar {
@@ -162,7 +164,11 @@ section {
   scroll-margin: 0;
   scroll-padding: 0;
 
-  /* DO NOT add transform here - can interfere with scroll-snap-align */
+  /* GPU acceleration for sections */
+  transform: translateZ(0);
+  will-change: transform;
+  backface-visibility: hidden;
+  contain: layout style;
 }
 
 /* Safari mobile fixes */
