@@ -6,7 +6,8 @@ import { createPortal } from 'react-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import pb, { getImageUrl } from '../../config/pocketbase'
+import pb, { clearCache, getImageUrl } from '../../config/pocketbase'
+import { useUploadQueue } from '../../contexts/UploadQueueContext'
 import ProjectPopupPreview from './ProjectPopupPreview'
 
 interface ProjectEditorProps {
@@ -47,6 +48,7 @@ export default function ProjectEditor({
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   const [newResponsibility, setNewResponsibility] = useState('')
   const imagesRef = useRef<ImageItem[]>(images)
+  const { addToQueue } = useUploadQueue()
 
   useEffect(() => {
     imagesRef.current = images
@@ -101,57 +103,47 @@ export default function ProjectEditor({
       setLoading(true)
 
       try {
-        const formData = new FormData()
-        formData.append('Title', value.title)
-        formData.append('Description', value.description)
-        formData.append('Order', value.order.toString())
-
-        value.responsibilities.forEach((resp) => {
-          formData.append('Responsibility_json', resp)
-        })
-
-        if (project && images.length > 0) {
-          if (project.Images && project.Images.length > 0) {
-            project.Images.forEach((filename) => {
-              formData.append('Images-', filename)
-            })
-          }
-
-          for (const img of images) {
-            if (img.file) {
-              formData.append('Images', img.file)
-            }
-            else if (img.isExisting) {
-              try {
-                const response = await fetch(img.url)
-                const blob = await response.blob()
-                const file = new File([blob], img.filename, {
-                  type: blob.type,
-                })
-                formData.append('Images', file)
-              }
-              catch (error) {
-                console.error('Error downloading existing image:', error)
-                throw new Error(`Failed to download image: ${img.filename}`)
-              }
-            }
-          }
+        const metadata = {
+          Title: value.title,
+          Description: value.description,
+          Order: value.order,
+          Responsibility_json: value.responsibilities,
         }
-        else {
-          images.forEach((img) => {
-            if (img.file) {
-              formData.append('Images', img.file)
-            }
-          })
-        }
+
+        let savedProjectId: string
 
         if (project) {
-          await pb.collection('Portfolio_Projects')
-            .update(project.id, formData)
+          savedProjectId = project.id
+          await pb.collection('Portfolio_Projects').update(project.id, metadata)
+
+          const existingFilenames = project.Images || []
+          const keptFilenames = images
+            .filter(img => img.isExisting)
+            .map(img => img.filename)
+          const toDelete = existingFilenames.filter(f => !keptFilenames.includes(f))
+
+          if (toDelete.length > 0) {
+            await pb.collection('Portfolio_Projects').update(project.id, {
+              'Images-': toDelete,
+            })
+          }
         }
         else {
-          await pb.collection('Portfolio_Projects')
-            .create(formData)
+          const created = await pb.collection('Portfolio_Projects').create(metadata)
+          savedProjectId = created.id
+        }
+
+        const newFiles = images
+          .filter(img => img.file)
+          .map(img => img.file as File)
+
+        if (newFiles.length > 0) {
+          addToQueue(savedProjectId, value.title, newFiles)
+          onShowToast('Project saved, uploading images...', 'success')
+        }
+        else {
+          clearCache('Portfolio_Projects')
+          onShowToast('Project saved', 'success')
         }
 
         onSave()

@@ -24,9 +24,11 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import ProjectEditor from '../../components/admin/ProjectEditor'
 import SettingsSidebar from '../../components/admin/SettingsSidebar'
+import UploadQueueIndicator from '../../components/admin/UploadQueueIndicator'
 import pb, { clearCache, getImageUrl } from '../../config/pocketbase'
+import { UploadQueueProvider } from '../../contexts/UploadQueueContext'
 
-export default function AdminDashboard() {
+function DashboardContent() {
   const [projects, setProjects] = useState<PortfolioProject[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -375,6 +377,7 @@ export default function AdminDashboard() {
             >
               <a href="/">View Portfolio</a>
             </Button>
+            <UploadQueueIndicator />
             <Button
               variant="ghost"
               size="icon"
@@ -956,5 +959,13 @@ export default function AdminDashboard() {
         </AlertDialogContent>
       </AlertDialog>
     </motion.div>
+  )
+}
+
+export default function AdminDashboard() {
+  return (
+    <UploadQueueProvider>
+      <DashboardContent />
+    </UploadQueueProvider>
   )
 }
