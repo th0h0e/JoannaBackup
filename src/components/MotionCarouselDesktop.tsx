@@ -171,7 +171,7 @@ export default function MotionCarouselDesktop({
             role="group"
             aria-label="Next section"
             onClick={scrollToNextSection}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: 'pointer', backgroundImage: `url(${lastImage.src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
           >
             <div
               style={{

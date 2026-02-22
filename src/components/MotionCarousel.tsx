@@ -7,7 +7,6 @@
  *
  * @module components/MotionCarousel
  * @see {@link MotionCarouselDesktop} - Desktop variant with keyboard navigation
- * @see {@link useCarouselBlurIntensity} - Hook for blur transition calculation
  */
 
 import type { Settings } from '../config/pocketbase'
@@ -157,15 +156,15 @@ export default function MotionCarousel({
             role="group"
             aria-label="Next section"
             onClick={scrollToNextSection}
-            style={{ cursor: 'pointer' }}
+            style={{ cursor: 'pointer', backgroundImage: `url(${lastImage.src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
           >
             <div className={styles.blurOverlay}>
               <div
                 className={styles.blackBlurDiv}
                 style={{
-                  background: `rgba(0, 0, 0, ${0.25 * blurIntensity ** 2})`,
-                  backdropFilter: `blur(${8 * blurIntensity ** 2}px)`,
-                  WebkitBackdropFilter: `blur(${8 * blurIntensity ** 2}px)`,
+                  background: `rgba(0, 0, 0, ${0.3 * blurIntensity ** 2})`,
+                  backdropFilter: `blur(${12 * blurIntensity ** 2}px)`,
+                  WebkitBackdropFilter: `blur(${12 * blurIntensity ** 2}px)`,
                   transition: 'none',
                 }}
               >
@@ -178,8 +177,8 @@ export default function MotionCarousel({
                   }}
                 >
                   <ChevronDown
-                    width={window.innerWidth >= 768 ? 28 : 24}
-                    height={window.innerWidth >= 768 ? 28 : 24}
+                    width={typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24}
+                    height={typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24}
                     color="white"
                     className="drop-shadow-2xl"
                   />
