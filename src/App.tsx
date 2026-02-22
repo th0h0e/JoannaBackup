@@ -38,7 +38,7 @@
 // ============================================================================
 
 // React
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 // Libraries
 import {
@@ -64,8 +64,6 @@ import { getImageUrl } from './config/pocketbase'
 
 // Hooks
 import { useEdgeNavigationPrevention } from './hooks/useEdgeNavigationPrevention'
-import { useHideAddressBar } from './hooks/useHideAddressBar'
-import { useMobileSwipeHint } from './hooks/useMobileSwipeHint'
 import { usePopupState } from './hooks/usePopupState'
 import { usePortfolioData } from './hooks/usePortfolioData'
 import { useSectionObserver } from './hooks/useSectionObserver'
@@ -129,8 +127,6 @@ function App() {
   // LOCAL STATE
   // ============================================================================
 
-  const [hasShownMobileHint, setHasShownMobileHint] = useState(false)
-
   // ============================================================================
   // DERIVED STATE (MEMOIZED)
   // ============================================================================
@@ -160,13 +156,7 @@ function App() {
   // MOBILE-SPECIFIC HOOKS
   // ============================================================================
 
-  useHideAddressBar()
   useEdgeNavigationPrevention()
-  useMobileSwipeHint({
-    hasShownMobileHint,
-    setHasShownMobileHint,
-    projectsCount: projectsData.length,
-  })
 
   // ============================================================================
   // RENDER LOGIC

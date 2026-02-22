@@ -171,7 +171,7 @@ export default function MotionCarouselDesktop({
             role="group"
             aria-label="Next section"
             onClick={scrollToNextSection}
-            style={{ cursor: 'pointer', backgroundImage: `url(${lastImage.src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+            style={{ cursor: 'pointer' }}
           >
             <div
               style={{
@@ -180,10 +180,21 @@ export default function MotionCarouselDesktop({
                 left: 0,
                 width: '100%',
                 height: '100%',
+                backgroundImage: `url(${lastImage.src})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                filter: 'blur(12px)',
+                WebkitFilter: 'blur(12px)',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
                 background: 'rgba(0, 0, 0, 0.3)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-                zIndex: 1,
               }}
             />
           </div>

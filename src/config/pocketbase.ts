@@ -37,7 +37,7 @@ interface CacheEntry {
 }
 
 // Get current cache version
-function getCacheVersion(): number {
+export function getCacheVersion(): number {
   try {
     const version = localStorage.getItem(CACHE_VERSION_KEY)
     return version ? Number.parseInt(version, 10) : 1

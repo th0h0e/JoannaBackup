@@ -156,33 +156,49 @@ export default function MotionCarousel({
             role="group"
             aria-label="Next section"
             onClick={scrollToNextSection}
-            style={{ cursor: 'pointer', backgroundImage: `url(${lastImage.src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+            style={{ cursor: 'pointer' }}
           >
-            <div className={styles.blurOverlay}>
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                backgroundImage: `url(${lastImage.src})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                filter: `blur(${12 * blurIntensity ** 2}px)`,
+                WebkitFilter: `blur(${12 * blurIntensity ** 2}px)`,
+                opacity: blurIntensity ** 2,
+                transition: 'none',
+              }}
+            />
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: '100%',
+                background: `rgba(0, 0, 0, ${0.3 * blurIntensity ** 2})`,
+                transition: 'none',
+              }}
+            >
               <div
-                className={styles.blackBlurDiv}
+                className="pointer-events-auto absolute bottom-5 left-1/2 z-100 cursor-pointer transition-opacity duration-300 hover:opacity-70"
                 style={{
-                  background: `rgba(0, 0, 0, ${0.3 * blurIntensity ** 2})`,
-                  backdropFilter: `blur(${12 * blurIntensity ** 2}px)`,
-                  WebkitBackdropFilter: `blur(${12 * blurIntensity ** 2}px)`,
-                  transition: 'none',
+                  opacity: blurIntensity ** 2,
+                  transform: 'translateX(-50%) translateZ(0)',
+                  willChange: 'transform, opacity',
                 }}
               >
-                <div
-                  className="pointer-events-auto absolute bottom-5 left-1/2 z-100 cursor-pointer transition-opacity duration-300 hover:opacity-70"
-                  style={{
-                    opacity: blurIntensity ** 2,
-                    transform: 'translateX(-50%) translateZ(0)',
-                    willChange: 'transform, opacity',
-                  }}
-                >
-                  <ChevronDown
-                    width={typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24}
-                    height={typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24}
-                    color="white"
-                    className="drop-shadow-2xl"
-                  />
-                </div>
+                <ChevronDown
+                  width={typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24}
+                  height={typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24}
+                  color="white"
+                  className="drop-shadow-2xl"
+                />
               </div>
             </div>
           </div>
