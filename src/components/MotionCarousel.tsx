@@ -23,10 +23,16 @@ import { createFontCssVars } from '../utils/typography'
 import styles from './Carousel.module.css'
 import ChevronDown from './icons/ChevronDown'
 
-/** Progress bar width as percentage of viewport */
+/* ==========================================================================
+   Constants
+   ========================================================================== */
+
 const PROGRESS_BAR_WIDTH_PERCENT = 0.89
-/** Progress bar left position as percentage of viewport */
 const PROGRESS_BAR_LEFT_PERCENT = 0.055
+
+/* ==========================================================================
+   Types
+   ========================================================================== */
 
 interface MotionCarouselProps {
   images: ProjectImage[]
@@ -40,6 +46,10 @@ interface MotionCarouselProps {
   screenWidth?: number
 }
 
+/* ==========================================================================
+   Component
+   ========================================================================== */
+
 export default function MotionCarousel({
   images,
   projectTitle,
@@ -51,12 +61,18 @@ export default function MotionCarousel({
   isAboutPopupVisible = false,
   screenWidth,
 }: MotionCarouselProps) {
+  /* --------------------------------------------------------------------------
+     Refs & State
+     -------------------------------------------------------------------------- */
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isOnBlurSlide, setIsOnBlurSlide] = useState(false)
   const [blurIntensity, setBlurIntensity] = useState(0)
 
+  /* --------------------------------------------------------------------------
+     Hooks
+     -------------------------------------------------------------------------- */
   const { calculateBlur } = useCarouselBlurIntensity({
     slideSelector: `.${styles.motionCarouselSlide}`,
   })
@@ -66,91 +82,153 @@ export default function MotionCarousel({
     [settingsData],
   )
 
-  const lastImage = images[images.length - 1]
-
   const cssVars = useMemo(
     () => createFontCssVars(fontSizes),
     [fontSizes],
   )
 
   const progressBarWidth = useMemo(
-    () => screenWidth ? `${screenWidth * PROGRESS_BAR_WIDTH_PERCENT}px` : '89vw',
+    () => screenWidth
+      ? `${screenWidth * PROGRESS_BAR_WIDTH_PERCENT}px`
+      : '89vw',
     [screenWidth],
   )
 
   const progressBarLeft = useMemo(
-    () => screenWidth ? `${screenWidth * PROGRESS_BAR_LEFT_PERCENT}px` : '5.5vw',
+    () => screenWidth
+      ? `${screenWidth * PROGRESS_BAR_LEFT_PERCENT}px`
+      : '5.5vw',
     [screenWidth],
   )
 
+  /* --------------------------------------------------------------------------
+     Derived Values
+     -------------------------------------------------------------------------- */
+  const lastImage = images[images.length - 1]
+  const regularImages = images.slice(0, -1)
+  const isTitleVisible = !isPopupVisible && !isAboutPopupVisible
+  const isProgressBarVisible = currentSlide > 0 && currentSlide <= images.length
+  const chevronSize = typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24
+
+  /* --------------------------------------------------------------------------
+     Scroll Effect
+     -------------------------------------------------------------------------- */
   useEffect(() => {
-    if (!containerRef.current)
-      return
+    const carousel = containerRef.current
+    if (!carousel) return
 
     const handleScroll = () => {
-      const carousel = containerRef.current
-      if (!carousel)
-        return
+      const currentCarousel = containerRef.current
+      if (!currentCarousel) return
 
-      const scrollLeft = carousel.scrollLeft
-      const containerWidth = carousel.offsetWidth
-      const maxScroll = carousel.scrollWidth - containerWidth
+      const scrollLeft = currentCarousel.scrollLeft
+      const containerWidth = currentCarousel.offsetWidth
+      const maxScroll = currentCarousel.scrollWidth - containerWidth
       const rawProgress = maxScroll > 0 ? scrollLeft / maxScroll : 0
+
       setScrollProgress(rawProgress)
 
       const scrollPercentage = rawProgress
       const currentIndex = Math.round(scrollPercentage * (totalSlides - 1))
       const clampedIndex = Math.max(0, Math.min(currentIndex, totalSlides - 1))
+
       setCurrentSlide(clampedIndex)
-
-      const isBlur = clampedIndex === totalSlides - 1
-      setIsOnBlurSlide(isBlur)
-
-      const intensity = calculateBlur(carousel)
-      setBlurIntensity(intensity)
+      setIsOnBlurSlide(clampedIndex === totalSlides - 1)
+      setBlurIntensity(calculateBlur(currentCarousel))
     }
 
-    const carousel = containerRef.current
     carousel.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
 
-    return () => {
-      carousel.removeEventListener('scroll', handleScroll)
-    }
+    return () => carousel.removeEventListener('scroll', handleScroll)
   }, [images.length, totalSlides, calculateBlur])
+
+  /* --------------------------------------------------------------------------
+     Event Handlers
+     -------------------------------------------------------------------------- */
+  const handleTitleClick = () => {
+    if (isOnBlurSlide) {
+      scrollToNextSection()
+    }
+    else {
+      onShowPopup?.(projectTitle)
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     Render
+     -------------------------------------------------------------------------- */
+
+  /**
+   * LAYER STRUCTURE (from lowest to highest z-index)
+   *
+   * z-0   .motionCarousel (container)
+   *       └─ background: lastImage (shows through transparent blur slide)
+   *
+   * z-5   .motionCarouselBackground
+   *       └─ Duplicate of lastImage, acts as blur target for backdrop-filter
+   *
+   * z-10  .motionCarouselContainer (slides wrapper)
+   *       └─ Contains all scrollable slides
+   *
+   * z-15  Individual slides:
+   *       ├─ .motionCarouselSlideImage (visible images, all EXCEPT last)
+   *       ├─ .motionCarouselSlideTransparent (last image, opacity: 0)
+   *       └─ .motionCarouselSlideBlur (transparent, contains blur overlay)
+   *            └─ .blurOverlay > .blackBlurDiv
+   *                 └─ backdrop-filter: blur() - blurs z-5 layer behind it
+   *
+   * z-20  Progress bars (siblings to scroll container)
+   *
+   * z-100 ChevronDown (inside blur slide, appears on blur slide)
+   *
+   * z-200 Project title / "NEXT PROJECT" (sibling to scroll container)
+   *
+   * BLUR SLIDE MECHANISM:
+   * The blur slide has a transparent background. When scrolled into view,
+   * the .blackBlurDiv applies backdrop-filter: blur() which blurs content
+   * BEHIND it (the z-5 background layer). Mobile uses PROGRESSIVE blur
+   * (0→8px) controlled by blurIntensity state.
+   */
 
   return (
     <>
+      {/* ========== SCROLL CONTAINER (z-0 to z-15) ========== */}
+
       <div
         ref={containerRef}
         className={styles.motionCarousel}
         data-carousel
         style={{ backgroundImage: `url(${lastImage.src})` }}
       >
+        {/* z-5: Background layer - blurred by backdrop-filter */}
         <div
           className={styles.motionCarouselBackground}
           style={{ backgroundImage: `url(${lastImage.src})` }}
         />
 
+        {/* z-10: Slides container */}
         <div className={styles.motionCarouselContainer}>
-          {images.slice(0, -1)
-            .map((image, idx) => (
-              <div
-                key={image.src}
-                className={`${styles.motionCarouselSlide} ${styles.motionCarouselSlideImage}`}
-                style={{ backgroundImage: `url(${image.src})` }}
-                role="group"
-                aria-label={`Slide ${idx + 1}`}
-              />
-            ))}
+          {/* z-15: Regular image slides (all EXCEPT last) */}
+          {regularImages.map((image, idx) => (
+            <div
+              key={image.src}
+              className={`${styles.motionCarouselSlide} ${styles.motionCarouselSlideImage}`}
+              style={{ backgroundImage: `url(${image.src})` }}
+              role="group"
+              aria-label={`Slide ${idx + 1}`}
+            />
+          ))}
 
+          {/* z-15: Transparent slide (spacer for last image) */}
           <div
             className={`${styles.motionCarouselSlide} ${styles.motionCarouselSlideTransparent}`}
+            style={{ backgroundImage: `url(${lastImage.src})` }}
             role="group"
             aria-label={`Slide ${images.length}`}
-            style={{ backgroundImage: `url(${lastImage.src})` }}
           />
 
+          {/* z-15: Blur slide - transparent with backdrop-filter */}
           <div
             className={`${styles.motionCarouselSlide} ${styles.motionCarouselSlideBlur}`}
             role="group"
@@ -158,53 +236,44 @@ export default function MotionCarousel({
             onClick={scrollToNextSection}
             style={{ cursor: 'pointer' }}
           >
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                backgroundImage: `url(${lastImage.src})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                filter: `blur(${12 * blurIntensity ** 2}px)`,
-                WebkitFilter: `blur(${12 * blurIntensity ** 2}px)`,
-                opacity: blurIntensity ** 2,
-                transition: 'none',
-              }}
-            />
-            <div
-              style={{
-                position: 'absolute',
-                top: 0,
-                left: 0,
-                width: '100%',
-                height: '100%',
-                background: `rgba(0, 0, 0, ${0.3 * blurIntensity ** 2})`,
-                transition: 'none',
-              }}
-            >
+            <div className={styles.blurOverlay}>
               <div
-                className="pointer-events-auto absolute bottom-5 left-1/2 z-100 cursor-pointer transition-opacity duration-300 hover:opacity-70"
+                className={styles.blackBlurDiv}
                 style={{
-                  opacity: blurIntensity ** 2,
-                  transform: 'translateX(-50%) translateZ(0)',
-                  willChange: 'transform, opacity',
+                  background: `rgba(0, 0, 0, ${0.25 * blurIntensity ** 2})`,
+                  backdropFilter: `blur(${8 * blurIntensity ** 2}px)`,
+                  WebkitBackdropFilter: `blur(${8 * blurIntensity ** 2}px)`,
+                  transition: 'none',
                 }}
               >
-                <ChevronDown
-                  width={typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24}
-                  height={typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24}
-                  color="white"
-                  className="drop-shadow-2xl"
-                />
+                {/* z-100: ChevronDown inside blur slide */}
+                <div
+                  className="
+                    pointer-events-auto absolute bottom-5 left-1/2 z-100
+                    cursor-pointer transition-opacity duration-300 hover:opacity-70
+                  "
+                  style={{
+                    opacity: blurIntensity ** 2,
+                    transform: 'translateX(-50%) translateZ(0)',
+                    willChange: 'transform, opacity',
+                  }}
+                >
+                  <ChevronDown
+                    width={chevronSize}
+                    height={chevronSize}
+                    color="white"
+                    className="drop-shadow-2xl"
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
+      {/* ========== OVERLAYS (z-20 to z-200) ========== */}
+
+      {/* z-200: Project Title */}
       <div
         className={`absolute top-1/2 left-1/2 z-200 w-full text-center ${projectTitleContainerClasses}`}
         style={{ transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}
@@ -215,77 +284,74 @@ export default function MotionCarousel({
             ...cssVars,
             pointerEvents: 'auto',
             cursor: 'pointer',
-            opacity: isPopupVisible || isAboutPopupVisible ? 0 : 1,
-            visibility:
-              isPopupVisible || isAboutPopupVisible ? 'hidden' : 'visible',
+            opacity: isTitleVisible ? 1 : 0,
+            visibility: isTitleVisible ? 'visible' : 'hidden',
             transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
           }}
-          onClick={() => {
-            if (isOnBlurSlide) {
-              scrollToNextSection()
-            }
-            else {
-              onShowPopup?.(projectTitle)
-            }
-          }}
+          onClick={handleTitleClick}
         >
           {isOnBlurSlide ? 'NEXT PROJECT' : projectTitle}
         </h1>
       </div>
 
+      {/* z-20: Bottom Progress Bar */}
       {images.length > 1 && (
-        <div
-          className="absolute bottom-5 z-20"
-          style={{
-            width: progressBarWidth,
-            left: progressBarLeft,
-            opacity: currentSlide > 0 && currentSlide <= images.length ? 1 : 0,
-            transform:
-              currentSlide > 0 && currentSlide <= images.length
-                ? 'translateY(0)'
-                : 'translateY(10px)',
-            transition:
-              'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
-            pointerEvents: currentSlide > 0 ? 'auto' : 'none',
-          }}
-        >
-          <div className="h-0.5 overflow-hidden rounded-full bg-gray-500/50 backdrop-blur-sm">
-            <div
-              className="h-full bg-gray-50"
-              style={{
-                width: `${scrollProgress * 100}%`,
-              }}
-            />
-          </div>
-        </div>
+        <ProgressBar
+          position="bottom"
+          width={progressBarWidth}
+          left={progressBarLeft}
+          progress={scrollProgress}
+          visible={isProgressBarVisible}
+        />
       )}
 
+      {/* z-20: Top Progress Bar */}
       {showTopProgressBar && images.length > 1 && (
-        <div
-          className="absolute top-5 z-20"
-          style={{
-            width: progressBarWidth,
-            left: progressBarLeft,
-            opacity: currentSlide > 0 && currentSlide <= images.length ? 1 : 0,
-            transform:
-              currentSlide > 0 && currentSlide <= images.length
-                ? 'translateY(0)'
-                : 'translateY(-10px)',
-            transition:
-              'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
-            pointerEvents: currentSlide > 0 ? 'auto' : 'none',
-          }}
-        >
-          <div className="h-0.5 overflow-hidden rounded-full bg-gray-500/50 backdrop-blur-sm">
-            <div
-              className="h-full bg-gray-50"
-              style={{
-                width: `${scrollProgress * 100}%`,
-              }}
-            />
-          </div>
-        </div>
+        <ProgressBar
+          position="top"
+          width={progressBarWidth}
+          left={progressBarLeft}
+          progress={scrollProgress}
+          visible={isProgressBarVisible}
+        />
       )}
     </>
+  )
+}
+
+/* ==========================================================================
+   Sub-components
+   ========================================================================== */
+
+interface ProgressBarProps {
+  position: 'top' | 'bottom'
+  width: string
+  left: string
+  progress: number
+  visible: boolean
+}
+
+function ProgressBar({ position, width, left, progress, visible }: ProgressBarProps) {
+  return (
+    <div
+      className={`absolute ${position === 'top' ? 'top-5' : 'bottom-5'} z-20`}
+      style={{
+        width,
+        left,
+        opacity: visible ? 1 : 0,
+        transform: visible
+          ? 'translateY(0)'
+          : `translateY(${position === 'top' ? '-10px' : '10px'})`,
+        transition: 'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
+        pointerEvents: visible ? 'auto' : 'none',
+      }}
+    >
+      <div className="h-0.5 overflow-hidden rounded-full bg-gray-500/50 backdrop-blur-sm">
+        <div
+          className="h-full bg-gray-50"
+          style={{ width: `${progress * 100}%` }}
+        />
+      </div>
+    </div>
   )
 }
