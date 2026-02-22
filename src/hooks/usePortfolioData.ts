@@ -25,12 +25,16 @@ import type {
   PortfolioProject,
   Settings,
 } from '../config/pocketbase'
-import { useEffect, useState } from 'react'
+import type { PreloadProgress } from '../utils/imagePreloader'
+import { useEffect, useRef, useState } from 'react'
 import pb, {
   getCachedData,
   getImageUrl,
   setCachedData,
 } from '../config/pocketbase'
+import { imagePreloader } from '../utils/imagePreloader'
+
+const PRELOAD_BATCH_SIZE = 3
 
 /**
  * Converted project data structure for use in components.
@@ -125,6 +129,12 @@ interface UsePortfolioDataReturn {
 
   /** Error message string or null if no error */
   error: string | null
+
+  /** Preload progress for batch image loading */
+  preloadProgress: PreloadProgress | null
+
+  /** Whether first 3 sections are ready to display */
+  sectionsReady: boolean
 }
 
 /**
@@ -181,6 +191,10 @@ export function usePortfolioData(): UsePortfolioDataReturn {
   const [settingsData, setSettingsData] = useState<Settings | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [preloadProgress, setPreloadProgress] = useState<PreloadProgress | null>(null)
+  const [sectionsReady, setSectionsReady] = useState(false)
+
+  const hasPreloadedRef = useRef(false)
 
   /**
    * Initial data fetch effect with caching support.
@@ -279,6 +293,49 @@ export function usePortfolioData(): UsePortfolioDataReturn {
       isCancelled = true
     }
   }, [])
+
+  /**
+   * Image preloading effect.
+   *
+   * After data is fetched, preload images in batches:
+   * - Batch 1: Hero + first 3 projects (blocks until complete)
+   * - Remaining batches: Load in background
+   */
+  useEffect(() => {
+    if (projectsData.length === 0 || hasPreloadedRef.current)
+      return
+
+    hasPreloadedRef.current = true
+
+    const preloadImages = async () => {
+      const heroImage = homepageData?.Hero_Image
+        ? getImageUrl(homepageData, homepageData.Hero_Image)
+        : null
+
+      const imagesBySection: string[][] = []
+
+      if (heroImage) {
+        imagesBySection.push([heroImage])
+      }
+
+      projectsData.forEach((project) => {
+        imagesBySection.push(project.images.map(img => img.src))
+      })
+
+      await imagePreloader.preloadSections({
+        imagesBySection,
+        batchSize: PRELOAD_BATCH_SIZE,
+        onProgress: (progress) => {
+          setPreloadProgress(progress)
+          if (progress.isReady) {
+            setSectionsReady(true)
+          }
+        },
+      })
+    }
+
+    preloadImages()
+  }, [projectsData, homepageData])
 
   /**
    * Realtime subscription effect for live content updates.
@@ -443,5 +500,7 @@ export function usePortfolioData(): UsePortfolioDataReturn {
     settingsData,
     loading,
     error,
+    preloadProgress,
+    sectionsReady,
   }
 }

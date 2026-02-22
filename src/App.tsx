@@ -100,6 +100,8 @@ function App() {
     settingsData,
     loading,
     error,
+    preloadProgress,
+    sectionsReady,
   } = usePortfolioData()
 
   const {
@@ -170,11 +172,33 @@ function App() {
   // RENDER LOGIC
   // ============================================================================
 
-  if (loading) {
+  if (loading || !sectionsReady) {
+    const progressPercent = preloadProgress
+      ? Math.round((preloadProgress.loadedImages / preloadProgress.totalImages) * 100)
+      : 0
+
     return (
-      <div className="flex h-dvh w-full items-center justify-center">
+      <div className="flex h-dvh w-full items-center justify-center bg-neutral-950">
         <div className="text-center">
-          <div className="mb-4 text-xl">Loading Portfolio...</div>
+          <div className="mb-4 text-xl text-white">Loading Portfolio...</div>
+          {preloadProgress && (
+            <div className="mx-auto w-48">
+              <div className="h-1 overflow-hidden rounded-full bg-neutral-800">
+                <div
+                  className="h-full bg-white transition-all duration-300"
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+              <div className="mt-2 text-xs text-neutral-400">
+                {preloadProgress.loadedImages}
+                {' '}
+                /
+                {preloadProgress.totalImages}
+                {' '}
+                images
+              </div>
+            </div>
+          )}
         </div>
       </div>
     )

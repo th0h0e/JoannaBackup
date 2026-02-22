@@ -132,6 +132,38 @@ export function getImageUrl(record: BaseSystemFields, filename: string) {
   return pb.files.getURL(record, filename)
 }
 
+// Viewport-based image size configuration
+const IMAGE_SIZE_CONFIG = {
+  mobile: { maxWidth: 800, quality: 80 },
+  tablet: { maxWidth: 1200, quality: 85 },
+  desktop: { maxWidth: 1920, quality: 90 },
+} as const
+
+// Determine viewport category based on width
+function getViewportCategory(width: number): keyof typeof IMAGE_SIZE_CONFIG {
+  if (width < 768)
+    return 'mobile'
+  if (width < 1280)
+    return 'tablet'
+  return 'desktop'
+}
+
+// Get optimized image URL with PocketBase thumbnail parameters
+export function getOptimizedImageUrl(
+  record: BaseSystemFields,
+  filename: string,
+  viewportWidth: number = typeof window !== 'undefined' ? window.innerWidth : 1920,
+): string {
+  const baseUrl = getImageUrl(record, filename)
+  const category = getViewportCategory(viewportWidth)
+  const config = IMAGE_SIZE_CONFIG[category]
+
+  const url = new URL(baseUrl)
+  url.searchParams.set('thumb', `${config.maxWidth}x0`)
+
+  return url.toString()
+}
+
 // Helper to get responsive font size classes (for CSS-in-JS)
 export function getResponsiveFontSizes(settings: Settings | null) {
   return {
