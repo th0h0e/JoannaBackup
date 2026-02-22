@@ -1,4 +1,4 @@
-import { http, HttpResponse, delay } from 'msw'
+import { delay, http, HttpResponse } from 'msw'
 
 const POCKETBASE_URL = 'https://pocketbase-j0ososc8ckcw48sos8w0ccok.kontext.icu'
 

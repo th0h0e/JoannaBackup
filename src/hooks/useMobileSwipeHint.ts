@@ -19,8 +19,6 @@ interface UseMobileSwipeHintOptions {
   projectsCount: number
 }
 
-/* eslint-disable jsdoc/check-param-names */
-
 /**
  * Hook for showing mobile swipe hint animation on first visit.
  *

@@ -24,7 +24,7 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import ProjectEditor from '../../components/admin/ProjectEditor'
 import SettingsSidebar from '../../components/admin/SettingsSidebar'
-import pb, { getImageUrl } from '../../config/pocketbase'
+import pb, { clearCache, getImageUrl } from '../../config/pocketbase'
 
 export default function AdminDashboard() {
   const [projects, setProjects] = useState<PortfolioProject[]>([])
@@ -52,6 +52,15 @@ export default function AdminDashboard() {
     if (!pb.authStore.isValid) {
       navigate('/admin')
     }
+  }, [navigate])
+
+  useEffect(() => {
+    const unsubscribe = pb.authStore.onChange((token) => {
+      if (!token) {
+        navigate('/admin')
+      }
+    })
+    return unsubscribe
   }, [navigate])
 
   const fetchHeroImage = async () => {
@@ -150,6 +159,7 @@ export default function AdminDashboard() {
       await pb.collection('Homepage')
         .update(homepageId, formData)
 
+      clearCache('Homepage')
       await fetchHeroImage()
       toast.success('Hero image updated')
     }
@@ -172,6 +182,7 @@ export default function AdminDashboard() {
       await pb.collection('Homepage')
         .update(homepageId, formData)
 
+      clearCache('Homepage')
       await fetchHeroImage()
       toast.success('Mobile hero image updated')
     }
@@ -208,6 +219,7 @@ export default function AdminDashboard() {
           Hero_Title: tempTitle.trim(),
         })
 
+      clearCache('Homepage')
       setHeroTitle(tempTitle.trim())
       setIsEditingTitle(false)
       toast.success('Hero title updated')
@@ -237,6 +249,7 @@ export default function AdminDashboard() {
       await pb
         .collection('Portfolio_Projects')
         .delete(deleteConfirmation.projectId)
+      clearCache('Portfolio_Projects')
       setDeleteConfirmation(null)
       await fetchProjects()
       toast.success('Project deleted successfully')
@@ -258,6 +271,7 @@ export default function AdminDashboard() {
 
   const handleSave = async () => {
     const isCreating = showNewProjectForm
+    clearCache('Portfolio_Projects')
     setEditingProject(null)
     setShowNewProjectForm(false)
     await fetchProjects()
@@ -289,6 +303,7 @@ export default function AdminDashboard() {
       })
 
       await Promise.all(updatePromises)
+      clearCache('Portfolio_Projects')
       toast.success('Projects reordered')
     }
     catch (err: unknown) {
@@ -472,7 +487,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       {isEditingTitle && (
-                        <div className="pointer-events-none absolute right-6 bottom-6 z-10 flex gap-2">
+                        <div className="pointer-events-auto absolute right-6 bottom-6 z-10 flex gap-2">
                           <Button
                             variant="outline"
                             size="icon"
@@ -624,7 +639,7 @@ export default function AdminDashboard() {
                         </div>
                       </div>
                       {isEditingTitle && (
-                        <div className="pointer-events-none absolute right-6 bottom-6 z-10 flex gap-2">
+                        <div className="pointer-events-auto absolute right-6 bottom-6 z-10 flex gap-2">
                           <Button
                             variant="outline"
                             size="icon"

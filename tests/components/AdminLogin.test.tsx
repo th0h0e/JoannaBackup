@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { BrowserRouter, MemoryRouter } from 'react-router-dom'
+import { BrowserRouter } from 'react-router-dom'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import AdminLogin from '@/pages/admin/AdminLogin'
 
 const mockNavigate = vi.fn()
@@ -28,7 +28,7 @@ vi.mock('@/config/pocketbase', () => ({
   },
 }))
 
-describe('AdminLogin', () => {
+describe('adminLogin', () => {
   beforeEach(() => {
     mockNavigate.mockClear()
   })

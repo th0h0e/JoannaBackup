@@ -1,11 +1,11 @@
-import { describe, it, expect } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
   createFontCssVars,
-  generateFontMediaQueries,
   createPopupTextStyle,
-  FONT_FAMILY,
-  LETTER_SPACING,
   DEFAULT_FONT_SIZES,
+  FONT_FAMILY,
+  generateFontMediaQueries,
+  LETTER_SPACING,
 } from '@/utils/typography'
 
 describe('typography utilities', () => {
@@ -91,7 +91,7 @@ describe('typography utilities', () => {
         largeDesktop: 4,
       })
 
-      const mediaQuery768 = css.match(/@media \(min-width: 768px\)[\s\S]*?}/)
+      const mediaQuery768 = css.match(/@media \(min-width: 768px\)[\s\S]*?\}/)
       expect(mediaQuery768?.[0]).toContain('font-size: 2rem')
     })
 
@@ -103,7 +103,7 @@ describe('typography utilities', () => {
         largeDesktop: 4,
       })
 
-      const mediaQuery1024 = css.match(/@media \(min-width: 1024px\)[\s\S]*?}/)
+      const mediaQuery1024 = css.match(/@media \(min-width: 1024px\)[\s\S]*?\}/)
       expect(mediaQuery1024?.[0]).toContain('font-size: 3rem')
     })
 
@@ -115,7 +115,7 @@ describe('typography utilities', () => {
         largeDesktop: 4,
       })
 
-      const mediaQuery1280 = css.match(/@media \(min-width: 1280px\)[\s\S]*?}/)
+      const mediaQuery1280 = css.match(/@media \(min-width: 1280px\)[\s\S]*?\}/)
       expect(mediaQuery1280?.[0]).toContain('font-size: 4rem')
     })
   })

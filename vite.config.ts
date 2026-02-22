@@ -3,7 +3,6 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   resolve: {
@@ -16,5 +15,8 @@ export default defineConfig({
     port: 5173,
     strictPort: true,
     open: true,
+    headers: {
+      'Content-Security-Policy': `default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https://pocketbase-j0ososc8ckcw48sos8w0ccok.kontext.icu; frame-ancestors 'none'; base-uri 'self'; form-action 'self';`,
+    },
   },
 })

@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, it, expect, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 describe('carousel utilities', () => {
   let container: HTMLDivElement
@@ -61,24 +61,24 @@ describe('carousel utilities', () => {
 
   describe('scrollToNextSection', () => {
     it('should scroll main container by viewport height', async () => {
-        const { scrollToNextSection } = await import('@/utils/scroll')
+      const { scrollToNextSection } = await import('@/utils/scroll')
 
-        const main = document.createElement('main')
-        const scrollBySpy = vi.fn()
-        main.scrollBy = scrollBySpy
-        container.appendChild(main)
+      const main = document.createElement('main')
+      const scrollBySpy = vi.fn()
+      main.scrollBy = scrollBySpy
+      container.appendChild(main)
 
-        vi.stubGlobal('innerHeight', 800)
+      vi.stubGlobal('innerHeight', 800)
 
-        scrollToNextSection()
+      scrollToNextSection()
 
-        expect(scrollBySpy).toHaveBeenCalledWith({ top: 800, behavior: 'smooth' })
-      })
+      expect(scrollBySpy).toHaveBeenCalledWith({ top: 800, behavior: 'smooth' })
+    })
 
     it('should handle missing main element', async () => {
-        const { scrollToNextSection } = await import('@/utils/scroll')
+      const { scrollToNextSection } = await import('@/utils/scroll')
 
-        expect(() => scrollToNextSection()).not.toThrow()
-      })
+      expect(() => scrollToNextSection()).not.toThrow()
+    })
   })
 })
