@@ -2,6 +2,7 @@ import type { Settings } from '../config/pocketbase'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
+import { resetAllCarousels } from '../utils/carousel'
 import ProjectNavigation from './ProjectNavigation'
 
 interface HamburgerMenuProps {
@@ -88,21 +89,10 @@ export default function HamburgerMenu({
                     onLinkClick={(index) => {
                       closeMenu()
 
-                      // Navigate after menu closes to avoid state conflicts
                       setTimeout(() => {
                         window.location.hash = `#project-${index}`
-
-                        // Reset all carousels to first slide after navigation
-                        setTimeout(() => {
-                          const carousels
-                            = document.querySelectorAll('[data-carousel]')
-                          carousels.forEach((carousel) => {
-                            if (carousel instanceof HTMLElement) {
-                              carousel.scrollLeft = 0
-                            }
-                          })
-                        }, 100)
-                      }, 300) // Wait for menu close animation
+                        resetAllCarousels(100)
+                      }, 300)
                     }}
                   />
                 </div>

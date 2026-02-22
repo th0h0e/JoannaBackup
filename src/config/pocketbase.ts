@@ -132,17 +132,6 @@ export function getImageUrl(record: BaseSystemFields, filename: string) {
   return pb.files.getURL(record, filename)
 }
 
-// Helper function to generate dynamic project title styles
-export function getProjectTitleStyle(settings: Settings | null) {
-  const mobileFontSize = settings?.Mobile_Font_Size ?? 1.25
-
-  return {
-    fontFamily: 'EnduroWeb, sans-serif',
-    letterSpacing: '0.03em',
-    fontSize: `${mobileFontSize}rem`,
-  }
-}
-
 // Helper to get responsive font size classes (for CSS-in-JS)
 export function getResponsiveFontSizes(settings: Settings | null) {
   return {

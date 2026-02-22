@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'motion/react'
 import ProjectCardSVG from '../assets/Project Card/JVDW WEB LIGHT BOX copy.svg'
+import { FONT_FAMILY, LETTER_SPACING } from '../utils/typography'
 
 interface ProjectPopupProps {
   isVisible: boolean
@@ -20,7 +21,6 @@ export default function ProjectPopup({
     <AnimatePresence>
       {isVisible && (
         <>
-          {/* Invisible Backdrop for click-to-close */}
           <motion.div
             className="fixed inset-0 z-40"
             initial={{ opacity: 0 }}
@@ -30,7 +30,6 @@ export default function ProjectPopup({
             onClick={onClose}
           />
 
-          {/* Popup */}
           <motion.div
             className="fixed z-50"
             role="dialog"
@@ -60,14 +59,13 @@ export default function ProjectPopup({
                 }}
               />
 
-              {/* Project Content Overlay */}
               <div className="absolute inset-0 flex flex-col justify-center px-4 py-8">
                 <h2
                   id="project-popup-title"
                   className="text-center leading-tight text-black uppercase"
                   style={{
-                    fontFamily: 'EnduroWeb, sans-serif',
-                    letterSpacing: '0.03em',
+                    fontFamily: FONT_FAMILY,
+                    letterSpacing: LETTER_SPACING,
                     fontSize: '12px',
                     marginBottom: '18px',
                   }}
@@ -77,8 +75,8 @@ export default function ProjectPopup({
                 <div
                   className="text-center leading-tight text-black uppercase"
                   style={{
-                    fontFamily: 'EnduroWeb, sans-serif',
-                    letterSpacing: '0.03em',
+                    fontFamily: FONT_FAMILY,
+                    letterSpacing: LETTER_SPACING,
                     fontSize: '12px',
                     marginBottom: '18px',
                   }}
@@ -93,8 +91,8 @@ export default function ProjectPopup({
                 <p
                   className="text-center leading-tight text-black"
                   style={{
-                    fontFamily: 'EnduroWeb, sans-serif',
-                    letterSpacing: '0.03em',
+                    fontFamily: FONT_FAMILY,
+                    letterSpacing: LETTER_SPACING,
                     fontSize: '12px',
                   }}
                 >

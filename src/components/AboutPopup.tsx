@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import Asset7Logo from '../assets/logo svg/Asset 7.svg'
 import Asset11Logo from '../assets/logo svg/Asset 11.svg'
 import ProjectCardSVG from '../assets/Project Card/JVDW WEB LIGHT BOX copy.svg'
+import { FONT_FAMILY, LETTER_SPACING } from '../utils/typography'
 
 interface AboutPopupProps {
   isVisible: boolean
@@ -19,7 +20,6 @@ export default function AboutPopup({
     <AnimatePresence>
       {isVisible && (
         <>
-          {/* Backdrop with blur effect for click-to-close */}
           <motion.div
             className="fixed inset-0 z-40"
             style={{
@@ -34,7 +34,6 @@ export default function AboutPopup({
             onClick={onClose}
           />
 
-          {/* Popup */}
           <motion.div
             className="fixed z-50"
             role="dialog"
@@ -64,29 +63,26 @@ export default function AboutPopup({
                 }}
               />
 
-              {/* About Content Overlay */}
               <div className="absolute inset-0 flex flex-col justify-between px-4 py-8">
-                {/* Top Logo */}
                 <div className="flex justify-center">
                   <img
                     src={Asset7Logo}
                     alt="Joanna Logo"
                     style={{
-                      width: '4.5rem', // Increased from 4rem
+                      width: '4.5rem',
                       height: 'auto',
-                      filter: 'brightness(0)', // Makes it black, no blend mode
+                      filter: 'brightness(0)',
                     }}
                   />
                 </div>
 
-                {/* Content */}
                 <div className="flex flex-1 flex-col justify-center">
                   <h2
                     id="about-popup-title"
                     className="text-center leading-tight text-black uppercase"
                     style={{
-                      fontFamily: 'EnduroWeb, sans-serif',
-                      letterSpacing: '0.03em',
+                      fontFamily: FONT_FAMILY,
+                      letterSpacing: LETTER_SPACING,
                       fontSize: '12px',
                       marginBottom: '18px',
                     }}
@@ -96,8 +92,8 @@ export default function AboutPopup({
                   <p
                     className="text-center leading-tight text-black"
                     style={{
-                      fontFamily: 'EnduroWeb, sans-serif',
-                      letterSpacing: '0.03em',
+                      fontFamily: FONT_FAMILY,
+                      letterSpacing: LETTER_SPACING,
                       fontSize: '12px',
                       marginBottom: '18px',
                     }}
@@ -109,8 +105,8 @@ export default function AboutPopup({
                   <h3
                     className="text-center leading-tight text-black uppercase"
                     style={{
-                      fontFamily: 'EnduroWeb, sans-serif',
-                      letterSpacing: '0.03em',
+                      fontFamily: FONT_FAMILY,
+                      letterSpacing: LETTER_SPACING,
                       fontSize: '12px',
                       marginBottom: '18px',
                     }}
@@ -120,8 +116,8 @@ export default function AboutPopup({
                   <p
                     className="text-center leading-tight text-black"
                     style={{
-                      fontFamily: 'EnduroWeb, sans-serif',
-                      letterSpacing: '0.03em',
+                      fontFamily: FONT_FAMILY,
+                      letterSpacing: LETTER_SPACING,
                       fontSize: '12px',
                       marginBottom: '18px',
                     }}
@@ -133,8 +129,8 @@ export default function AboutPopup({
                   <h3
                     className="text-center leading-tight text-black uppercase"
                     style={{
-                      fontFamily: 'EnduroWeb, sans-serif',
-                      letterSpacing: '0.03em',
+                      fontFamily: FONT_FAMILY,
+                      letterSpacing: LETTER_SPACING,
                       fontSize: '12px',
                       marginBottom: '18px',
                     }}
@@ -144,8 +140,8 @@ export default function AboutPopup({
                   <p
                     className="text-center leading-tight text-black"
                     style={{
-                      fontFamily: 'EnduroWeb, sans-serif',
-                      letterSpacing: '0.03em',
+                      fontFamily: FONT_FAMILY,
+                      letterSpacing: LETTER_SPACING,
                       fontSize: '12px',
                       marginBottom: '18px',
                     }}
@@ -159,8 +155,8 @@ export default function AboutPopup({
                   <button
                     className="cursor-pointer text-center leading-tight text-black transition-opacity duration-300 hover:opacity-70"
                     style={{
-                      fontFamily: 'EnduroWeb, sans-serif',
-                      letterSpacing: '0.03em',
+                      fontFamily: FONT_FAMILY,
+                      letterSpacing: LETTER_SPACING,
                       fontSize: '12px',
                       textDecoration: 'underline',
                       background: 'none',
@@ -177,15 +173,14 @@ export default function AboutPopup({
                   </button>
                 </div>
 
-                {/* Bottom Logo */}
                 <div className="flex justify-center">
                   <img
                     src={Asset11Logo}
                     alt="Van Der Weg Logo"
                     style={{
-                      width: '8rem', // Increased from 7rem
+                      width: '8rem',
                       height: 'auto',
-                      filter: 'brightness(0)', // Makes it black, no blend mode
+                      filter: 'brightness(0)',
                     }}
                   />
                 </div>

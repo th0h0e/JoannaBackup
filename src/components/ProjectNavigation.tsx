@@ -5,6 +5,7 @@ import {
   navigationLinkClasses,
   navigationListClasses,
 } from '../utils/sharedStyles'
+import { FONT_FAMILY, generateFontMediaQueries, LETTER_SPACING } from '../utils/typography'
 
 interface ProjectNavigationProps {
   projectTitles: string[]
@@ -17,35 +18,12 @@ export default function ProjectNavigation({
   onLinkClick,
   settingsData = null,
 }: ProjectNavigationProps) {
-  // Get dynamic font sizes from settings
   const fontSizes = getResponsiveFontSizes(settingsData)
 
   return (
     <>
       <style>
-        {`
-        .project-navigation__link {
-          font-size: ${fontSizes.mobile}rem;
-        }
-        
-        @media (min-width: 768px) {
-          .project-navigation__link {
-            font-size: ${fontSizes.tablet}rem;
-          }
-        }
-        
-        @media (min-width: 1024px) {
-          .project-navigation__link {
-            font-size: ${fontSizes.desktop}rem;
-          }
-        }
-        
-        @media (min-width: 1280px) {
-          .project-navigation__link {
-            font-size: ${fontSizes.largeDesktop}rem;
-          }
-        }
-      `}
+        {generateFontMediaQueries('.project-navigation__link', fontSizes)}
       </style>
       <div className={navigationContainerClasses}>
         <ul className={navigationListClasses}>
@@ -55,16 +33,13 @@ export default function ProjectNavigation({
                 href={`#project-${index}`}
                 className={`${navigationLinkClasses} project-navigation__link`}
                 style={{
-                  fontFamily: 'EnduroWeb, sans-serif',
-                  letterSpacing: '0.03em',
+                  fontFamily: FONT_FAMILY,
+                  letterSpacing: LETTER_SPACING,
                 }}
                 onClick={(e) => {
                   if (onLinkClick) {
                     e.preventDefault()
                     onLinkClick(index)
-                  }
-                  else {
-                    // Default behavior for ProjectIndex - direct navigation
                   }
                 }}
               >

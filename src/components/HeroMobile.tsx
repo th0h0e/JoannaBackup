@@ -6,6 +6,7 @@ import {
   projectTitleClasses,
   projectTitleContainerClasses,
 } from '../utils/sharedStyles'
+import { FONT_FAMILY, generateFontMediaQueries, LETTER_SPACING } from '../utils/typography'
 import ChevronDown from './icons/ChevronDown'
 
 interface HeroProps {
@@ -27,43 +28,23 @@ export default function HeroMobile({
   const [hasAnimatedIn, setHasAnimatedIn] = useState(false)
   const hasTriggeredRef = useRef(false)
 
-  // Track initial animation completion - setState is intentional for one-time animation trigger
   useEffect(() => {
     if (!hasTriggeredRef.current && !isAboutPopupVisible) {
       hasTriggeredRef.current = true
-      setHasAnimatedIn(true) // eslint-disable-line react-hooks-extra/no-direct-set-state-in-use-effect
+      setHasAnimatedIn(true)
     }
   }, [isAboutPopupVisible])
+
   return (
     <>
       <style>
-        {`
-        .hero-title {
-          font-size: ${fontSizes.mobile}rem;
-        }
-        @media (min-width: 768px) {
-          .hero-title {
-            font-size: ${fontSizes.tablet}rem;
-          }
-        }
-        @media (min-width: 1024px) {
-          .hero-title {
-            font-size: ${fontSizes.desktop}rem;
-          }
-        }
-        @media (min-width: 1280px) {
-          .hero-title {
-            font-size: ${fontSizes.largeDesktop}rem;
-          }
-        }
-      `}
+        {generateFontMediaQueries('.hero-title', fontSizes)}
       </style>
       <section
         id="hero-section"
         className="relative flex w-full snap-center items-center justify-center overflow-hidden bg-white"
         style={{ height: '100lvh' }}
       >
-        {/* Hero Background Image */}
         <motion.div
           className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroImage})` }}
@@ -72,7 +53,6 @@ export default function HeroMobile({
           transition={{ duration: 1.2, ease: 'easeOut' }}
         />
 
-        {/* Hero Headline */}
         <AnimatePresence>
           {!isAboutPopupVisible && (
             <motion.div
@@ -90,8 +70,8 @@ export default function HeroMobile({
               <h1
                 className={`text-white ${projectTitleClasses} hero-title`}
                 style={{
-                  fontFamily: 'EnduroWeb, sans-serif',
-                  letterSpacing: '0.03em',
+                  fontFamily: FONT_FAMILY,
+                  letterSpacing: LETTER_SPACING,
                 }}
               >
                 {heroTitle}
@@ -100,7 +80,6 @@ export default function HeroMobile({
           )}
         </AnimatePresence>
 
-        {/* Scroll Hint */}
         <div
           className="absolute bottom-8 z-10 text-white"
           style={{ left: '50%', marginLeft: '-12px', opacity: 1 }}
