@@ -74,7 +74,7 @@ export default function MotionCarousel({
      Hooks
      -------------------------------------------------------------------------- */
   const { calculateBlur } = useCarouselBlurIntensity({
-    slideSelector: `.${styles.motionCarouselSlide}`,
+    slideSelector: `.${styles.slideMobile}`,
   })
 
   const fontSizes = useMemo(
@@ -115,11 +115,13 @@ export default function MotionCarousel({
      -------------------------------------------------------------------------- */
   useEffect(() => {
     const carousel = containerRef.current
-    if (!carousel) return
+    if (!carousel)
+      return
 
     const handleScroll = () => {
       const currentCarousel = containerRef.current
-      if (!currentCarousel) return
+      if (!currentCarousel)
+        return
 
       const scrollLeft = currentCarousel.scrollLeft
       const containerWidth = currentCarousel.offsetWidth
@@ -162,21 +164,23 @@ export default function MotionCarousel({
   /**
    * LAYER STRUCTURE (from lowest to highest z-index)
    *
-   * z-0   .motionCarousel (container)
-   *       └─ background: lastImage (shows through transparent blur slide)
+   * z-0   .carouselSectionMobile (container)
+   *       └─ background: lastImage (shows through transparent slide and blur slide)
+   *       └─ Acts as blur target for backdrop-filter
    *
-   * z-5   .motionCarouselBackground
-   *       └─ Duplicate of lastImage, acts as blur target for backdrop-filter
+   * z-5   .carouselSectionMobileBackground
+   *       └─ Reserved for future use
    *
-   * z-10  .motionCarouselContainer (slides wrapper)
+   * z-10  .slidesWrapperMobile (slides wrapper)
    *       └─ Contains all scrollable slides
    *
    * z-15  Individual slides:
-   *       ├─ .motionCarouselSlideImage (visible images, all EXCEPT last)
-   *       ├─ .motionCarouselSlideTransparent (last image, opacity: 0)
-   *       └─ .motionCarouselSlideBlur (transparent, contains blur overlay)
+   *       ├─ .regularSlideMobile (visible images, all EXCEPT last)
+   *       ├─ .transparentSlideMobile (transparent, reveals z-0)
+   *       │    └─ Nested div: lastImage with opacity: 0
+   *       └─ .blurSlideMobile (transparent, contains blur overlay)
    *            └─ .blurOverlay > .blackBlurDiv
-   *                 └─ backdrop-filter: blur() - blurs z-5 layer behind it
+   *                 └─ backdrop-filter: blur() - blurs z-0 container background
    *
    * z-20  Progress bars (siblings to scroll container)
    *
@@ -187,7 +191,7 @@ export default function MotionCarousel({
    * BLUR SLIDE MECHANISM:
    * The blur slide has a transparent background. When scrolled into view,
    * the .blackBlurDiv applies backdrop-filter: blur() which blurs content
-   * BEHIND it (the z-5 background layer). Mobile uses PROGRESSIVE blur
+   * BEHIND it (the z-0 container background). Mobile uses PROGRESSIVE blur
    * (0→8px) controlled by blurIntensity state.
    */
 
@@ -197,40 +201,45 @@ export default function MotionCarousel({
 
       <div
         ref={containerRef}
-        className={styles.motionCarousel}
+        className={styles.carouselSectionMobile}
         data-carousel
         style={{ backgroundImage: `url(${lastImage.src})` }}
       >
-        {/* z-5: Background layer - blurred by backdrop-filter */}
-        <div
-          className={styles.motionCarouselBackground}
-          style={{ backgroundImage: `url(${lastImage.src})` }}
-        />
-
-        {/* z-10: Slides container */}
-        <div className={styles.motionCarouselContainer}>
-          {/* z-15: Regular image slides (all EXCEPT last) */}
+        {/* z-10: Slides wrapper */}
+        <div className={styles.slidesWrapperMobile}>
+          {/* z-15: Regular slides (all EXCEPT last) */}
           {regularImages.map((image, idx) => (
             <div
               key={image.src}
-              className={`${styles.motionCarouselSlide} ${styles.motionCarouselSlideImage}`}
+              className={`${styles.slideMobile} ${styles.regularSlideMobile}`}
               style={{ backgroundImage: `url(${image.src})` }}
               role="group"
               aria-label={`Slide ${idx + 1}`}
             />
           ))}
 
-          {/* z-15: Transparent slide (spacer for last image) */}
+          {/* z-15: Transparent slide (reveals z-0) */}
           <div
-            className={`${styles.motionCarouselSlide} ${styles.motionCarouselSlideTransparent}`}
-            style={{ backgroundImage: `url(${lastImage.src})` }}
+            className={`${styles.slideMobile} ${styles.transparentSlideMobile}`}
             role="group"
             aria-label={`Slide ${images.length}`}
-          />
+          >
+            {/* Nested div with lastImage, opacity: 0 */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: `url(${lastImage.src})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                opacity: 0,
+              }}
+            />
+          </div>
 
           {/* z-15: Blur slide - transparent with backdrop-filter */}
           <div
-            className={`${styles.motionCarouselSlide} ${styles.motionCarouselSlideBlur}`}
+            className={`${styles.slideMobile} ${styles.blurSlideMobile}`}
             role="group"
             aria-label="Next section"
             onClick={scrollToNextSection}
@@ -279,7 +288,7 @@ export default function MotionCarousel({
         style={{ transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}
       >
         <h1
-          className={`text-white ${projectTitleClasses} ${styles.motionProjectTitle}`}
+          className={`text-white ${projectTitleClasses} ${styles.projectTitleMobile}`}
           style={{
             ...cssVars,
             pointerEvents: 'auto',

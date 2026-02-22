@@ -18,7 +18,7 @@
    Mobile Carousel Styles
    ============================================ */
 
-.motionCarousel {
+.carouselSectionMobile {
   position: relative;
   height: 100%;
   width: 100%;
@@ -35,11 +35,11 @@
   backface-visibility: hidden;
 }
 
-.motionCarousel::-webkit-scrollbar {
+.carouselSectionMobile::-webkit-scrollbar {
   display: none;
 }
 
-.motionCarouselBackground {
+.carouselSectionMobileBackground {
   position: absolute;
   top: 0;
   left: 0;
@@ -53,7 +53,7 @@
   backface-visibility: hidden;
 }
 
-.motionCarouselContainer {
+.slidesWrapperMobile {
   position: relative;
   height: 100%;
   width: 100%;
@@ -63,7 +63,7 @@
   will-change: transform;
 }
 
-.motionCarouselSlide {
+.slideMobile {
   position: relative;
   height: 100%;
   width: 100%;
@@ -77,7 +77,7 @@
   contain: layout style;
 }
 
-.motionCarouselSlideImage {
+.regularSlideMobile {
   background-size: cover;
   background-position: center;
   background-color: black;
@@ -85,7 +85,7 @@
   will-change: transform;
 }
 
-.motionCarouselSlideTransparent {
+.transparentSlideMobile {
   background: transparent;
   z-index: 15;
   opacity: 0;
@@ -95,7 +95,7 @@
   transform: translateZ(0);
 }
 
-.motionCarouselSlideBlur {
+.blurSlideMobile {
   background: transparent;
   z-index: 15;
   transform: translateZ(0);
@@ -124,7 +124,7 @@
   will-change: backdrop-filter, background;
 }
 
-.motionProjectTitle {
+.projectTitleMobile {
   font-family: 'EnduroWeb', sans-serif;
   letter-spacing: 0.03em;
   font-size: var(--font-size-mobile);
@@ -133,19 +133,19 @@
 }
 
 @media (min-width: 768px) {
-  .motionProjectTitle {
+  .projectTitleMobile {
     font-size: var(--font-size-tablet);
   }
 }
 
 @media (min-width: 1024px) {
-  .motionProjectTitle {
+  .projectTitleMobile {
     font-size: var(--font-size-desktop);
   }
 }
 
 @media (min-width: 1280px) {
-  .motionProjectTitle {
+  .projectTitleMobile {
     font-size: var(--font-size-large-desktop);
   }
 }
@@ -154,7 +154,7 @@
    Desktop Carousel Styles
    ============================================ */
 
-.motionCarouselDesktop {
+.carouselSectionDesktop {
   position: relative;
   height: 100%;
   width: 100%;
@@ -172,11 +172,11 @@
   backface-visibility: hidden;
 }
 
-.motionCarouselDesktop::-webkit-scrollbar {
+.carouselSectionDesktop::-webkit-scrollbar {
   display: none;
 }
 
-.motionCarouselDesktopBackground {
+.carouselSectionDesktopBackground {
   position: absolute;
   top: 0;
   left: 0;
@@ -190,7 +190,7 @@
   backface-visibility: hidden;
 }
 
-.motionCarouselDesktopContainer {
+.slidesWrapperDesktop {
   position: relative;
   height: 100%;
   width: 100%;
@@ -200,7 +200,7 @@
   will-change: transform;
 }
 
-.motionCarouselDesktopSlide {
+.slideDesktop {
   position: relative;
   height: 100%;
   flex-shrink: 0;
@@ -217,7 +217,16 @@
   contain: layout style;
 }
 
-.motionCarouselDesktopSlideBlur {
+.transparentSlideDesktop {
+  min-width: 100vw;
+  width: 100vw;
+  background: transparent;
+  z-index: 15;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.blurSlideDesktop {
   min-width: 100vw;
   width: 100vw;
   background: transparent;
@@ -226,7 +235,7 @@
   will-change: transform, opacity;
 }
 
-.motionProjectTitleDesktop {
+.projectTitleDesktop {
   font-family: 'EnduroWeb', sans-serif;
   letter-spacing: 0.03em;
   font-size: var(--font-size-desktop);
@@ -235,7 +244,7 @@
 }
 
 @media (min-width: 1280px) {
-  .motionProjectTitleDesktop {
+  .projectTitleDesktop {
     font-size: var(--font-size-large-desktop);
   }
 }

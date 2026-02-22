@@ -109,6 +109,7 @@ export default function MotionCarouselDesktop({
      Derived Values
      -------------------------------------------------------------------------- */
   const lastImage = images[images.length - 1]
+  const regularImages = images.slice(0, -1)
   const isTitleVisible = !isPopupVisible && !isAboutPopupVisible
   const isProgressBarVisible = currentSlide > 0 && !isOnBlurSlide
   const showRightChevron = images.length > 1 && currentSlide < images.length - 1
@@ -118,27 +119,45 @@ export default function MotionCarouselDesktop({
      -------------------------------------------------------------------------- */
   useEffect(() => {
     const carousel = containerRef.current
-    if (!carousel) return
+    if (!carousel)
+      return
 
     const handleScroll = () => {
       const currentCarousel = containerRef.current
-      if (!currentCarousel) return
+      if (!currentCarousel)
+        return
 
       const scrollLeft = currentCarousel.scrollLeft
       const containerWidth = currentCarousel.offsetWidth
       const maxScroll = currentCarousel.scrollWidth - containerWidth
-      const rawProgress = maxScroll > 0 ? scrollLeft / maxScroll : 0
-
-      setScrollProgress(rawProgress)
-
-      // Desktop: slides are 50vw, detect based on half-width increments
       const halfWidth = containerWidth * 0.5
 
+      // Calculate where transparent slide (100vw) is centered
+      // After all regular slides (50vw each), transparent starts at:
+      // (images.length - 1) * halfWidth = position where transparent snaps
+      const transparentSnapPosition = (images.length - 1) * halfWidth
+
+      // Progress: 0% at first slide, 100% at transparent slide
+      // Cap at 1 so progress doesn't exceed 100% on blur slide
+      const rawProgress = transparentSnapPosition > 0
+        ? Math.min(scrollLeft / transparentSnapPosition, 1)
+        : 0
+      setScrollProgress(rawProgress)
+
+      // Slide detection
       if (scrollLeft >= maxScroll - BLUR_SLIDE_TOLERANCE_PX) {
+        // On blur slide
         setCurrentSlide(totalSlides - 1)
         setIsOnBlurSlide(true)
       }
       else {
+        // On regular or transparent slide
+        // Snap positions for 50vw slides: 0, 25vw, 75vw, 125vw, ...
+        // Formula: round(scrollLeft / halfWidth) works because:
+        // - Slide at 0: round(0 / 50vw) = 0
+        // - Slide at 25vw: round(0.5) = 1
+        // - Slide at 75vw: round(1.5) = 2
+        // - Transparent at 200vw: round(4) = 4 = images.length - 1
         const slideIndex = Math.round(scrollLeft / halfWidth)
         const actualSlide = Math.min(slideIndex, images.length - 1)
         setCurrentSlide(actualSlide)
@@ -166,7 +185,8 @@ export default function MotionCarouselDesktop({
 
   const handleNextSlide = () => {
     const carousel = containerRef.current
-    if (!carousel) return
+    if (!carousel)
+      return
 
     const containerWidth = carousel.offsetWidth
     const halfWidth = containerWidth * 0.5
@@ -186,19 +206,23 @@ export default function MotionCarouselDesktop({
   /**
    * LAYER STRUCTURE (from lowest to highest z-index)
    *
-   * z-0   .motionCarouselDesktop (container)
-   *       └─ background: lastImage (shows through transparent blur slide)
+   * z-0   .carouselSectionDesktop (container)
+   *       └─ background: lastImage (shows through transparent slide and blur slide)
+   *       └─ Acts as blur target for backdrop-filter
    *
-   * z-5   .motionCarouselDesktopBackground
-   *       └─ Duplicate of lastImage, acts as blur target for backdrop-filter
+   * z-5   .carouselSectionDesktopBackground
+   *       └─ Reserved for future use
    *
-   * z-10  .motionCarouselDesktopContainer (slides wrapper)
+   * z-10  .slidesWrapperDesktop (slides wrapper)
    *       └─ Contains all scrollable slides
    *
    * z-15  Individual slides (50vw wide, showing 2 at once):
-   *       ├─ .motionCarouselDesktopSlide (visible images, ALL images)
-   *       └─ .motionCarouselDesktopSlideBlur (100vw, transparent)
-   *            └─ backdrop-filter: blur(12px) - blurs z-5 layer behind it
+   *       ├─ .slideDesktop (base slide class)
+   *       ├─ .regularSlideDesktop (visible images, all EXCEPT last)
+   *       ├─ .transparentSlideDesktop (transparent, reveals z-0)
+   *       │    └─ Nested div: lastImage with opacity: 0
+   *       └─ .blurSlideDesktop (100vw, transparent)
+   *            └─ backdrop-filter: blur(12px) - blurs z-0 container background
    *
    * z-20  Progress bar + Bottom ChevronDown (siblings to scroll container)
    *
@@ -208,8 +232,6 @@ export default function MotionCarouselDesktop({
    *
    * DESKTOP vs MOBILE DIFFERENCES:
    * - Slide width: 50vw (shows 2 slides at once) vs 100vw (mobile)
-   * - Images shown: ALL images vs all EXCEPT last (mobile)
-   * - Transparent slide: NONE vs required on mobile
    * - Blur: FIXED 12px vs PROGRESSIVE 0→8px (mobile)
    * - ChevronDown: OUTSIDE blur slide (z-20) vs INSIDE (mobile, z-100)
    * - Keyboard: Arrow keys enabled vs touch-only (mobile)
@@ -221,32 +243,45 @@ export default function MotionCarouselDesktop({
 
       <div
         ref={containerRef}
-        className={styles.motionCarouselDesktop}
+        className={styles.carouselSectionDesktop}
         data-carousel
         style={{ backgroundImage: `url(${lastImage.src})` }}
       >
-        {/* z-5: Background layer - blurred by backdrop-filter */}
-        <div
-          className={styles.motionCarouselDesktopBackground}
-          style={{ backgroundImage: `url(${lastImage.src})` }}
-        />
-
-        {/* z-10: Slides container */}
-        <div className={styles.motionCarouselDesktopContainer}>
-          {/* z-15: Regular image slides (ALL images - desktop shows all) */}
-          {images.map((image, idx) => (
+        {/* z-10: Slides wrapper */}
+        <div className={styles.slidesWrapperDesktop}>
+          {/* z-15: Regular slides (all EXCEPT last) */}
+          {regularImages.map((image, idx) => (
             <div
               key={image.src}
-              className={styles.motionCarouselDesktopSlide}
+              className={styles.slideDesktop}
               style={{ backgroundImage: `url(${image.src})` }}
               role="group"
               aria-label={`Slide ${idx + 1}`}
             />
           ))}
 
-          {/* z-15: Blur slide - transparent with backdrop-filter */}
+          {/* z-15: Transparent slide (reveals z-0) */}
           <div
-            className={`${styles.motionCarouselDesktopSlide} ${styles.motionCarouselDesktopSlideBlur}`}
+            className={`${styles.slideDesktop} ${styles.transparentSlideDesktop}`}
+            role="group"
+            aria-label={`Slide ${images.length}`}
+          >
+            {/* Nested div with lastImage, opacity: 0 */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                backgroundImage: `url(${lastImage.src})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                opacity: 0,
+              }}
+            />
+          </div>
+
+          {/* z-15: Blur slide (+1) - transparent with backdrop-filter */}
+          <div
+            className={`${styles.slideDesktop} ${styles.blurSlideDesktop}`}
             role="group"
             aria-label="Next section"
             onClick={scrollToNextSection}
@@ -275,7 +310,7 @@ export default function MotionCarouselDesktop({
         style={{ transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}
       >
         <h1
-          className={`text-white ${projectTitleClasses} ${styles.motionProjectTitleDesktop}`}
+          className={`text-white ${projectTitleClasses} ${styles.projectTitleDesktop}`}
           style={{
             ...cssVars,
             pointerEvents: 'auto',
