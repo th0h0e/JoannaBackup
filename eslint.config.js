@@ -15,4 +15,9 @@ export default antfu({
     css: true,
     html: true,
   },
+}).append({
+  files: ['src/components/ui/**/*.tsx'],
+  rules: {
+    'react-refresh/only-export-components': 'off',
+  },
 })
