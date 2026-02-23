@@ -10,7 +10,6 @@ import {
   projectTitleContainerClasses,
 } from '../utils/sharedStyles'
 import { createFontCssVars } from '../utils/typography'
-import styles from './Carousel.module.css'
 import ChevronDown from './icons/ChevronDown'
 
 const PROGRESS_BAR_WIDTH_PERCENT = 0.89
@@ -43,10 +42,9 @@ export default function MotionCarousel({
   const [scrollProgress, setScrollProgress] = useState(0)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isOnBlurSlide, setIsOnBlurSlide] = useState(false)
-  const [blurIntensity, setBlurIntensity] = useState(0)
 
   const { calculateBlur } = useCarouselBlurIntensity({
-    slideSelector: `.${styles.slideMobile}`,
+    slideSelector: '.slide-mobile',
   })
 
   const fontSizes = useMemo(
@@ -102,7 +100,6 @@ export default function MotionCarousel({
 
       setCurrentSlide(clampedIndex)
       setIsOnBlurSlide(clampedIndex === totalSlides - 1)
-      setBlurIntensity(calculateBlur(currentCarousel))
     }
 
     carousel.addEventListener('scroll', handleScroll, { passive: true })
@@ -124,18 +121,18 @@ export default function MotionCarousel({
     <>
       <div
         ref={containerRef}
-        className={styles.carouselSectionMobile}
+        className="relative h-full w-full overflow-x-auto overscroll-x-contain snap-x snap-mandatory scroll-smooth scrollbar-hide [will-change:scroll-position] [backface-visibility:hidden]"
         data-carousel
       >
         <div
-          className={styles.carouselSectionMobileBackground}
+          className="absolute inset-0 z-[1] bg-cover bg-center"
           style={{ backgroundImage: `url(${lastImage.src})` }}
         />
-        <div className={styles.slidesWrapperMobile}>
+        <div className="relative flex h-full w-full">
           {regularImages.map((image, idx) => (
             <div
               key={image.src}
-              className={`${styles.slideMobile} ${styles.regularSlideMobile}`}
+              className="slide-mobile relative h-full w-full flex-shrink-0 min-w-full snap-center snap-always bg-cover bg-center bg-black [will-change:transform] [backface-visibility:hidden]"
               style={{ backgroundImage: `url(${image.src})` }}
               role="group"
               aria-label={`Slide ${idx + 1}`}
@@ -143,7 +140,7 @@ export default function MotionCarousel({
           ))}
 
           <div
-            className={`${styles.slideMobile} ${styles.transparentSlideMobile}`}
+            className="slide-mobile relative h-full w-full flex-shrink-0 min-w-full snap-center snap-always bg-transparent bg-cover bg-center z-15 opacity-0"
             role="group"
             aria-label={`Slide ${images.length}`}
           >
@@ -160,11 +157,10 @@ export default function MotionCarousel({
           </div>
 
           <div
-            className={`${styles.slideMobile} ${styles.blurSlideMobile}`}
+            className="slide-mobile relative h-full w-full flex-shrink-0 min-w-full snap-center snap-always bg-transparent z-15 cursor-pointer"
             role="group"
             aria-label="Next section"
             onClick={scrollToNextSection}
-            style={{ cursor: 'pointer' }}
           >
             <div
               style={{
@@ -212,7 +208,7 @@ export default function MotionCarousel({
         style={{ transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}
       >
         <h1
-          className={`text-white ${projectTitleClasses} ${styles.projectTitleMobile}`}
+          className={`text-white font-[EnduroWeb] tracking-[0.03em] text-xl md:text-2xl lg:text-3xl xl:text-4xl ${projectTitleClasses}`}
           style={{
             ...cssVars,
             pointerEvents: 'auto',

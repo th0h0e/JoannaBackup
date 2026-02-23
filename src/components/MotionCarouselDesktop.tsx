@@ -9,7 +9,6 @@ import {
   projectTitleClasses,
   projectTitleContainerClasses,
 } from '../utils/sharedStyles'
-import styles from './Carousel.module.css'
 import ChevronDown from './icons/ChevronDown'
 import ChevronRight from './icons/ChevronRight'
 
@@ -150,15 +149,15 @@ export default function MotionCarouselDesktop({
     <>
       <div
         ref={containerRef}
-        className={styles.carouselSectionDesktop}
+        className="relative h-full w-full bg-cover bg-center bg-fixed bg-no-repeat overflow-x-auto overscroll-x-contain snap-x snap-mandatory scroll-smooth scrollbar-hide [will-change:scroll-position] [backface-visibility:hidden]"
         data-carousel
         style={{ backgroundImage: `url(${lastImage.src})` }}
       >
-        <div className={styles.slidesWrapperDesktop}>
+        <div className="relative z-10 flex h-full w-full">
           {regularImages.map((image, idx) => (
             <div
               key={image.src}
-              className={styles.slideDesktop}
+              className="relative h-full w-[50vw] min-w-[50vw] flex-shrink-0 snap-center snap-always bg-cover bg-center bg-black [will-change:transform] [backface-visibility:hidden]"
               style={{ backgroundImage: `url(${image.src})` }}
               role="group"
               aria-label={`Slide ${idx + 1}`}
@@ -166,7 +165,7 @@ export default function MotionCarouselDesktop({
           ))}
 
           <div
-            className={styles.transparentSlideDesktop}
+            className="relative h-full w-screen min-w-screen! flex-shrink-0 snap-center snap-always bg-transparent [will-change:transform]"
             role="group"
             aria-label={`Slide ${images.length}`}
           >
@@ -183,13 +182,11 @@ export default function MotionCarouselDesktop({
           </div>
 
           <div
-            className={styles.blurSlideDesktop}
+            className="relative h-full w-screen min-w-screen flex-shrink-0 snap-center snap-always bg-transparent cursor-pointer"
             role="group"
             aria-label="Next section"
             onClick={scrollToNextSection}
-            style={{ cursor: 'pointer' }}
           >
-            {/* Middle wrapper */}
             <div
               style={{
                 position: 'absolute',
@@ -197,7 +194,6 @@ export default function MotionCarouselDesktop({
                 pointerEvents: 'none',
               }}
             >
-              {/* Inner blur effect layer with motion */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: isOnBlurSlide ? 1 : 0 }}
@@ -220,7 +216,7 @@ export default function MotionCarouselDesktop({
         style={{ transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}
       >
         <h1
-          className={`text-white ${projectTitleClasses} ${styles.projectTitleDesktop}`}
+          className={`text-white font-[EnduroWeb] tracking-[0.03em] text-3xl xl:text-4xl z-20 ${projectTitleClasses}`}
           style={{
             ...cssVars,
             pointerEvents: 'auto',
