@@ -1,5 +1,6 @@
 import type { Settings } from '../config/pocketbase'
 import type { ProjectImage } from '../types/project'
+import { motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getResponsiveFontSizes } from '../config/pocketbase'
 import { useCarouselBlurIntensity } from '../hooks/useCarouselBlurIntensity'
@@ -165,35 +166,42 @@ export default function MotionCarousel({
             onClick={scrollToNextSection}
             style={{ cursor: 'pointer' }}
           >
-            <div className={styles.blurOverlay}>
-              <div
-                className={styles.blackBlurDiv}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                pointerEvents: 'none',
+              }}
+            >
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: isOnBlurSlide ? 1 : 0 }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
                 style={{
-                  background: `rgba(0, 0, 0, ${0.25 * blurIntensity ** 2})`,
-                  backdropFilter: `blur(${8 * blurIntensity ** 2}px)`,
-                  WebkitBackdropFilter: `blur(${8 * blurIntensity ** 2}px)`,
-                  transition: 'none',
+                  position: 'absolute',
+                  inset: 0,
+                  background: 'rgba(0, 0, 0, 0.15)',
+                  backdropFilter: 'blur(12px)',
+                  WebkitBackdropFilter: 'blur(12px)',
                 }}
-              >
-                <div
-                  className="
-                    pointer-events-auto absolute bottom-5 left-1/2 z-100
-                    cursor-pointer transition-opacity duration-300 hover:opacity-70
-                  "
-                  style={{
-                    opacity: blurIntensity ** 2,
-                    transform: 'translateX(-50%) translateZ(0)',
-                    willChange: 'transform, opacity',
-                  }}
-                >
-                  <ChevronDown
-                    width={chevronSize}
-                    height={chevronSize}
-                    color="white"
-                    className="drop-shadow-2xl"
-                  />
-                </div>
-              </div>
+              />
+            </div>
+            <div
+              className="pointer-events-auto absolute bottom-5 left-1/2 z-100 cursor-pointer transition-opacity duration-300 hover:opacity-70"
+              style={{
+                opacity: isOnBlurSlide ? 1 : 0,
+                transform: 'translateX(-50%) translateZ(0)',
+                willChange: 'transform, opacity',
+                visibility: isOnBlurSlide ? 'visible' : 'hidden',
+              }}
+              onClick={scrollToNextSection}
+            >
+              <ChevronDown
+                width={chevronSize}
+                height={chevronSize}
+                color="white"
+                className="drop-shadow-2xl"
+              />
             </div>
           </div>
         </div>
