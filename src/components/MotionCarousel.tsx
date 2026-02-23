@@ -1,14 +1,3 @@
-/**
- * @fileoverview Mobile carousel component with native CSS scroll-snap.
- *
- * This component provides a touch-optimized horizontal image carousel for
- * mobile devices and tablets (<1024px). It uses native browser scroll-snap
- * for smooth, predictable slide transitions without JavaScript animations.
- *
- * @module components/MotionCarousel
- * @see {@link MotionCarouselDesktop} - Desktop variant with keyboard navigation
- */
-
 import type { Settings } from '../config/pocketbase'
 import type { ProjectImage } from '../types/project'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -23,16 +12,8 @@ import { createFontCssVars } from '../utils/typography'
 import styles from './Carousel.module.css'
 import ChevronDown from './icons/ChevronDown'
 
-/* ==========================================================================
-   Constants
-   ========================================================================== */
-
 const PROGRESS_BAR_WIDTH_PERCENT = 0.89
 const PROGRESS_BAR_LEFT_PERCENT = 0.055
-
-/* ==========================================================================
-   Types
-   ========================================================================== */
 
 interface MotionCarouselProps {
   images: ProjectImage[]
@@ -46,10 +27,6 @@ interface MotionCarouselProps {
   screenWidth?: number
 }
 
-/* ==========================================================================
-   Component
-   ========================================================================== */
-
 export default function MotionCarousel({
   images,
   projectTitle,
@@ -61,18 +38,12 @@ export default function MotionCarousel({
   isAboutPopupVisible = false,
   screenWidth,
 }: MotionCarouselProps) {
-  /* --------------------------------------------------------------------------
-     Refs & State
-     -------------------------------------------------------------------------- */
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollProgress, setScrollProgress] = useState(0)
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isOnBlurSlide, setIsOnBlurSlide] = useState(false)
   const [blurIntensity, setBlurIntensity] = useState(0)
 
-  /* --------------------------------------------------------------------------
-     Hooks
-     -------------------------------------------------------------------------- */
   const { calculateBlur } = useCarouselBlurIntensity({
     slideSelector: `.${styles.slideMobile}`,
   })
@@ -101,18 +72,12 @@ export default function MotionCarousel({
     [screenWidth],
   )
 
-  /* --------------------------------------------------------------------------
-     Derived Values
-     -------------------------------------------------------------------------- */
   const lastImage = images[images.length - 1]
   const regularImages = images.slice(0, -1)
   const isTitleVisible = !isPopupVisible && !isAboutPopupVisible
   const isProgressBarVisible = currentSlide > 0 && currentSlide <= images.length
   const chevronSize = typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24
 
-  /* --------------------------------------------------------------------------
-     Scroll Effect
-     -------------------------------------------------------------------------- */
   useEffect(() => {
     const carousel = containerRef.current
     if (!carousel)
@@ -145,9 +110,6 @@ export default function MotionCarousel({
     return () => carousel.removeEventListener('scroll', handleScroll)
   }, [images.length, totalSlides, calculateBlur])
 
-  /* --------------------------------------------------------------------------
-     Event Handlers
-     -------------------------------------------------------------------------- */
   const handleTitleClick = () => {
     if (isOnBlurSlide) {
       scrollToNextSection()
@@ -157,61 +119,18 @@ export default function MotionCarousel({
     }
   }
 
-  /* --------------------------------------------------------------------------
-     Render
-     -------------------------------------------------------------------------- */
-
-  /**
-   * LAYER STRUCTURE (from lowest to highest z-index)
-   *
-   * z-0   .carouselSectionMobile (container)
-   *       └─ Scroll container with overflow handling
-   *
-   * z-5   .carouselSectionMobileBackground
-   *       └─ background: lastImage (shows through transparent slide and blur slide)
-   *       └─ Acts as blur target for backdrop-filter
-   *
-   * z-10  .slidesWrapperMobile (slides wrapper)
-   *       └─ Contains all scrollable slides
-   *
-   * z-15  Individual slides:
-   *       ├─ .regularSlideMobile (visible images, all EXCEPT last)
-   *       ├─ .transparentSlideMobile (transparent, reveals z-0)
-   *       │    └─ Nested div: lastImage with opacity: 0
-   *       └─ .blurSlideMobile (transparent, contains blur overlay)
-   *            └─ .blurOverlay > .blackBlurDiv
-   *                 └─ backdrop-filter: blur() - blurs z-0 container background
-   *
-   * z-20  Progress bars (siblings to scroll container)
-   *
-   * z-100 ChevronDown (inside blur slide, appears on blur slide)
-   *
-   * z-200 Project title / "NEXT PROJECT" (sibling to scroll container)
-   *
-   * BLUR SLIDE MECHANISM:
-   * The blur slide has a transparent background. When scrolled into view,
-   * the .blackBlurDiv applies backdrop-filter: blur() which blurs content
-   * BEHIND it (the z-0 container background). Mobile uses PROGRESSIVE blur
-   * (0→8px) controlled by blurIntensity state.
-   */
-
   return (
     <>
-      {/* ========== SCROLL CONTAINER (z-0 to z-15) ========== */}
-
       <div
         ref={containerRef}
         className={styles.carouselSectionMobile}
         data-carousel
       >
-        {/* z-5: Background layer - blur target */}
         <div
           className={styles.carouselSectionMobileBackground}
           style={{ backgroundImage: `url(${lastImage.src})` }}
         />
-        {/* z-10: Slides wrapper */}
         <div className={styles.slidesWrapperMobile}>
-          {/* z-15: Regular slides (all EXCEPT last) */}
           {regularImages.map((image, idx) => (
             <div
               key={image.src}
@@ -222,13 +141,11 @@ export default function MotionCarousel({
             />
           ))}
 
-          {/* z-15: Transparent slide (reveals z-0) */}
           <div
             className={`${styles.slideMobile} ${styles.transparentSlideMobile}`}
             role="group"
             aria-label={`Slide ${images.length}`}
           >
-            {/* Nested div with lastImage, opacity: 0 */}
             <div
               style={{
                 position: 'absolute',
@@ -241,7 +158,6 @@ export default function MotionCarousel({
             />
           </div>
 
-          {/* z-15: Blur slide - transparent with backdrop-filter */}
           <div
             className={`${styles.slideMobile} ${styles.blurSlideMobile}`}
             role="group"
@@ -259,7 +175,6 @@ export default function MotionCarousel({
                   transition: 'none',
                 }}
               >
-                {/* z-100: ChevronDown inside blur slide */}
                 <div
                   className="
                     pointer-events-auto absolute bottom-5 left-1/2 z-100
@@ -284,9 +199,6 @@ export default function MotionCarousel({
         </div>
       </div>
 
-      {/* ========== OVERLAYS (z-20 to z-200) ========== */}
-
-      {/* z-200: Project Title */}
       <div
         className={`absolute top-1/2 left-1/2 z-200 w-full text-center ${projectTitleContainerClasses}`}
         style={{ transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}
@@ -307,7 +219,6 @@ export default function MotionCarousel({
         </h1>
       </div>
 
-      {/* z-20: Bottom Progress Bar */}
       {images.length > 1 && (
         <ProgressBar
           position="bottom"
@@ -318,7 +229,6 @@ export default function MotionCarousel({
         />
       )}
 
-      {/* z-20: Top Progress Bar */}
       {showTopProgressBar && images.length > 1 && (
         <ProgressBar
           position="top"
@@ -331,10 +241,6 @@ export default function MotionCarousel({
     </>
   )
 }
-
-/* ==========================================================================
-   Sub-components
-   ========================================================================== */
 
 interface ProgressBarProps {
   position: 'top' | 'bottom'
