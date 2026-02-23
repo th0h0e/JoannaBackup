@@ -1,6 +1,5 @@
 import type { Settings } from '../config/pocketbase'
 import type { ProjectImage } from '../types/project'
-import { motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getResponsiveFontSizes } from '../config/pocketbase'
 import { useCarouselBlurIntensity } from '../hooks/useCarouselBlurIntensity'
@@ -10,6 +9,7 @@ import {
   projectTitleContainerClasses,
 } from '../utils/sharedStyles'
 import { createFontCssVars } from '../utils/typography'
+import BlurOverlay from './BlurOverlay'
 import ChevronDown from './icons/ChevronDown'
 
 const PROGRESS_BAR_WIDTH_PERCENT = 0.89
@@ -162,26 +162,7 @@ export default function MotionCarousel({
             aria-label="Next section"
             onClick={scrollToNextSection}
           >
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                pointerEvents: 'none',
-              }}
-            >
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isOnBlurSlide ? 1 : 0 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'rgba(0, 0, 0, 0.15)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                }}
-              />
-            </div>
+            <BlurOverlay visible={isOnBlurSlide} />
             <div
               className="pointer-events-auto absolute bottom-5 left-1/2 z-100 cursor-pointer transition-opacity duration-300 hover:opacity-70"
               style={{

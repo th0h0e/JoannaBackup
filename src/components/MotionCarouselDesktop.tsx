@@ -1,6 +1,5 @@
 import type { Settings } from '../config/pocketbase'
 import type { ProjectImage } from '../types/project'
-import { motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getResponsiveFontSizes } from '../config/pocketbase'
 import { useCarouselKeyboardNavigation } from '../hooks/useCarouselKeyboardNavigation'
@@ -9,6 +8,7 @@ import {
   projectTitleClasses,
   projectTitleContainerClasses,
 } from '../utils/sharedStyles'
+import BlurOverlay from './BlurOverlay'
 import ChevronDown from './icons/ChevronDown'
 import ChevronRight from './icons/ChevronRight'
 
@@ -187,26 +187,7 @@ export default function MotionCarouselDesktop({
             aria-label="Next section"
             onClick={scrollToNextSection}
           >
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                pointerEvents: 'none',
-              }}
-            >
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: isOnBlurSlide ? 1 : 0 }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-                style={{
-                  position: 'absolute',
-                  inset: 0,
-                  background: 'rgba(0, 0, 0, 0.15)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                }}
-              />
-            </div>
+            <BlurOverlay visible={isOnBlurSlide} />
           </div>
         </div>
       </div>
