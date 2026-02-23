@@ -206,23 +206,14 @@ export default function MotionCarouselDesktop({
   /**
    * LAYER STRUCTURE (from lowest to highest z-index)
    *
-   * z-0   .carouselSectionDesktop (container)
+   * z-1   .carouselSectionDesktopBackground
    *       └─ background: lastImage (shows through transparent slide and blur slide)
    *       └─ Acts as blur target for backdrop-filter
    *
-   * z-5   .carouselSectionDesktopBackground
-   *       └─ Reserved for future use
-   *
-   * z-10  .slidesWrapperDesktop (slides wrapper)
-   *       └─ Contains all scrollable slides
-   *
-   * z-15  Individual slides (50vw wide, showing 2 at once):
-   *       ├─ .slideDesktop (base slide class)
-   *       ├─ .regularSlideDesktop (visible images, all EXCEPT last)
-   *       ├─ .transparentSlideDesktop (transparent, reveals z-0)
-   *       │    └─ Nested div: lastImage with opacity: 0
-   *       └─ .blurSlideDesktop (100vw, transparent)
-   *            └─ backdrop-filter: blur(12px) - blurs z-0 container background
+   *       .slidesWrapperDesktop (slides wrapper - same stacking context)
+   *       ├─ .slideDesktop (50vw, visible images)
+   *       ├─ .transparentSlideDesktop (100vw, transparent, reveals background)
+   *       └─ .blurSlideDesktop (100vw, transparent + backdrop-filter)
    *
    * z-20  Progress bar + Bottom ChevronDown (siblings to scroll container)
    *
@@ -232,7 +223,7 @@ export default function MotionCarouselDesktop({
    *
    * DESKTOP vs MOBILE DIFFERENCES:
    * - Slide width: 50vw (shows 2 slides at once) vs 100vw (mobile)
-   * - Blur: FIXED 12px vs PROGRESSIVE 0→8px (mobile)
+   * - Blur: FIXED 40px vs PROGRESSIVE 0→8px (mobile)
    * - ChevronDown: OUTSIDE blur slide (z-20) vs INSIDE (mobile, z-100)
    * - Keyboard: Arrow keys enabled vs touch-only (mobile)
    */
@@ -247,9 +238,8 @@ export default function MotionCarouselDesktop({
         data-carousel
         style={{ backgroundImage: `url(${lastImage.src})` }}
       >
-        {/* z-10: Slides wrapper */}
         <div className={styles.slidesWrapperDesktop}>
-          {/* z-15: Regular slides (all EXCEPT last) */}
+          {/* Regular slides (all EXCEPT last) */}
           {regularImages.map((image, idx) => (
             <div
               key={image.src}
@@ -260,13 +250,11 @@ export default function MotionCarouselDesktop({
             />
           ))}
 
-          {/* z-15: Transparent slide (reveals z-0) */}
           <div
-            className={`${styles.slideDesktop} ${styles.transparentSlideDesktop}`}
+            className={styles.transparentSlideDesktop}
             role="group"
             aria-label={`Slide ${images.length}`}
           >
-            {/* Nested div with lastImage, opacity: 0 */}
             <div
               style={{
                 position: 'absolute',
@@ -274,28 +262,25 @@ export default function MotionCarouselDesktop({
                 backgroundImage: `url(${lastImage.src})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                opacity: 0,
+                opacity: 0.0001,
               }}
             />
           </div>
 
-          {/* z-15: Blur slide (+1) - transparent with backdrop-filter */}
           <div
-            className={`${styles.slideDesktop} ${styles.blurSlideDesktop}`}
+            className={styles.blurSlideDesktop}
             role="group"
             aria-label="Next section"
             onClick={scrollToNextSection}
             style={{ cursor: 'pointer' }}
           >
-            {/* Backdrop blur overlay - fixed 12px blur */}
             <div
               style={{
                 position: 'absolute',
                 inset: 0,
-                background: 'rgba(0, 0, 0, 0.3)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
-                zIndex: 1,
+                background: 'rgba(0, 0, 0, 0.0015)',
+                backdropFilter: 'blur(40px)',
+                WebkitBackdropFilter: 'blur(40px)',
               }}
             />
           </div>

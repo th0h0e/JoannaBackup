@@ -165,11 +165,11 @@ export default function MotionCarousel({
    * LAYER STRUCTURE (from lowest to highest z-index)
    *
    * z-0   .carouselSectionMobile (container)
-   *       └─ background: lastImage (shows through transparent slide and blur slide)
-   *       └─ Acts as blur target for backdrop-filter
+   *       └─ Scroll container with overflow handling
    *
    * z-5   .carouselSectionMobileBackground
-   *       └─ Reserved for future use
+   *       └─ background: lastImage (shows through transparent slide and blur slide)
+   *       └─ Acts as blur target for backdrop-filter
    *
    * z-10  .slidesWrapperMobile (slides wrapper)
    *       └─ Contains all scrollable slides
@@ -203,8 +203,12 @@ export default function MotionCarousel({
         ref={containerRef}
         className={styles.carouselSectionMobile}
         data-carousel
-        style={{ backgroundImage: `url(${lastImage.src})` }}
       >
+        {/* z-5: Background layer - blur target */}
+        <div
+          className={styles.carouselSectionMobileBackground}
+          style={{ backgroundImage: `url(${lastImage.src})` }}
+        />
         {/* z-10: Slides wrapper */}
         <div className={styles.slidesWrapperMobile}>
           {/* z-15: Regular slides (all EXCEPT last) */}
