@@ -11,6 +11,7 @@ import {
 import BlurOverlay from './BlurOverlay'
 import ChevronDown from './icons/ChevronDown'
 import ChevronRight from './icons/ChevronRight'
+import { Progress } from './ui/progress'
 
 const PROGRESS_BAR_WIDTH_PERCENT = 0.8
 const PROGRESS_BAR_LEFT_PERCENT = 0.1
@@ -232,12 +233,11 @@ export default function MotionCarouselDesktop({
               width: '100%',
             }}
           >
-            <div className="h-0.5 overflow-hidden rounded-full bg-gray-500/50 backdrop-blur-sm">
-              <div
-                className="h-full bg-gray-50"
-                style={{ width: `${scrollProgress * 100}%` }}
-              />
-            </div>
+            <Progress
+              value={scrollProgress * 100}
+              className="h-0.5 rounded-full bg-gray-500/50 backdrop-blur-sm"
+              indicatorClassName="bg-gray-50"
+            />
           </div>
         </div>
       )}

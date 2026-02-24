@@ -11,6 +11,7 @@ import {
 import { createFontCssVars } from '../utils/typography'
 import BlurOverlay from './BlurOverlay'
 import ChevronDown from './icons/ChevronDown'
+import { Progress } from './ui/progress'
 
 const PROGRESS_BAR_WIDTH_PERCENT = 0.89
 const PROGRESS_BAR_LEFT_PERCENT = 0.055
@@ -250,12 +251,11 @@ function ProgressBar({ position, width, left, progress, visible }: ProgressBarPr
         pointerEvents: visible ? 'auto' : 'none',
       }}
     >
-      <div className="h-0.5 overflow-hidden rounded-full bg-gray-500/50 backdrop-blur-sm">
-        <div
-          className="h-full bg-gray-50"
-          style={{ width: `${progress * 100}%` }}
-        />
-      </div>
+      <Progress
+        value={progress * 100}
+        className="h-0.5 rounded-full bg-gray-500/50 backdrop-blur-sm"
+        indicatorClassName="bg-gray-50"
+      />
     </div>
   )
 }
