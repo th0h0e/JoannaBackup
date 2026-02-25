@@ -1,3 +1,51 @@
+/**
+ * @file AboutPopup.tsx
+ * @description Modal dialog component for displaying "About" information.
+ *
+ * This component renders a centered popup modal with information about the
+ * portfolio owner, including their story, expertise, and client list. It uses
+ * a fixed positioning strategy with a backdrop overlay and scale animation
+ * for smooth entry/exit transitions.
+ *
+ * @architecture
+ * The component follows a modal pattern with:
+ *
+ * 1. **Backdrop Layer** - Semi-transparent overlay with blur effect (z-index: 40)
+ * 2. **Content Layer** - Centered card with SVG background (z-index: 50)
+ *
+ * Content Structure:
+ * - Logo assets at top (Asset 7) and bottom (Asset 11)
+ * - Portfolio title (uppercase, centered)
+ * - About description paragraph
+ * - Expertise section (title + description)
+ * - Selected Clients section (title + comma-separated client list)
+ * - Contact button (mailto link)
+ *
+ * Animation Behavior:
+ * - Entry: Scale from 0.85 to 1.0 with opacity fade-in (0.3s easeOut)
+ * - Exit: Scale from 1.0 to 0.85 with opacity fade-out (0.3s)
+ * - Backdrop: Opacity transition from 0 to 1 (0.3s)
+ *
+ * Typography Settings:
+ * - Font Family: EnduroWeb (via FONT_FAMILY constant)
+ * - Letter Spacing: 0.03em (via LETTER_SPACING constant)
+ * - Font Size: 12px across all text elements
+ * - Section Margins: 18px between content sections
+ *
+ * Layout Dimensions:
+ * - Width: 280px (fixed)
+ * - Position: Fixed, centered (top: 50%, left: 50%, translate: -50%, -50%)
+ * - Drop Shadow: 0 8px 20px rgba(0, 0, 0, 0.15)
+ *
+ * @dependencies
+ * - motion/react: Animation library for AnimatePresence and motion components
+ * - About type: PocketBase data type for about content
+ *
+ * @see {@link ProjectPopup} Similar component for project details
+ * @author Joanna van der Wilt
+ * @version 2.0.0
+ */
+
 import type { About } from '../config/pocketbase'
 import { AnimatePresence, motion } from 'motion/react'
 import Asset7Logo from '../assets/logo svg/Asset 7.svg'
@@ -5,12 +53,31 @@ import Asset11Logo from '../assets/logo svg/Asset 11.svg'
 import ProjectCardSVG from '../assets/Project Card/JVDW WEB LIGHT BOX copy.svg'
 import { FONT_FAMILY, LETTER_SPACING } from '../utils/typography'
 
+/**
+ * Props for the AboutPopup component.
+ */
 interface AboutPopupProps {
+  /** Controls the visibility of the popup modal */
   isVisible: boolean
+  /** Callback function invoked when the popup should close (backdrop click) */
   onClose: () => void
+  /** About data from PocketBase CMS containing portfolio info, expertise, and clients */
   aboutData: About | null
 }
 
+/**
+ * Modal dialog component for displaying "About" information.
+ *
+ * Renders a centered popup with a decorative SVG card background containing
+ * the portfolio owner's story, expertise, and client list. The modal features
+ * smooth scale animations for entry/exit and a blurred backdrop overlay.
+ *
+ * @param {AboutPopupProps} props - Component props
+ * @param {boolean} props.isVisible - Controls the visibility of the popup modal
+ * @param {() => void} props.onClose - Callback function invoked when the popup should close
+ * @param {About | null} props.aboutData - About data from PocketBase CMS
+ * @returns {JSX.Element} The rendered about popup modal with AnimatePresence wrapper
+ */
 export default function AboutPopup({
   isVisible,
   onClose,
@@ -42,13 +109,13 @@ export default function AboutPopup({
             style={{
               top: '50%',
               left: '50%',
+              x: '-50%',
+              y: '-50%',
               width: '280px',
-              position: 'fixed',
-              transform: 'translate(-50%, -50%) scale(var(--scale, 1))',
             }}
-            initial={{ '--scale': 0.8, 'opacity': 0 } as any}
-            animate={{ '--scale': 1, 'opacity': 1 } as any}
-            exit={{ '--scale': 0.8, 'opacity': 0 } as any}
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.85, opacity: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
           >
             <div className="relative">

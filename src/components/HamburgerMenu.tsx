@@ -1,3 +1,32 @@
+/**
+ * @file HamburgerMenu.tsx
+ * @description Full-screen overlay navigation menu for the portfolio website.
+ *
+ * This component provides a hamburger-style menu button that, when activated,
+ * reveals a full-screen overlay containing the project navigation list. The menu
+ * uses React portals to render outside the main container hierarchy, ensuring
+ * proper z-index stacking and avoiding CSS containment issues.
+ *
+ * @architecture
+ * The component implements:
+ *
+ * 1. **Portal Rendering** - Uses `createPortal` to render the overlay directly
+ *    to `document.body`, bypassing any parent container constraints
+ * 2. **Mix-Blend-Mode** - The hamburger button uses `mix-blend-mode: exclusion`
+ *    when closed, making it visible on all backgrounds; switches to normal mode
+ *    when open with a black background
+ * 3. **Animation System** - Uses Motion (Framer Motion) for smooth open/close
+ *    transitions with backdrop, content, and button animations
+ *
+ * Navigation Pattern:
+ * - Uses anchor link navigation (`#project-{index}`) for section jumps
+ * - Resets carousel positions after navigation via `resetAllCarousels()`
+ * - Includes 300ms delay for smooth close animation before navigation
+ *
+ * @see {@link ProjectNavigation} - The navigation list component rendered inside
+ * @see {@link resetAllCarousels} - Utility to reset carousel scroll positions
+ */
+
 import type { Settings } from '../config/pocketbase'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
@@ -12,6 +41,21 @@ interface HamburgerMenuProps {
   isMobile?: boolean
 }
 
+/**
+ * Full-screen overlay navigation menu component.
+ *
+ * Renders a fixed-position hamburger button that transforms into an X when clicked,
+ * revealing a full-screen white overlay with the project navigation list. The menu
+ * uses portal rendering to escape container constraints and mix-blend-mode for
+ * visibility on varying backgrounds.
+ *
+ * @param {HamburgerMenuProps} props - Component props
+ * @param {string[]} props.projectTitles - Array of project titles to display in the navigation list
+ * @param {boolean} [props.isPopupVisible=false] - Whether a popup is currently visible; hides the hamburger button when true
+ * @param {Settings | null} [props.settingsData=null] - Settings data from PocketBase for typography configuration
+ * @param {boolean} [props.isMobile=false] - Whether the viewport is mobile; affects button sizing
+ * @returns {JSX.Element} The hamburger button and portal-rendered overlay menu
+ */
 export default function HamburgerMenu({
   projectTitles,
   isPopupVisible = false,
@@ -53,6 +97,7 @@ export default function HamburgerMenu({
               height: isOpen ? '18px' : isMobile ? '17.32px' : '18px',
             }}
             transition={{ duration: 0.3 }}
+            whileTap={{ scale: 0.8 }}
           />
         </button>
       )}

@@ -1,5 +1,54 @@
+/**
+ * @file MotionCarouselDesktop.tsx
+ * @description Desktop-optimized horizontal image carousel with native CSS scroll-snap.
+ *
+ * This component provides a desktop-optimized carousel experience for larger screens
+ * (screens >= 1024px). It implements horizontal scroll-snap navigation with half-viewport
+ * slides, progress indicators, keyboard navigation, and a blur transition effect for
+ * navigating to the next project section.
+ *
+ * @architecture
+ * The carousel follows a native scroll-based architecture:
+ *
+ * 1. **Scroll Container** - Native horizontal scroll with CSS scroll-snap-type: x mandatory
+ * 2. **Slide Layout** - Each slide occupies 50% viewport width (half-bleed images)
+ * 3. **Progress Tracking** - Scroll event listeners update progress bar and current slide
+ * 4. **Blur Transition** - Final slide displays blurred background with "NEXT PROJECT" prompt
+ *
+ * Key Differences from MotionCarousel (mobile):
+ * - Half-width slides (50vw) for side-by-side viewing vs full-width (100vw) on mobile
+ * - Single progress bar at bottom only
+ * - Keyboard navigation support via useCarouselKeyboardNavigation hook
+ * - Right chevron button for explicit next-slide navigation
+ * - Fixed background image behind all slides for visual continuity
+ *
+ * @features
+ * - Native CSS scroll-snap for smooth, browser-optimized scrolling
+ * - Half-viewport slide width for desktop viewing experience
+ * - Progress bar showing current position (0% to 100%)
+ * - Blur slide transition effect for section navigation
+ * - Title click handler: shows popup on image slides, navigates on blur slide
+ * - Keyboard navigation (arrow keys) for accessibility
+ * - Right chevron button for explicit slide advancement
+ * - Responsive font sizing via settings configuration
+ * - Animated title with AnimatePresence for fade transitions
+ *
+ * @dependencies
+ * - motion/react: AnimatePresence and motion for animations
+ * - useCarouselKeyboardNavigation: Hook for keyboard-based carousel navigation
+ *
+ * @see {@link MotionCarousel} Mobile variant with touch-optimized interactions
+ * @author Joanna van der Wilt
+ * @version 2.0.0
+ */
+
+// ============================================================================
+// IMPORTS
+// ============================================================================
+
 import type { Settings } from '../config/pocketbase'
 import type { ProjectImage } from '../types/project'
+import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { getResponsiveFontSizes } from '../config/pocketbase'
 import { useCarouselKeyboardNavigation } from '../hooks/useCarouselKeyboardNavigation'
@@ -13,21 +62,64 @@ import ChevronDown from './icons/ChevronDown'
 import ChevronRight from './icons/ChevronRight'
 import { Progress } from './ui/progress'
 
+// ============================================================================
+// CONSTANTS
+// ============================================================================
+
 const PROGRESS_BAR_WIDTH_PERCENT = 0.8
 const PROGRESS_BAR_LEFT_PERCENT = 0.1
 const BLUR_SLIDE_TOLERANCE_PX = 5
 
+// ============================================================================
+// TYPES
+// ============================================================================
+
+/**
+ * Props for the MotionCarouselDesktop component.
+ */
 interface MotionCarouselDesktopProps {
+  /** Array of project images to display in the carousel */
   images: ProjectImage[]
+  /** Title of the current project, displayed centered on the carousel */
   projectTitle: string
+  /** Application settings containing font size configurations */
   settingsData?: Settings | null
+  /** Total number of slides including blur transition slides */
   totalSlides: number
+  /** Callback fired when title is clicked (opens project popup) */
   onShowPopup?: (title: string) => void
+  /** Whether the project popup is currently visible */
   isPopupVisible?: boolean
+  /** Whether the about popup is currently visible */
   isAboutPopupVisible?: boolean
+  /** Current screen width in pixels, used for progress bar positioning */
   screenWidth?: number
 }
 
+// ============================================================================
+// COMPONENT DEFINITION
+// ============================================================================
+
+/**
+ * Desktop-optimized horizontal image carousel with native CSS scroll-snap.
+ *
+ * Renders a horizontal carousel where each image occupies 50% of the viewport width,
+ * allowing users to see partial adjacent images. The carousel uses native browser
+ * scroll-snap for smooth navigation between slides, with progress indicators,
+ * keyboard navigation support, and a blur transition effect on the final slide
+ * that allows users to navigate to the next project section.
+ *
+ * @param {MotionCarouselDesktopProps} props - Component props
+ * @param {ProjectImage[]} props.images - Array of project images to display
+ * @param {string} props.projectTitle - Title of the current project
+ * @param {Settings | null} [props.settingsData] - Application settings for font sizing
+ * @param {number} props.totalSlides - Total number of slides including blur slides
+ * @param {Function} [props.onShowPopup] - Callback when title is clicked to show popup
+ * @param {boolean} [props.isPopupVisible=false] - Whether project popup is visible
+ * @param {boolean} [props.isAboutPopupVisible=false] - Whether about popup is visible
+ * @param {number} [props.screenWidth] - Current screen width for progress bar positioning
+ * @returns {JSX.Element} The rendered carousel with progress bar, title overlay, and navigation
+ */
 export default function MotionCarouselDesktop({
   images,
   projectTitle,
@@ -197,76 +289,72 @@ export default function MotionCarouselDesktop({
         className={`absolute top-1/2 left-1/2 z-200 w-full text-center ${projectTitleContainerClasses}`}
         style={{ transform: 'translate(-50%, -50%)', pointerEvents: 'none' }}
       >
-        <h1
-          className={`text-white font-[EnduroWeb] tracking-[0.03em] text-3xl xl:text-4xl z-20 ${projectTitleClasses}`}
-          style={{
-            ...cssVars,
-            pointerEvents: 'auto',
-            cursor: 'pointer',
-            opacity: isTitleVisible ? 1 : 0,
-            visibility: isTitleVisible ? 'visible' : 'hidden',
-            transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
-          }}
-          onClick={handleTitleClick}
-        >
-          {isOnBlurSlide ? 'NEXT PROJECT' : projectTitle}
-        </h1>
+        <AnimatePresence>
+          {isTitleVisible && (
+            <motion.h1
+              key="carousel-title-desktop"
+              className={`text-white font-[EnduroWeb] tracking-[0.03em] text-3xl xl:text-4xl z-20 ${projectTitleClasses}`}
+              style={{
+                ...cssVars,
+                pointerEvents: 'auto',
+                cursor: 'pointer',
+              }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              onClick={handleTitleClick}
+            >
+              {isOnBlurSlide ? 'NEXT PROJECT' : projectTitle}
+            </motion.h1>
+          )}
+        </AnimatePresence>
       </div>
 
       {images.length > 1 && (
-        <div
+        <motion.div
           className="absolute bottom-7 z-20"
+          animate={{
+            opacity: isProgressBarVisible ? 1 : 0,
+            y: isProgressBarVisible ? 0 : 10,
+          }}
+          transition={{ duration: 0.15, ease: 'easeInOut' }}
           style={{
             width: progressBarWidth,
             left: progressBarLeft,
-            willChange: 'transform',
+            pointerEvents: isProgressBarVisible ? 'auto' : 'none',
           }}
         >
-          <div
-            style={{
-              opacity: isProgressBarVisible ? 1 : 0,
-              transform: isProgressBarVisible
-                ? 'translateY(0) translateZ(0)'
-                : 'translateY(10px) translateZ(0)',
-              transition: 'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
-              pointerEvents: isProgressBarVisible ? 'auto' : 'none',
-              width: '100%',
-            }}
-          >
-            <Progress
-              value={scrollProgress * 100}
-              className="h-0.5 rounded-full bg-gray-500/50 backdrop-blur-sm"
-              indicatorClassName="bg-gray-50"
-            />
-          </div>
-        </div>
+          <Progress
+            value={scrollProgress * 100}
+            className="h-0.5 rounded-full bg-gray-500/50 backdrop-blur-sm"
+            indicatorClassName="bg-gray-50"
+          />
+        </motion.div>
       )}
 
       {images.length > 1 && (
-        <div
-          className="absolute bottom-10 left-1/2 z-20 -translate-x-1/2"
-          style={{ transform: 'translate(-50%, 0) translateZ(0)', willChange: 'transform' }}
-        >
-          <div
-            style={{
-              opacity: isOnBlurSlide ? 1 : 0,
-              transform: isOnBlurSlide
-                ? 'translateY(0) translateZ(0)'
-                : 'translateY(-10px) translateZ(0)',
-              transition: 'opacity 0.15s ease-in-out, transform 0.15s ease-in-out',
-              pointerEvents: isOnBlurSlide ? 'auto' : 'none',
-              cursor: 'pointer',
-            }}
-            onClick={scrollToNextSection}
-          >
-            <ChevronDown
-              width={28}
-              height={28}
-              color="white"
-              className="drop-shadow-2xl transition-opacity duration-300 hover:opacity-70"
-            />
-          </div>
-        </div>
+        <AnimatePresence>
+          {isOnBlurSlide && (
+            <motion.div
+              key="chevron-desktop"
+              className="absolute bottom-10 left-1/2 z-20 cursor-pointer hover:opacity-70"
+              style={{ x: '-50%' }}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.15, ease: 'easeInOut' }}
+              onClick={scrollToNextSection}
+            >
+              <ChevronDown
+                width={28}
+                height={28}
+                color="white"
+                className="drop-shadow-2xl"
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       )}
 
       {showRightChevron && (
