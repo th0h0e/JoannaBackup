@@ -39,12 +39,20 @@
  * @author Joanna van der Wilt
  */
 
+// ============================================================================
+// IMPORTS
+// ============================================================================
+
+// Libraries
 import { motion } from 'motion/react'
+
+// Assets
 import Asset11Logo from '../assets/logo svg/Asset 11.svg'
 
-/**
- * Props for the LogoBottom component.
- */
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
 interface LogoBottomProps {
   onClick: () => void
   isHero: boolean
@@ -52,6 +60,10 @@ interface LogoBottomProps {
   showPopup: boolean
   isMobile: boolean
 }
+
+// ============================================================================
+// COMPONENT DEFINITION
+// ============================================================================
 
 /**
  * Bottom logo component that displays the "Van Der Weg" portion of the split logo.
@@ -61,17 +73,12 @@ interface LogoBottomProps {
  * mix-blend-mode exclusion for visibility on all backgrounds and hides when
  * popups are active.
  *
- * @param {() => void} onClick - Callback function triggered when the logo is clicked,
- *   typically used to open the AboutPopup
- * @param {boolean} isHero - Whether the current section is the hero section;
- *   when true, the logo animates from its centered hero position
- * @param {boolean} showAboutPopup - Whether the AboutPopup is currently visible;
- *   when true, the logo fades out and becomes non-interactive
- * @param {boolean} showPopup - Whether the ProjectPopup is currently visible;
- *   when true on mobile, the logo fades out and becomes non-interactive
- * @param {boolean} isMobile - Whether the viewport is in mobile mode;
- *   affects container dimensions (160×60 mobile vs 200×80 desktop)
- *
+ * @param {LogoBottomProps} props - Component props
+ * @param {() => void} props.onClick - Callback triggered when logo is clicked
+ * @param {boolean} props.isHero - Whether current section is hero; triggers animation from hero position
+ * @param {boolean} props.showAboutPopup - Whether AboutPopup is visible; hides logo when true
+ * @param {boolean} props.showPopup - Whether ProjectPopup is visible; hides logo on mobile when true
+ * @param {boolean} props.isMobile - Whether viewport is mobile; affects container dimensions
  * @returns {JSX.Element} A Motion-animated fixed-position logo element
  */
 export default function LogoBottom({
@@ -81,9 +88,17 @@ export default function LogoBottom({
   showPopup,
   isMobile,
 }: LogoBottomProps) {
-  // Fixed container dimensions - exact same as LogoTop
+  // ============================================================================
+  // DERIVED STATE
+  // ============================================================================
+
   const containerWidth = isMobile ? '160px' : '200px'
   const containerHeight = isMobile ? '60px' : '80px'
+  const isHidden = showAboutPopup || (showPopup && isMobile)
+
+  // ============================================================================
+  // RENDER
+  // ============================================================================
 
   return (
     <motion.div
@@ -95,11 +110,9 @@ export default function LogoBottom({
         mixBlendMode: 'exclusion',
         width: containerWidth,
         height: containerHeight,
-        opacity: showAboutPopup || (showPopup && isMobile) ? 0 : 1,
-        pointerEvents:
-          showAboutPopup || (showPopup && isMobile) ? 'none' : 'auto',
-        transition:
-          'opacity 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out',
+        opacity: isHidden ? 0 : 1,
+        pointerEvents: isHidden ? 'none' : 'auto',
+        transition: 'opacity 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out',
       }}
       initial={{ top: isHero ? '68lvh' : 'calc(100lvh - 60px - 80px)' }}
       animate={{ top: 'calc(100lvh - 60px - 80px)' }}
@@ -111,8 +124,8 @@ export default function LogoBottom({
         alt="Van Der Weg Logo Bottom"
         style={{
           filter: 'brightness(0) invert(1)',
-          maxWidth: '100%', // Full width since Asset 11 is the width baseline
-          maxHeight: '83.33%', // 83.33333333% - proportional to Asset 7's height
+          maxWidth: '100%',
+          maxHeight: '83.33%',
           width: 'auto',
           height: 'auto',
           objectFit: 'contain',

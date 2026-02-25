@@ -46,24 +46,37 @@
  * @version 2.0.0
  */
 
+// ============================================================================
+// IMPORTS
+// ============================================================================
+
+// Types
 import type { About } from '../config/pocketbase'
+
+// Libraries
 import { AnimatePresence, motion } from 'motion/react'
+
+// Assets
 import Asset7Logo from '../assets/logo svg/Asset 7.svg'
 import Asset11Logo from '../assets/logo svg/Asset 11.svg'
 import ProjectCardSVG from '../assets/Project Card/JVDW WEB LIGHT BOX copy.svg'
+
+// Utils
 import { FONT_FAMILY, LETTER_SPACING } from '../utils/typography'
 
-/**
- * Props for the AboutPopup component.
- */
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
 interface AboutPopupProps {
-  /** Controls the visibility of the popup modal */
   isVisible: boolean
-  /** Callback function invoked when the popup should close (backdrop click) */
   onClose: () => void
-  /** About data from PocketBase CMS containing portfolio info, expertise, and clients */
   aboutData: About | null
 }
+
+// ============================================================================
+// COMPONENT DEFINITION
+// ============================================================================
 
 /**
  * Modal dialog component for displaying "About" information.
@@ -83,10 +96,39 @@ export default function AboutPopup({
   onClose,
   aboutData,
 }: AboutPopupProps) {
+  // ============================================================================
+  // DERIVED DATA
+  // ============================================================================
+
+  const portfolioTitle = aboutData?.Portfolio_Title || 'Story Driven Strategy'
+  const aboutDescription = aboutData?.About_Description
+    || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mattis ipsum vel nulla blandit, eu porta ligula mattis. Phasellus mattis rutrum elit, sed cursus risus tempus quis. Mauris sed ante et lectus consectetur aliquet. Sed in orci a metus aliquam porttitor.'
+  const expertiseTitle = aboutData?.Expertise_Title || 'Expertise'
+  const expertiseDescription = aboutData?.Expertise_Description
+    || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mattis ipsum vel nulla blandit.'
+  const selectedClientsTitle = aboutData?.Selected_Clients_Title || 'Selected Clients'
+  const clientList = (aboutData?.Client_List_Json || aboutData?.Client_List)?.join(', ')
+    || 'Ipsum, Dolor, Sit Amet, Consectetur, Adipiscing, Aenean, Mattis, Blandit.'
+  const contactEmail = aboutData?.Contact_Email || 'hello@joannavanderwerf.com'
+  const contactMessage = aboutData?.Contact_Message || 'Get in touch'
+
+  // ============================================================================
+  // HANDLERS
+  // ============================================================================
+
+  const handleContactClick = () => {
+    window.location.href = `mailto:${contactEmail}`
+  }
+
+  // ============================================================================
+  // RENDER
+  // ============================================================================
+
   return (
     <AnimatePresence>
       {isVisible && (
         <>
+          {/* Backdrop */}
           <motion.div
             className="fixed inset-0 z-40"
             style={{
@@ -101,6 +143,7 @@ export default function AboutPopup({
             onClick={onClose}
           />
 
+          {/* Content */}
           <motion.div
             className="fixed z-50"
             role="dialog"
@@ -131,6 +174,7 @@ export default function AboutPopup({
               />
 
               <div className="absolute inset-0 flex flex-col justify-between px-4 py-8">
+                {/* Top Logo */}
                 <div className="flex justify-center">
                   <img
                     src={Asset7Logo}
@@ -143,6 +187,7 @@ export default function AboutPopup({
                   />
                 </div>
 
+                {/* Content */}
                 <div className="flex flex-1 flex-col justify-center">
                   <h2
                     id="about-popup-title"
@@ -154,7 +199,7 @@ export default function AboutPopup({
                       marginBottom: '18px',
                     }}
                   >
-                    {aboutData?.Portfolio_Title || 'Story Driven Strategy'}
+                    {portfolioTitle}
                   </h2>
                   <p
                     className="text-center leading-tight text-black"
@@ -165,8 +210,7 @@ export default function AboutPopup({
                       marginBottom: '18px',
                     }}
                   >
-                    {aboutData?.About_Description
-                      || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mattis ipsum vel nulla blandit, eu porta ligula mattis. Phasellus mattis rutrum elit, sed cursus risus tempus quis. Mauris sed ante et lectus consectetur aliquet. Sed in orci a metus aliquam porttitor.'}
+                    {aboutDescription}
                   </p>
 
                   <h3
@@ -178,7 +222,7 @@ export default function AboutPopup({
                       marginBottom: '18px',
                     }}
                   >
-                    {aboutData?.Expertise_Title || 'Expertise'}
+                    {expertiseTitle}
                   </h3>
                   <p
                     className="text-center leading-tight text-black"
@@ -189,8 +233,7 @@ export default function AboutPopup({
                       marginBottom: '18px',
                     }}
                   >
-                    {aboutData?.Expertise_Description
-                      || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean mattis ipsum vel nulla blandit.'}
+                    {expertiseDescription}
                   </p>
 
                   <h3
@@ -202,7 +245,7 @@ export default function AboutPopup({
                       marginBottom: '18px',
                     }}
                   >
-                    {aboutData?.Selected_Clients_Title || 'Selected Clients'}
+                    {selectedClientsTitle}
                   </h3>
                   <p
                     className="text-center leading-tight text-black"
@@ -213,10 +256,7 @@ export default function AboutPopup({
                       marginBottom: '18px',
                     }}
                   >
-                    {(
-                      aboutData?.Client_List_Json || aboutData?.Client_List
-                    )?.join(', ')
-                    || 'Ipsum, Dolor, Sit Amet, Consectetur, Adipiscing, Aenean, Mattis, Blandit.'}
+                    {clientList}
                   </p>
 
                   <button
@@ -230,16 +270,13 @@ export default function AboutPopup({
                       border: 'none',
                       width: '100%',
                     }}
-                    onClick={() => {
-                      const email
-                        = aboutData?.Contact_Email || 'hello@joannavanderwerf.com'
-                      window.location.href = `mailto:${email}`
-                    }}
+                    onClick={handleContactClick}
                   >
-                    {aboutData?.Contact_Message || 'Get in touch'}
+                    {contactMessage}
                   </button>
                 </div>
 
+                {/* Bottom Logo */}
                 <div className="flex justify-center">
                   <img
                     src={Asset11Logo}

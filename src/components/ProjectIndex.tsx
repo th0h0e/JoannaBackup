@@ -25,13 +25,28 @@
  * @see {@link App} - Renders this as the final section in the scroll container
  */
 
+// ============================================================================
+// IMPORTS
+// ============================================================================
+
+// Types
 import type { Settings } from '../config/pocketbase'
+
+// Components
 import ProjectNavigation from './ProjectNavigation'
+
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
 
 interface ProjectIndexProps {
   projectTitles: string[]
   settingsData?: Settings | null
 }
+
+// ============================================================================
+// COMPONENT DEFINITION
+// ============================================================================
 
 /**
  * Final portfolio section containing the project navigation list.
@@ -42,7 +57,7 @@ interface ProjectIndexProps {
  *
  * @param {ProjectIndexProps} props - Component props
  * @param {string[]} props.projectTitles - Array of project titles to pass to ProjectNavigation
- * @param {Settings | null} [props.settingsData=null] - Settings data from PocketBase for typography configuration
+ * @param {Settings | null} [props.settingsData] - Settings data for typography configuration
  * @returns {JSX.Element} A full-screen section with the project navigation list
  */
 export default function ProjectIndex({

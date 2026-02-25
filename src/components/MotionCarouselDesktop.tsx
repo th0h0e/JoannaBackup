@@ -115,8 +115,8 @@ interface MotionCarouselDesktopProps {
  * @param {Settings | null} [props.settingsData] - Application settings for font sizing
  * @param {number} props.totalSlides - Total number of slides including blur slides
  * @param {Function} [props.onShowPopup] - Callback when title is clicked to show popup
- * @param {boolean} [props.isPopupVisible=false] - Whether project popup is visible
- * @param {boolean} [props.isAboutPopupVisible=false] - Whether about popup is visible
+ * @param {boolean} [props.isPopupVisible] - Whether project popup is visible
+ * @param {boolean} [props.isAboutPopupVisible] - Whether about popup is visible
  * @param {number} [props.screenWidth] - Current screen width for progress bar positioning
  * @returns {JSX.Element} The rendered carousel with progress bar, title overlay, and navigation
  */

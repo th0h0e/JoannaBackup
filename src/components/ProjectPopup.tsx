@@ -42,25 +42,34 @@
  * @version 2.0.0
  */
 
+// ============================================================================
+// IMPORTS
+// ============================================================================
+
+// Libraries
 import { AnimatePresence, motion } from 'motion/react'
+
+// Assets
 import ProjectCardSVG from '../assets/Project Card/JVDW WEB LIGHT BOX copy.svg'
+
+// Utils
 import { FONT_FAMILY, LETTER_SPACING } from '../utils/typography'
 
-/**
- * Props for the ProjectPopup component.
- */
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
 interface ProjectPopupProps {
-  /** Controls the visibility of the popup modal */
   isVisible: boolean
-  /** Callback function invoked when the popup should close (backdrop click) */
   onClose: () => void
-  /** The title of the project to display (rendered in uppercase) */
   projectTitle: string
-  /** The description text for the project (rendered in normal case) */
   projectDescription: string
-  /** Array of agency responsibilities to display (rendered in uppercase, line-separated) */
   projectResponsibility: string[]
 }
+
+// ============================================================================
+// COMPONENT DEFINITION
+// ============================================================================
 
 /**
  * Modal dialog component for displaying project details.
@@ -84,10 +93,15 @@ export default function ProjectPopup({
   projectDescription,
   projectResponsibility,
 }: ProjectPopupProps) {
+  // ============================================================================
+  // RENDER
+  // ============================================================================
+
   return (
     <AnimatePresence>
       {isVisible && (
         <>
+          {/* Backdrop */}
           <motion.div
             className="fixed inset-0 z-40"
             initial={{ opacity: 0 }}
@@ -97,6 +111,7 @@ export default function ProjectPopup({
             onClick={onClose}
           />
 
+          {/* Content */}
           <motion.div
             className="fixed z-50"
             role="dialog"

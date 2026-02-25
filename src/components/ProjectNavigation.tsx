@@ -25,9 +25,20 @@
  * @see {@link ProjectIndex} - Uses this component for final section navigation
  */
 
+// ============================================================================
+// IMPORTS
+// ============================================================================
+
+// Types
 import type { Settings } from '../config/pocketbase'
+
+// Libraries
 import { motion } from 'motion/react'
+
+// Config
 import { getResponsiveFontSizes } from '../config/pocketbase'
+
+// Utils
 import {
   navigationContainerClasses,
   navigationLinkClasses,
@@ -35,11 +46,19 @@ import {
 } from '../utils/sharedStyles'
 import { FONT_FAMILY, generateFontMediaQueries, LETTER_SPACING } from '../utils/typography'
 
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
 interface ProjectNavigationProps {
   projectTitles: string[]
   onLinkClick?: (index: number) => void
   settingsData?: Settings | null
 }
+
+// ============================================================================
+// ANIMATION VARIANTS
+// ============================================================================
 
 const listVariants = {
   hidden: {},
@@ -60,6 +79,10 @@ const itemVariants = {
   },
 }
 
+// ============================================================================
+// COMPONENT DEFINITION
+// ============================================================================
+
 /**
  * Reusable project navigation list with staggered animations.
  *
@@ -70,8 +93,8 @@ const itemVariants = {
  *
  * @param {ProjectNavigationProps} props - Component props
  * @param {string[]} props.projectTitles - Array of project titles to render as navigation links
- * @param {(index: number) => void} [props.onLinkClick] - Optional click handler; receives the project index; prevents default anchor navigation when provided
- * @param {Settings | null} [props.settingsData=null] - Settings data from PocketBase for responsive typography
+ * @param {(index: number) => void} [props.onLinkClick] - Optional click handler; receives project index
+ * @param {Settings | null} [props.settingsData] - Settings for responsive typography
  * @returns {JSX.Element} An animated navigation list of project links
  */
 export default function ProjectNavigation({
@@ -79,7 +102,26 @@ export default function ProjectNavigation({
   onLinkClick,
   settingsData = null,
 }: ProjectNavigationProps) {
+  // ============================================================================
+  // DERIVED STATE
+  // ============================================================================
+
   const fontSizes = getResponsiveFontSizes(settingsData)
+
+  // ============================================================================
+  // HANDLERS
+  // ============================================================================
+
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, index: number) => {
+    if (onLinkClick) {
+      e.preventDefault()
+      onLinkClick(index)
+    }
+  }
+
+  // ============================================================================
+  // RENDER
+  // ============================================================================
 
   return (
     <>
@@ -103,12 +145,7 @@ export default function ProjectNavigation({
                   fontFamily: FONT_FAMILY,
                   letterSpacing: LETTER_SPACING,
                 }}
-                onClick={(e) => {
-                  if (onLinkClick) {
-                    e.preventDefault()
-                    onLinkClick(index)
-                  }
-                }}
+                onClick={e => handleLinkClick(e, index)}
               >
                 {title}
               </a>

@@ -27,12 +27,27 @@
  * @see {@link resetAllCarousels} - Utility to reset carousel scroll positions
  */
 
+// ============================================================================
+// IMPORTS
+// ============================================================================
+
+// Types
 import type { Settings } from '../config/pocketbase'
+
+// Libraries
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
+
+// Utils
 import { resetAllCarousels } from '../utils/carousel'
+
+// Components
 import ProjectNavigation from './ProjectNavigation'
+
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
 
 interface HamburgerMenuProps {
   projectTitles: string[]
@@ -40,6 +55,10 @@ interface HamburgerMenuProps {
   settingsData?: Settings | null
   isMobile?: boolean
 }
+
+// ============================================================================
+// COMPONENT DEFINITION
+// ============================================================================
 
 /**
  * Full-screen overlay navigation menu component.
@@ -51,9 +70,9 @@ interface HamburgerMenuProps {
  *
  * @param {HamburgerMenuProps} props - Component props
  * @param {string[]} props.projectTitles - Array of project titles to display in the navigation list
- * @param {boolean} [props.isPopupVisible=false] - Whether a popup is currently visible; hides the hamburger button when true
- * @param {Settings | null} [props.settingsData=null] - Settings data from PocketBase for typography configuration
- * @param {boolean} [props.isMobile=false] - Whether the viewport is mobile; affects button sizing
+ * @param {boolean} [props.isPopupVisible] - Whether a popup is currently visible; hides the hamburger button when true
+ * @param {Settings | null} [props.settingsData] - Settings data from PocketBase for typography configuration
+ * @param {boolean} [props.isMobile] - Whether the viewport is mobile; affects button sizing
  * @returns {JSX.Element} The hamburger button and portal-rendered overlay menu
  */
 export default function HamburgerMenu({
@@ -62,10 +81,17 @@ export default function HamburgerMenu({
   settingsData = null,
   isMobile = false,
 }: HamburgerMenuProps) {
+  // ============================================================================
+  // STATE
+  // ============================================================================
+
   const [isOpen, setIsOpen] = useState(false)
 
+  // ============================================================================
+  // HANDLERS
+  // ============================================================================
+
   const toggleMenu = () => {
-    // Don't allow opening menu when popups are visible
     if (isPopupVisible)
       return
     setIsOpen(!isOpen)
@@ -74,6 +100,18 @@ export default function HamburgerMenu({
   const closeMenu = () => {
     setIsOpen(false)
   }
+
+  const handleNavigation = (index: number) => {
+    closeMenu()
+    setTimeout(() => {
+      window.location.hash = `#project-${index}`
+      resetAllCarousels(100)
+    }, 300)
+  }
+
+  // ============================================================================
+  // RENDER
+  // ============================================================================
 
   return (
     <>
@@ -131,14 +169,7 @@ export default function HamburgerMenu({
                   <ProjectNavigation
                     projectTitles={projectTitles}
                     settingsData={settingsData}
-                    onLinkClick={(index) => {
-                      closeMenu()
-
-                      setTimeout(() => {
-                        window.location.hash = `#project-${index}`
-                        resetAllCarousels(100)
-                      }, 300)
-                    }}
+                    onLinkClick={handleNavigation}
                   />
                 </div>
               </motion.div>

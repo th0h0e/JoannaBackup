@@ -38,12 +38,20 @@
  * @author Joanna van der Wilt
  */
 
+// ============================================================================
+// IMPORTS
+// ============================================================================
+
+// Libraries
 import { motion } from 'motion/react'
+
+// Assets
 import Asset7Logo from '../assets/logo svg/Asset 7.svg'
 
-/**
- * Props for the LogoTop component.
- */
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
 interface LogoTopProps {
   onClick: () => void
   isHero: boolean
@@ -51,6 +59,10 @@ interface LogoTopProps {
   showPopup: boolean
   isMobile: boolean
 }
+
+// ============================================================================
+// COMPONENT DEFINITION
+// ============================================================================
 
 /**
  * Top logo component that displays the "Joanna" portion of the split logo.
@@ -60,17 +72,12 @@ interface LogoTopProps {
  * mix-blend-mode exclusion for visibility on all backgrounds and hides when
  * popups are active.
  *
- * @param {() => void} onClick - Callback function triggered when the logo is clicked,
- *   typically used to open the AboutPopup
- * @param {boolean} isHero - Whether the current section is the hero section;
- *   when true, the logo animates from its centered hero position
- * @param {boolean} showAboutPopup - Whether the AboutPopup is currently visible;
- *   when true, the logo fades out and becomes non-interactive
- * @param {boolean} showPopup - Whether the ProjectPopup is currently visible;
- *   when true on mobile, the logo fades out and becomes non-interactive
- * @param {boolean} isMobile - Whether the viewport is in mobile mode;
- *   affects container dimensions (160×60 mobile vs 200×80 desktop)
- *
+ * @param {LogoTopProps} props - Component props
+ * @param {() => void} props.onClick - Callback triggered when logo is clicked
+ * @param {boolean} props.isHero - Whether current section is hero; triggers animation from hero position
+ * @param {boolean} props.showAboutPopup - Whether AboutPopup is visible; hides logo when true
+ * @param {boolean} props.showPopup - Whether ProjectPopup is visible; hides logo on mobile when true
+ * @param {boolean} props.isMobile - Whether viewport is mobile; affects container dimensions
  * @returns {JSX.Element} A Motion-animated fixed-position logo element
  */
 export default function LogoTop({
@@ -80,9 +87,17 @@ export default function LogoTop({
   showPopup,
   isMobile,
 }: LogoTopProps) {
-  // Fixed container dimensions - same for both logos
+  // ============================================================================
+  // DERIVED STATE
+  // ============================================================================
+
   const containerWidth = isMobile ? '160px' : '200px'
   const containerHeight = isMobile ? '60px' : '80px'
+  const isHidden = showAboutPopup || (showPopup && isMobile)
+
+  // ============================================================================
+  // RENDER
+  // ============================================================================
 
   return (
     <motion.div
@@ -94,11 +109,9 @@ export default function LogoTop({
         mixBlendMode: 'exclusion',
         width: containerWidth,
         height: containerHeight,
-        opacity: showAboutPopup || (showPopup && isMobile) ? 0 : 1,
-        pointerEvents:
-          showAboutPopup || (showPopup && isMobile) ? 'none' : 'auto',
-        transition:
-          'opacity 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out',
+        opacity: isHidden ? 0 : 1,
+        pointerEvents: isHidden ? 'none' : 'auto',
+        transition: 'opacity 0.3s ease-out, width 0.3s ease-out, height 0.3s ease-out',
       }}
       initial={{ top: isHero ? 'calc(50% - 18lvh)' : '60px' }}
       animate={{ top: '60px' }}
@@ -110,8 +123,8 @@ export default function LogoTop({
         alt="Joanna Logo Top"
         style={{
           filter: 'brightness(0) invert(1)',
-          maxWidth: '54.15%', // 54.15162455% - proportional to Asset 11's width
-          maxHeight: '100%', // Full height since Asset 7 is the height baseline
+          maxWidth: '54.15%',
+          maxHeight: '100%',
           width: 'auto',
           height: 'auto',
           objectFit: 'contain',

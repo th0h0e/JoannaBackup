@@ -33,14 +33,24 @@
  * @author Joanna van der Wilt
  */
 
+// ============================================================================
+// IMPORTS
+// ============================================================================
+
+// Libraries
 import { AnimatePresence, motion } from 'motion/react'
 
-/**
- * Props for the BlurOverlay component.
- */
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
 interface BlurOverlayProps {
   visible: boolean
 }
+
+// ============================================================================
+// ANIMATION VARIANTS
+// ============================================================================
 
 /**
  * Animation variants for the blur overlay.
@@ -48,15 +58,6 @@ interface BlurOverlayProps {
  * Defines the visual states for the overlay animation using Framer Motion's
  * variants pattern. This approach allows for declarative animation state
  * management and easy state transitions.
- *
- * @property {Object} hidden - Initial/exit state with no blur and full transparency
- * @property {number} hidden.opacity - Fully transparent (0)
- * @property {string} hidden.backdropFilter - No blur effect ('blur(0px)')
- * @property {string} hidden.WebkitBackdropFilter - Safari-compatible blur ('blur(0px)')
- * @property {Object} visible - Active state with blur and full opacity
- * @property {number} visible.opacity - Fully visible (1)
- * @property {string} visible.backdropFilter - 12px Gaussian blur ('blur(12px)')
- * @property {string} visible.WebkitBackdropFilter - Safari-compatible blur ('blur(12px)')
  */
 const overlayVariants = {
   hidden: {
@@ -71,6 +72,10 @@ const overlayVariants = {
   },
 }
 
+// ============================================================================
+// COMPONENT DEFINITION
+// ============================================================================
+
 /**
  * Animated blur overlay component for carousel visual transitions.
  *
@@ -81,12 +86,9 @@ const overlayVariants = {
  * The overlay is positioned absolutely to fill its parent container and
  * allows pointer events to pass through to underlying elements.
  *
- * @param {boolean} visible - Whether the blur overlay should be visible;
- *   when true, the overlay animates in with blur effect; when false,
- *   it animates out and is removed from the DOM via AnimatePresence
- *
- * @returns {JSX.Element} A Motion-animated blur overlay element, or null
- *   when not visible (handled by AnimatePresence)
+ * @param {BlurOverlayProps} props - Component props
+ * @param {boolean} props.visible - Whether the blur overlay should be visible
+ * @returns {JSX.Element} A Motion-animated blur overlay element
  */
 export default function BlurOverlay({ visible }: BlurOverlayProps) {
   return (

@@ -75,7 +75,7 @@ interface HeroProps {
  *   when true, the hero title is hidden via AnimatePresence exit animation
  * @param {Settings | null} props.settingsData - CMS settings containing responsive font sizes
  *   and other configuration options
- * @param {boolean} [props.isMobile=true] - Whether the viewport is mobile-sized;
+ * @param {boolean} [props.isMobile] - Whether the viewport is mobile-sized;
  *   affects chevron icon sizing (24px on mobile, 28px otherwise)
  *
  * @returns {JSX.Element} The rendered hero section with animated elements

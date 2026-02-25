@@ -110,10 +110,10 @@ interface MotionCarouselProps {
  * @param {string} props.projectTitle - Title of the current project
  * @param {Settings | null} [props.settingsData] - Application settings for font sizing
  * @param {number} props.totalSlides - Total number of slides including blur slides
- * @param {boolean} [props.showTopProgressBar=true] - Whether to show top progress bar
+ * @param {boolean} [props.showTopProgressBar] - Whether to show top progress bar
  * @param {Function} [props.onShowPopup] - Callback when title is clicked to show popup
- * @param {boolean} [props.isPopupVisible=false] - Whether project popup is visible
- * @param {boolean} [props.isAboutPopupVisible=false] - Whether about popup is visible
+ * @param {boolean} [props.isPopupVisible] - Whether project popup is visible
+ * @param {boolean} [props.isAboutPopupVisible] - Whether about popup is visible
  * @param {number} [props.screenWidth] - Current screen width for progress bar positioning
  * @returns {JSX.Element} The rendered carousel with progress bars and title overlay
  */
