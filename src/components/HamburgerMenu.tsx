@@ -119,12 +119,12 @@ export default function HamburgerMenu({
       {!isPopupVisible && (
         <button
           onClick={toggleMenu}
-          className="fixed top-[80px] right-5 z-[10000] cursor-pointer md:top-[89px] md:right-[40px]"
+          className="fixed top-20 right-5 z-10000 cursor-pointer md:top-22.25 md:right-10"
           aria-label="Toggle menu"
           aria-expanded={isOpen}
         >
           <motion.div
-            className="block md:h-[18px] md:w-[18px]"
+            className="block md:h-4.5 md:w-4.5"
             style={{
               mixBlendMode: isOpen ? 'normal' : 'exclusion',
             }}
@@ -147,7 +147,7 @@ export default function HamburgerMenu({
             <>
               {/* Backdrop */}
               <motion.div
-                className="fixed inset-0 z-[9998] bg-white"
+                className="fixed inset-0 z-9998 bg-white"
                 style={{ height: '100lvh' }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -158,7 +158,7 @@ export default function HamburgerMenu({
 
               {/* Menu Content */}
               <motion.div
-                className="fixed inset-0 z-[9999] flex items-center justify-center"
+                className="fixed inset-0 z-9999 flex items-center justify-center"
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
