@@ -127,7 +127,7 @@ export default function MotionCarouselDesktop({
   onShowPopup,
   isPopupVisible = false,
   isAboutPopupVisible = false,
-  screenWidth,
+  screenWidth: _screenWidth,
 }: MotionCarouselDesktopProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [scrollProgress, setScrollProgress] = useState(0)

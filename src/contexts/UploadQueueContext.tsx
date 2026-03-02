@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { createContext, use, useCallback, useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 import pb, { clearCache } from '../config/pocketbase'
 
 export interface QueueItem {
@@ -65,6 +66,7 @@ export function UploadQueueProvider({ children }: { children: ReactNode }) {
   const [isProcessing, setIsProcessing] = useState(false)
   const processingRef = useRef(false)
   const itemsRef = useRef(items)
+  const completedProjectIdsRef = useRef<Set<string>>(new Set())
 
   useEffect(() => {
     itemsRef.current = items
@@ -144,6 +146,63 @@ export function UploadQueueProvider({ children }: { children: ReactNode }) {
       processQueue()
     }
   }, [items, processQueue])
+
+  const verifyProjectImageCount = useCallback(async (projectId: string, projectName: string) => {
+    try {
+      const project = await pb.collection('Portfolio_Projects').getOne(projectId)
+      const imageCount = project.Images?.length || 0
+      if (imageCount < 3) {
+        toast.warning(`Project "${projectName}" has only ${imageCount} images (minimum: 3)`)
+      }
+    }
+    catch (err) {
+      console.warn('Failed to verify project image count:', err)
+    }
+  }, [])
+
+  // Track project upload completion and show toast notifications
+  useEffect(() => {
+    // Group items by project
+    const projectGroups = items.reduce((acc, item) => {
+      if (!acc[item.projectId]) {
+        acc[item.projectId] = []
+      }
+      acc[item.projectId].push(item)
+      return acc
+    }, {} as Record<string, QueueItem[]>)
+
+    // Check each project for completion
+    for (const [projectId, projectItems] of Object.entries(projectGroups)) {
+      const allDone = projectItems.every(
+        i => i.status === 'completed' || i.status === 'failed',
+      )
+
+      // Skip if not all done or already notified
+      if (!allDone || completedProjectIdsRef.current.has(projectId)) {
+        continue
+      }
+
+      // Mark as notified
+      completedProjectIdsRef.current.add(projectId)
+
+      const projectName = projectItems[0].projectName
+      const successCount = projectItems.filter(i => i.status === 'completed').length
+      const failedCount = projectItems.filter(i => i.status === 'failed').length
+
+      // Show appropriate toast
+      if (failedCount === 0) {
+        toast.success(`All ${successCount} images uploaded for "${projectName}"`)
+      }
+      else {
+        toast.error(`${failedCount} image(s) failed to upload for "${projectName}"`)
+      }
+
+      // Verify minimum images after successful uploads
+      if (successCount > 0) {
+        verifyProjectImageCount(projectId, projectName)
+      }
+    }
+  }, [items, verifyProjectImageCount])
 
   const addToQueue = useCallback((projectId: string, projectName: string, files: File[]) => {
     const newItems: QueueItem[] = files.map(file => ({
