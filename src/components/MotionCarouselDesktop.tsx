@@ -57,6 +57,7 @@ import {
   projectTitleClasses,
   projectTitleContainerClasses,
 } from '../utils/sharedStyles'
+import { generateFontMediaQueries } from '../utils/typography'
 import BlurOverlay from './BlurOverlay'
 import ChevronDown from './icons/ChevronDown'
 import ChevronRight from './icons/ChevronRight'
@@ -146,14 +147,6 @@ export default function MotionCarouselDesktop({
     [settingsData],
   )
 
-  const cssVars = useMemo(
-    () => ({
-      '--font-size-desktop': `${fontSizes.desktop}rem`,
-      '--font-size-large-desktop': `${fontSizes.largeDesktop}rem`,
-    }) as React.CSSProperties,
-    [fontSizes],
-  )
-
   const progressBarWidth = useMemo(
     () => screenWidth
       ? `${screenWidth * PROGRESS_BAR_WIDTH_PERCENT}px`
@@ -240,6 +233,7 @@ export default function MotionCarouselDesktop({
 
   return (
     <>
+      <style>{generateFontMediaQueries('.carousel-title-desktop', fontSizes)}</style>
       <div
         ref={containerRef}
         className="relative h-full w-full bg-cover bg-center bg-fixed bg-no-repeat overflow-x-auto overscroll-x-contain snap-x snap-mandatory scroll-smooth scrollbar-hide will-change-scroll backface-hidden"
@@ -293,9 +287,8 @@ export default function MotionCarouselDesktop({
           {isTitleVisible && (
             <motion.h1
               key="carousel-title-desktop"
-              className={`text-white font-[EnduroWeb] tracking-[0.03em] text-3xl xl:text-4xl z-20 ${projectTitleClasses}`}
+              className={`text-white font-[EnduroWeb] tracking-[0.03em] z-20 carousel-title-desktop ${projectTitleClasses}`}
               style={{
-                ...cssVars,
                 pointerEvents: 'auto',
                 cursor: 'pointer',
               }}
