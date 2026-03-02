@@ -1,0 +1,150 @@
+"lsp": {
+		"eslint": {
+			"settings": {
+				"codeActionOnSave": {
+					"mode": "all",
+				},
+			},
+		},
+	},
+	"language_models": {
+		"openai_compatible": {
+			"Z.AI": {
+				"api_url": "https://api.z.ai/api/coding/paas/v4",
+				"available_models": [
+					{
+						"name": "glm-5",
+						"display_name": "Z.AI GLM-5",
+						"max_tokens": 8192,
+						"capabilities": {
+							"tools": true,
+							"images": false,
+							// GLM-5 supports parallel tool calls
+							"parallel_tool_calls": true,
+							"prompt_cache_key": false,
+						},
+					},
+				],
+			},
+		},
+	},
+	"agent": {
+		// Whether the inline assistant should use streaming tools, when available
+		"inline_assistant_use_streaming_tools": true,
+		// Whether the agent is enabled.
+		"enabled": true,
+		// Whether to show the agent panel button in the status bar.
+		"button": true,
+		// Where to dock the agent panel. Can be 'left', 'right' or 'bottom'.
+		"dock": "right",
+		// Where to dock the agents panel. Can be 'left' or 'right'.
+		"agents_panel_dock": "left",
+		// Default width when the agent panel is docked to the left or right.
+		// Default height when the agent panel is docked to the bottom.
+		"default_height": 320,
+		// The view to use by default (thread, or text_thread)
+		"default_view": "thread",
+		// The default model to use when creating new threads.
+		"default_model": {
+			// The provider to use.
+			"provider": "openai_compatible",
+			// The model to use.
+			"model": "glm-5",
+			// Whether thinking is enabled.
+			"enable_thinking": true,
+		},
+		"model_parameters": [
+			// GLM-5 Specific Configuration
+			// CRITICAL: GLM-5 requires temperature=1.0 for optimal performance.
+			// Do not use lower values typical of other coding models.
+			{
+				"provider": "openai_compatible",
+				"model": "glm-5",
+				"temperature": 1.0,
+			},
+		],
+		"tool_permissions": {
+			// "confirm" is safest for destructive actions (edit/delete).
+			"default": "confirm",
+			"tools": {
+				"terminal": {
+					"default": "confirm",
+					"always_confirm": [
+						// Protect against forceful git history rewrites
+						{ "pattern": "git\\s+(reset|clean)\\s+--hard" },
+						{ "pattern": "git\\s+push\\s+(-f|--force)" },
+						// Prevent accidental package installs in wrong directory (optional)
+						// { "pattern": "npm\\s+install" }
+					],
+				},
+				"edit_file": {
+					"default": "allow", // Smoother workflow for standard code edits
+					"always_confirm": [
+						// Always ask before editing secrets or config files
+						{ "pattern": "\\.env($|\\.)" },
+						{ "pattern": "secrets?/" },
+						{ "pattern": "\\.pem$" },
+						{ "pattern": "\\.key$" },
+					],
+				},
+			},
+		},
+		// When enabled, agent edits will be displayed in single-file editors for review
+		"single_file_review": true,
+		// When enabled, show voting thumbs for feedback on agent edits.
+		"enable_feedback": true,
+		"default_profile": "write",
+		"profiles": {
+			"write": {
+				"name": "Write",
+				"enable_all_context_servers": true,
+				"tools": {
+					"copy_path": true,
+					"create_directory": true,
+					"delete_path": true,
+					"diagnostics": true,
+					"edit_file": true,
+					"fetch": true,
+					"list_directory": true,
+					"project_notifications": false,
+					"move_path": true,
+					"now": true,
+					"find_path": true,
+					"read_file": true,
+					"restore_file_from_disk": true,
+					"save_file": true,
+					"open": true,
+					"grep": true,
+					"subagent": true,
+					"terminal": true,
+					// Enabled: Triggers GLM-5's "Deep Thinking" mode for better reasoning
+					"thinking": true,
+					"web_search": true,
+				},
+			},
+			"ask": {
+				"name": "Ask",
+				"tools": {
+					"diagnostics": true,
+					"fetch": true,
+					"list_directory": true,
+					"project_notifications": false,
+					"now": true,
+					"find_path": true,
+					"read_file": true,
+					"open": true,
+					"grep": true,
+					"subagent": true,
+					// Enabled: Even in "Ask" mode, GLM-5 benefits from reasoning before answering
+					"thinking": true,
+					"web_search": true,
+				},
+			},
+			"minimal": {
+				"name": "Minimal",
+				"enable_all_context_servers": false,
+				"tools": {},
+			},
+		},
+	},
+}

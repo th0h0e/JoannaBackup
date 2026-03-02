@@ -35,7 +35,11 @@ import {
   projectTitleClasses,
   projectTitleContainerClasses,
 } from '../utils/sharedStyles'
-import { FONT_FAMILY, generateFontMediaQueries, LETTER_SPACING } from '../utils/typography'
+import {
+  FONT_FAMILY,
+  generateFontMediaQueries,
+  LETTER_SPACING,
+} from '../utils/typography'
 import ChevronDown from './icons/ChevronDown'
 
 // ============================================================================
@@ -89,9 +93,7 @@ export default function Hero({
 
   return (
     <>
-      <style>
-        {generateFontMediaQueries('.hero-title', fontSizes)}
-      </style>
+      <style>{generateFontMediaQueries('.hero-title', fontSizes)}</style>
       <section
         id="hero-section"
         className="relative flex w-full snap-center items-center justify-center overflow-hidden bg-white"
