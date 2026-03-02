@@ -188,14 +188,11 @@ export default function MotionCarousel({
       <style>{generateFontMediaQueries('.carousel-title-mobile', fontSizes)}</style>
       <div
         ref={containerRef}
-        className="relative h-full w-full overflow-x-auto overscroll-x-contain snap-x snap-mandatory scroll-smooth scrollbar-hide will-change-scroll backface-hidden"
+        className="relative h-full w-full bg-cover bg-center bg-fixed bg-no-repeat overflow-x-auto overscroll-x-contain snap-x snap-mandatory scroll-smooth scrollbar-hide will-change-scroll backface-hidden"
         data-carousel
+        style={{ backgroundImage: `url(${lastImage.src})` }}
       >
-        <div
-          className="absolute inset-0 z-1 bg-cover bg-center"
-          style={{ backgroundImage: `url(${lastImage.src})` }}
-        />
-        <div className="relative flex h-full w-full">
+        <div className="relative z-10 flex h-full w-full">
           {regularImages.map((image, idx) => (
             <div
               key={image.src}
@@ -207,7 +204,7 @@ export default function MotionCarousel({
           ))}
 
           <div
-            className="slide-mobile relative h-full w-full shrink-0 min-w-full snap-center snap-always bg-transparent bg-cover bg-center z-15 opacity-0"
+            className="slide-mobile relative h-full w-full shrink-0 min-w-full snap-center snap-always bg-transparent will-change-transform"
             role="group"
             aria-label={`Slide ${images.length}`}
           >
@@ -218,13 +215,13 @@ export default function MotionCarousel({
                 backgroundImage: `url(${lastImage.src})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                opacity: 0,
+                opacity: 0.0001,
               }}
             />
           </div>
 
           <div
-            className="slide-mobile relative h-full w-full shrink-0 min-w-full snap-center snap-always bg-transparent z-15 cursor-pointer"
+            className="slide-mobile relative h-full w-full shrink-0 min-w-full snap-center snap-always bg-transparent cursor-pointer"
             role="group"
             aria-label="Next section"
             onClick={scrollToNextSection}
