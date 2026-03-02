@@ -100,7 +100,7 @@ export default function BlurOverlay({ visible }: BlurOverlayProps) {
           initial="hidden"
           animate="visible"
           exit="hidden"
-          transition={{ duration: 0.6, ease: 'easeOut' }}
+          transition={{ duration: 0.3, ease: 'easeOut' }}
           style={{
             position: 'absolute',
             inset: 0,
