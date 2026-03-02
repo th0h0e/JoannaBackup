@@ -62,9 +62,6 @@ import { Progress } from './ui/progress'
 // CONSTANTS
 // ============================================================================
 
-const PROGRESS_BAR_WIDTH_PERCENT = 0.89
-const PROGRESS_BAR_LEFT_PERCENT = 0.055
-
 // ============================================================================
 // TYPES
 // ============================================================================
@@ -139,43 +136,25 @@ export default function MotionCarousel({
 
   const fontSizes = useMemo(
     () => getResponsiveFontSizes(settingsData),
-    [settingsData],
+    [settingsData]
   )
 
-  const cssVars = useMemo(
-    () => createFontCssVars(fontSizes),
-    [fontSizes],
-  )
-
-  const progressBarWidth = useMemo(
-    () => screenWidth
-      ? `${screenWidth * PROGRESS_BAR_WIDTH_PERCENT}px`
-      : '89vw',
-    [screenWidth],
-  )
-
-  const progressBarLeft = useMemo(
-    () => screenWidth
-      ? `${screenWidth * PROGRESS_BAR_LEFT_PERCENT}px`
-      : '5.5vw',
-    [screenWidth],
-  )
+  const cssVars = useMemo(() => createFontCssVars(fontSizes), [fontSizes])
 
   const lastImage = images[images.length - 1]
   const regularImages = images.slice(0, -1)
   const isTitleVisible = !isPopupVisible && !isAboutPopupVisible
   const isProgressBarVisible = currentSlide > 0 && currentSlide <= images.length
-  const chevronSize = typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24
+  const chevronSize =
+    typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24
 
   useEffect(() => {
     const carousel = containerRef.current
-    if (!carousel)
-      return
+    if (!carousel) return
 
     const handleScroll = () => {
       const currentCarousel = containerRef.current
-      if (!currentCarousel)
-        return
+      if (!currentCarousel) return
 
       const scrollLeft = currentCarousel.scrollLeft
       const containerWidth = currentCarousel.offsetWidth
@@ -201,8 +180,7 @@ export default function MotionCarousel({
   const handleTitleClick = () => {
     if (isOnBlurSlide) {
       scrollToNextSection()
-    }
-    else {
+    } else {
       onShowPopup?.(projectTitle)
     }
   }
@@ -307,8 +285,6 @@ export default function MotionCarousel({
       {images.length > 1 && (
         <ProgressBar
           position="bottom"
-          width={progressBarWidth}
-          left={progressBarLeft}
           progress={scrollProgress}
           visible={isProgressBarVisible}
         />
@@ -317,8 +293,6 @@ export default function MotionCarousel({
       {showTopProgressBar && images.length > 1 && (
         <ProgressBar
           position="top"
-          width={progressBarWidth}
-          left={progressBarLeft}
           progress={scrollProgress}
           visible={isProgressBarVisible}
         />
@@ -337,10 +311,6 @@ export default function MotionCarousel({
 interface ProgressBarProps {
   /** Position of the progress bar - 'top' or 'bottom' of the carousel */
   position: 'top' | 'bottom'
-  /** Width of the progress bar (CSS value) */
-  width: string
-  /** Left offset position of the progress bar (CSS value) */
-  left: string
   /** Current scroll progress as a decimal from 0 to 1 */
   progress: number
   /** Whether the progress bar should be visible */
@@ -366,7 +336,7 @@ interface ProgressBarProps {
 function ProgressBar({ position, progress, visible }: ProgressBarProps) {
   return (
     <motion.div
-      className={`absolute left-0 w-screen flex justify-center ${position === 'top' ? 'top-5' : 'bottom-5'} z-20`}
+      className={`absolute left-0 w-screen px-5 ${position === 'top' ? 'top-5' : 'bottom-5'} z-20`}
       animate={{
         opacity: visible ? 1 : 0,
         y: visible ? 0 : position === 'top' ? -10 : 10,
@@ -376,7 +346,7 @@ function ProgressBar({ position, progress, visible }: ProgressBarProps) {
     >
       <Progress
         value={progress * 100}
-        className="h-0.5 rounded-full bg-gray-500/50 backdrop-blur-sm"
+        className="h-0.5 w-full rounded-full bg-gray-500/50 backdrop-blur-sm"
         indicatorClassName="bg-gray-50"
       />
     </motion.div>

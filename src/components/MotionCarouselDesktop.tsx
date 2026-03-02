@@ -67,8 +67,6 @@ import { Progress } from './ui/progress'
 // CONSTANTS
 // ============================================================================
 
-const PROGRESS_BAR_WIDTH_PERCENT = 0.8
-const PROGRESS_BAR_LEFT_PERCENT = 0.1
 const BLUR_SLIDE_TOLERANCE_PX = 5
 
 // ============================================================================
@@ -145,20 +143,6 @@ export default function MotionCarouselDesktop({
   const fontSizes = useMemo(
     () => getResponsiveFontSizes(settingsData),
     [settingsData],
-  )
-
-  const progressBarWidth = useMemo(
-    () => screenWidth
-      ? `${screenWidth * PROGRESS_BAR_WIDTH_PERCENT}px`
-      : '80vw',
-    [screenWidth],
-  )
-
-  const progressBarLeft = useMemo(
-    () => screenWidth
-      ? `${screenWidth * PROGRESS_BAR_LEFT_PERCENT}px`
-      : '10vw',
-    [screenWidth],
   )
 
   const lastImage = images[images.length - 1]
@@ -306,21 +290,17 @@ export default function MotionCarouselDesktop({
 
       {images.length > 1 && (
         <motion.div
-          className="absolute bottom-7 z-20"
+          className="absolute bottom-7 left-0 w-screen px-[10%] z-20"
           animate={{
             opacity: isProgressBarVisible ? 1 : 0,
             y: isProgressBarVisible ? 0 : 10,
           }}
           transition={{ duration: 0.15, ease: 'easeInOut' }}
-          style={{
-            width: progressBarWidth,
-            left: progressBarLeft,
-            pointerEvents: isProgressBarVisible ? 'auto' : 'none',
-          }}
+          style={{ pointerEvents: isProgressBarVisible ? 'auto' : 'none' }}
         >
           <Progress
             value={scrollProgress * 100}
-            className="h-0.5 rounded-full bg-gray-500/50 backdrop-blur-sm"
+            className="h-0.5 w-full rounded-full bg-gray-500/50 backdrop-blur-sm"
             indicatorClassName="bg-gray-50"
           />
         </motion.div>
