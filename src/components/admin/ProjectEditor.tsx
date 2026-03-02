@@ -12,6 +12,7 @@ import ProjectPopupPreview from './ProjectPopupPreview'
 
 interface ProjectEditorProps {
   project: PortfolioProject | null
+  existingProjects: PortfolioProject[]
   onSave: () => void
   onCancel: () => void
   onShowToast: (message: string, type: 'success' | 'error') => void
@@ -36,10 +37,16 @@ const MIN_IMAGES = 3
 
 export default function ProjectEditor({
   project,
+  existingProjects,
   onSave,
   onCancel,
   onShowToast,
 }: ProjectEditorProps) {
+  // Calculate order for new projects (max existing + 1)
+  const calculatedOrder = project
+    ? project.Order || 0
+    : Math.max(0, ...existingProjects.map(p => p.Order || 0)) + 1
+
   const [images, setImages] = useState<ImageItem[]>([])
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
@@ -95,7 +102,7 @@ export default function ProjectEditor({
     defaultValues: {
       title: project?.Title || '',
       description: project?.Description || '',
-      order: project?.Order || 0,
+      order: calculatedOrder,
       responsibilities:
         project?.Responsibility_json || project?.Responsibility || [],
     } as ProjectFormValues,
@@ -502,29 +509,6 @@ export default function ProjectEditor({
                       rows={6}
                       className="border-input placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[120px] w-full resize-none rounded-md border bg-transparent px-4 py-3 text-sm focus-visible:ring-1 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                       placeholder="Project description..."
-                    />
-                  </div>
-                )}
-              </form.Field>
-
-              <form.Field name="order">
-                {field => (
-                  <div className="space-y-2">
-                    <Label
-                      htmlFor="order"
-                      className="text-xs tracking-wider uppercase"
-                    >
-                      Position in Portfolio *
-                    </Label>
-                    <Input
-                      id="order"
-                      type="number"
-                      value={field.state.value}
-                      onChange={e =>
-                        field.handleChange(Number.parseInt(e.target.value))}
-                      onBlur={field.handleBlur}
-                      required
-                      min="0"
                     />
                   </div>
                 )}

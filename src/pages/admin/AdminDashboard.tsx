@@ -901,6 +901,7 @@ function DashboardContent() {
       {(editingProject || showNewProjectForm) && (
         <ProjectEditor
           project={editingProject}
+          existingProjects={projects}
           onSave={handleSave}
           onCancel={() => {
             setEditingProject(null)
