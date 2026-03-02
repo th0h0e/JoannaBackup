@@ -354,24 +354,25 @@ interface ProgressBarProps {
  * that visually indicates how far the user has scrolled through the images.
  * The bar animates in/out based on visibility state using Framer Motion.
  *
+ * Uses w-screen + flex justify-center for reliable centering, matching the
+ * pattern used by the chevron (which sits inside a viewport-width slide).
+ *
  * @param {ProgressBarProps} props - Component props
  * @param {'top' | 'bottom'} props.position - Position of the progress bar
- * @param {string} props.width - Width of the progress bar
- * @param {string} props.left - Left offset position
  * @param {number} props.progress - Current progress (0 to 1)
  * @param {boolean} props.visible - Whether the bar is visible
  * @returns {JSX.Element} The rendered progress bar
  */
-function ProgressBar({ position, width, left, progress, visible }: ProgressBarProps) {
+function ProgressBar({ position, progress, visible }: ProgressBarProps) {
   return (
     <motion.div
-      className={`absolute ${position === 'top' ? 'top-5' : 'bottom-5'} z-20`}
+      className={`absolute left-0 w-screen flex justify-center ${position === 'top' ? 'top-5' : 'bottom-5'} z-20`}
       animate={{
         opacity: visible ? 1 : 0,
         y: visible ? 0 : position === 'top' ? -10 : 10,
       }}
       transition={{ duration: 0.15, ease: 'easeInOut' }}
-      style={{ width, left, pointerEvents: visible ? 'auto' : 'none' }}
+      style={{ pointerEvents: visible ? 'auto' : 'none' }}
     >
       <Progress
         value={progress * 100}
