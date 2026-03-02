@@ -53,7 +53,7 @@ import {
   projectTitleClasses,
   projectTitleContainerClasses,
 } from '../utils/sharedStyles'
-import { createFontCssVars } from '../utils/typography'
+import { generateFontMediaQueries } from '../utils/typography'
 import BlurOverlay from './BlurOverlay'
 import ChevronDown from './icons/ChevronDown'
 import { Progress } from './ui/progress'
@@ -139,8 +139,6 @@ export default function MotionCarousel({
     [settingsData]
   )
 
-  const cssVars = useMemo(() => createFontCssVars(fontSizes), [fontSizes])
-
   const lastImage = images[images.length - 1]
   const regularImages = images.slice(0, -1)
   const isTitleVisible = !isPopupVisible && !isAboutPopupVisible
@@ -187,6 +185,7 @@ export default function MotionCarousel({
 
   return (
     <>
+      <style>{generateFontMediaQueries('.carousel-title-mobile', fontSizes)}</style>
       <div
         ref={containerRef}
         className="relative h-full w-full overflow-x-auto overscroll-x-contain snap-x snap-mandatory scroll-smooth scrollbar-hide will-change-scroll backface-hidden"
@@ -264,9 +263,8 @@ export default function MotionCarousel({
           {isTitleVisible && (
             <motion.h1
               key="carousel-title"
-              className={`text-white font-[EnduroWeb] tracking-[0.03em] text-xl md:text-2xl lg:text-3xl xl:text-4xl ${projectTitleClasses}`}
+              className={`text-white font-[EnduroWeb] tracking-[0.03em] carousel-title-mobile ${projectTitleClasses}`}
               style={{
-                ...cssVars,
                 pointerEvents: 'auto',
                 cursor: 'pointer',
               }}
