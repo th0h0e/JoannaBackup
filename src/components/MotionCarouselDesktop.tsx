@@ -247,7 +247,7 @@ export default function MotionCarouselDesktop({
                 backgroundImage: `url(${lastImage.src})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
-                opacity: 0.0001,
+                opacity: 1,
               }}
             />
           </div>
