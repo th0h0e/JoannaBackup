@@ -11,6 +11,7 @@ import pb, {
   getCacheVersion,
   getImageUrl,
   setCachedData,
+  withTimeout,
 } from '../config/pocketbase'
 import { imagePreloader } from '../utils/imagePreloader'
 
@@ -59,6 +60,7 @@ export function usePortfolioData(): UsePortfolioDataReturn {
   const hasPreloadedRef = useRef(false)
   const cacheVersionRef = useRef(getCacheVersion())
   const isMountedRef = useRef(false)
+  const isComponentMountedRef = useRef(true)
 
   /**
    * Auth state listener - tracks admin login/logout.
@@ -68,6 +70,15 @@ export function usePortfolioData(): UsePortfolioDataReturn {
       setIsAdmin(!!token)
     })
     return unsubscribe
+  }, [])
+
+  /**
+   * Cleanup on unmount - prevents state updates after unmount.
+   */
+  useEffect(() => {
+    return () => {
+      isComponentMountedRef.current = false
+    }
   }, [])
 
   /**
@@ -96,13 +107,13 @@ export function usePortfolioData(): UsePortfolioDataReturn {
         }
       }
 
-      // Fetch from API
+      // Fetch from API with timeout
       const [
         projectsResponse,
         homepageResponse,
         aboutResponse,
         settingsResponse,
-      ] = await Promise.all([
+      ] = await withTimeout(Promise.all([
         pb.collection('Portfolio_Projects')
           .getFullList<PortfolioProject>({ sort: 'Order' }),
         pb.collection('Homepage')
@@ -111,7 +122,7 @@ export function usePortfolioData(): UsePortfolioDataReturn {
           .getFullList<About>({ filter: 'Is_Active = true', sort: '-created' }),
         pb.collection('Settings')
           .getFullList<Settings>({ sort: '-created' }),
-      ])
+      ]))
 
       // Cache the results
       setCachedData('Portfolio_Projects', projectsResponse)
@@ -122,7 +133,10 @@ export function usePortfolioData(): UsePortfolioDataReturn {
       // Update cache version ref
       cacheVersionRef.current = getCacheVersion()
 
-      // Update state
+      // Update state (only if still mounted)
+      if (!isComponentMountedRef.current)
+        return
+
       const convertedProjects = projectsResponse.map(convertPocketBaseProject)
       setProjectsData(convertedProjects)
       setHomepageData(homepageResponse[0] || null)
@@ -131,11 +145,15 @@ export function usePortfolioData(): UsePortfolioDataReturn {
       setError(null)
     }
     catch (err) {
+      if (!isComponentMountedRef.current)
+        return
       console.error('Error fetching data:', err)
       setError('Failed to load data')
     }
     finally {
-      setLoading(false)
+      if (isComponentMountedRef.current) {
+        setLoading(false)
+      }
     }
   }, [])
 

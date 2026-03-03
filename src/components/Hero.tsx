@@ -141,12 +141,10 @@ export default function Hero({
         <motion.div
           className="absolute bottom-8 z-10 text-white"
           style={{ left: '50%', marginLeft: '-12px' }}
-          animate={{ y: [0, -6, 0] }}
-          transition={{
-            duration: 1.8,
-            repeat: Infinity,
-            ease: 'easeInOut',
-            delay: 1.5,
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: 1,
+            transition: { duration: 0.3, delay: 1.3 },
           }}
         >
           <ChevronDown

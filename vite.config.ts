@@ -20,6 +20,7 @@ export default defineConfig({
     },
   },
   esbuild: {
+    // eslint-disable-next-line node/prefer-global/process
     drop: process.env.NODE_ENV === 'production' ? ['console', 'debugger'] : [],
   },
   build: {

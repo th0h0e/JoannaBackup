@@ -10,6 +10,27 @@ import PocketBase from 'pocketbase'
 // PocketBase client configuration
 const pb = new PocketBase('https://pocketbase-j0ososc8ckcw48sos8w0ccok.kontext.icu')
 
+// Default timeout for API requests (15 seconds)
+const DEFAULT_TIMEOUT_MS = 15000
+
+/**
+ * Wraps a promise with a timeout, rejecting if it takes too long.
+ * Useful for adding timeouts to PocketBase API calls.
+ */
+export function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number = DEFAULT_TIMEOUT_MS,
+): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) => {
+      setTimeout(() => {
+        reject(new Error(`Request timed out after ${timeoutMs / 1000}s`))
+      }, timeoutMs)
+    }),
+  ])
+}
+
 export default pb
 
 // Re-export types with simpler names for use throughout the app
@@ -96,10 +117,39 @@ export function setCachedData<T>(collection: string, data: T): void {
       timestamp: Date.now(),
       version: getCacheVersion(),
     }
-    localStorage.setItem(getCacheKey(collection), JSON.stringify(entry))
+    const serialized = JSON.stringify(entry)
+
+    // Check if we have enough storage space (optional best-effort check)
+    if (!hasStorageSpace(serialized.length)) {
+      console.warn('Insufficient storage space, clearing old cache')
+      clearCache()
+    }
+
+    localStorage.setItem(getCacheKey(collection), serialized)
   }
   catch (error) {
     console.warn('Cache write error:', error)
+  }
+}
+
+/**
+ * Best-effort check for available storage space.
+ * Returns true if storage appears available or if API is unsupported.
+ */
+function hasStorageSpace(bytesNeeded: number): boolean {
+  try {
+    // Use Storage API if available (modern browsers)
+    if (navigator.storage?.estimate) {
+      navigator.storage.estimate().then(({ usage, quota }) => {
+        if (usage !== undefined && quota !== undefined) {
+          return (quota - usage) > bytesNeeded
+        }
+      })
+    }
+    return true // Fallback: assume space available
+  }
+  catch {
+    return true
   }
 }
 

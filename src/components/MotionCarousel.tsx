@@ -136,23 +136,25 @@ export default function MotionCarousel({
 
   const fontSizes = useMemo(
     () => getResponsiveFontSizes(settingsData),
-    [settingsData]
+    [settingsData],
   )
 
   const lastImage = images[images.length - 1]
   const regularImages = images.slice(0, -1)
   const isTitleVisible = !isPopupVisible && !isAboutPopupVisible
   const isProgressBarVisible = currentSlide > 0 && currentSlide <= images.length
-  const chevronSize =
-    typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24
+  const chevronSize
+    = typeof screenWidth === 'number' && screenWidth >= 768 ? 28 : 24
 
   useEffect(() => {
     const carousel = containerRef.current
-    if (!carousel) return
+    if (!carousel)
+      return
 
     const handleScroll = () => {
       const currentCarousel = containerRef.current
-      if (!currentCarousel) return
+      if (!currentCarousel)
+        return
 
       const scrollLeft = currentCarousel.scrollLeft
       const containerWidth = currentCarousel.offsetWidth
@@ -178,7 +180,8 @@ export default function MotionCarousel({
   const handleTitleClick = () => {
     if (isOnBlurSlide) {
       scrollToNextSection()
-    } else {
+    }
+    else {
       onShowPopup?.(projectTitle)
     }
   }

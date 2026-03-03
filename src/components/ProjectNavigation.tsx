@@ -1,10 +1,10 @@
 /**
  * @file ProjectNavigation.tsx
- * @description Reusable project navigation list component with staggered animations.
+ * @description Reusable project navigation list component with entrance animations.
  *
  * This component renders a styled list of project titles as anchor links, designed
  * for use in both the HamburgerMenu overlay and the ProjectIndex section. It uses
- * Motion (Framer Motion) for staggered entrance animations and supports custom
+ * Motion (Framer Motion) for entrance animations and supports custom
  * click handlers for programmatic navigation.
  *
  * @architecture
@@ -12,13 +12,13 @@
  *
  * 1. **Anchor Link Navigation** - Uses `#project-{index}` href pattern for direct
  *    section navigation, enabling browser back/forward support and accessibility
- * 2. **Staggered Animation** - Projects appear sequentially with 70ms delay between
- *    each item, creating a cascading reveal effect
+ * 2. **Entrance Animation** - All project titles appear simultaneously with a fade-in
+ *    effect after a short delay (150ms)
  * 3. **Responsive Typography** - Uses PocketBase settings for responsive font sizes
  *    across breakpoints via `generateFontMediaQueries()`
  *
  * Animation Configuration:
- * - `listVariants` - Container animation with staggered children (70ms delay, 150ms initial delay)
+ * - `listVariants` - Container animation with 150ms delay before children animate
  * - `itemVariants` - Individual item animation fading in from 10px below
  *
  * @see {@link HamburgerMenu} - Uses this component for overlay navigation
@@ -64,7 +64,7 @@ const listVariants = {
   hidden: {},
   visible: {
     transition: {
-      staggerChildren: 0.07,
+      // No stagger - all items appear together after delay
       delayChildren: 0.15,
     },
   },
@@ -84,12 +84,13 @@ const itemVariants = {
 // ============================================================================
 
 /**
- * Reusable project navigation list with staggered animations.
+ * Reusable project navigation list with entrance animations.
  *
  * Renders an animated list of project titles as anchor links. When `onLinkClick`
  * is provided, it intercepts the default anchor navigation and calls the handler
  * instead, allowing the parent component to manage navigation (e.g., closing a
  * menu before navigating). Without a handler, links use native anchor navigation.
+ * All items appear simultaneously after a short delay.
  *
  * @param {ProjectNavigationProps} props - Component props
  * @param {string[]} props.projectTitles - Array of project titles to render as navigation links
