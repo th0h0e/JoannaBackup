@@ -2,15 +2,15 @@
  * @file BlurOverlayDesktop.tsx
  * @description Static blur overlay component for desktop carousel transitions.
  *
- * This component renders a semi-transparent blur overlay that appears instantly
- * without animation, designed specifically for the desktop carousel experience.
- * Unlike the animated BlurOverlay component, this version provides immediate
- * visual feedback when scrolling to the blur slide.
+ * This component renders a semi-transparent blur overlay that is always visible,
+ * designed specifically for the desktop carousel's "NEXT PROJECT" slide.
+ * Unlike the animated BlurOverlay component, this version is always rendered
+ * to avoid any backdrop-filter rendering delay when scrolling to the slide.
  *
  * @architecture
- * The component uses a simple conditional render pattern:
+ * The component uses a simple static render pattern:
  *
- * 1. **Static Rendering** - No Framer Motion or animation library dependencies
+ * 1. **Always Rendered** - No conditional logic, blur is always active
  * 2. **Backdrop Filter** - Applies a 12px Gaussian blur with a semi-transparent
  *    black background (15% opacity) for a glassmorphism effect
  * 3. **Cross-Browser Support** - Includes both `backdropFilter` and
@@ -24,36 +24,22 @@
  */
 
 // ============================================================================
-// TYPE DEFINITIONS
-// ============================================================================
-
-interface BlurOverlayDesktopProps {
-  /** Whether the blur overlay should be visible */
-  visible: boolean
-}
-
-// ============================================================================
 // COMPONENT DEFINITION
 // ============================================================================
 
 /**
  * Static blur overlay component for desktop carousel visual transitions.
  *
- * Renders a full-coverage overlay with a backdrop blur effect that appears
- * instantly when visible becomes true. No enter/exit animations - the blur
- * is either fully visible or not rendered.
+ * Renders a full-coverage overlay with a backdrop blur effect that is always
+ * visible. No conditional rendering - the blur is always applied to avoid
+ * any rendering delay when the user scrolls to this slide.
  *
  * The overlay is positioned absolutely to fill its parent container and
  * allows pointer events to pass through to underlying elements.
  *
- * @param {BlurOverlayDesktopProps} props - Component props
- * @param {boolean} props.visible - Whether the blur overlay should be visible
- * @returns {JSX.Element | null} A static blur overlay element, or null if not visible
+ * @returns {JSX.Element} A static blur overlay element
  */
-export default function BlurOverlayDesktop({ visible }: BlurOverlayDesktopProps) {
-  if (!visible)
-    return null
-
+export default function BlurOverlayDesktop() {
   return (
     <div
       style={{

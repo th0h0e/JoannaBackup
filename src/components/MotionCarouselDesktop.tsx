@@ -258,7 +258,7 @@ export default function MotionCarouselDesktop({
             aria-label="Next section"
             onClick={scrollToNextSection}
           >
-            <BlurOverlayDesktop visible={isOnBlurSlide} />
+            <BlurOverlayDesktop />
           </div>
         </div>
       </div>
