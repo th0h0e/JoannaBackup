@@ -58,7 +58,7 @@ import {
   projectTitleContainerClasses,
 } from '../utils/sharedStyles'
 import { generateFontMediaQueries } from '../utils/typography'
-import BlurOverlay from './BlurOverlay'
+import BlurOverlayDesktop from './BlurOverlayDesktop'
 import ChevronDown from './icons/ChevronDown'
 import ChevronRight from './icons/ChevronRight'
 import { Progress } from './ui/progress'
@@ -258,7 +258,7 @@ export default function MotionCarouselDesktop({
             aria-label="Next section"
             onClick={scrollToNextSection}
           >
-            <BlurOverlay visible={isOnBlurSlide} />
+            <BlurOverlayDesktop visible={isOnBlurSlide} />
           </div>
         </div>
       </div>
