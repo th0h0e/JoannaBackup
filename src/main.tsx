@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react'
 import { AnimatePresence } from 'motion/react'
 import * as React from 'react'
 import { lazy, Suspense } from 'react'
@@ -6,14 +5,6 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
 import App from './App.tsx'
 import './index.css'
-
-// Initialize Sentry as early as possible
-Sentry.init({
-  dsn: 'https://4981600ff5cc02441de606ca9943a126@o4510808141398016.ingest.de.sentry.io/4510808149983312',
-  // Setting this option to true will send default PII data to Sentry.
-  // For example, automatic IP address collection on events
-  sendDefaultPii: true,
-})
 
 // Lazy load admin pages - only downloaded when user visits /admin routes
 const AdminLogin = lazy(() => import('./pages/admin/AdminLogin.tsx'))
