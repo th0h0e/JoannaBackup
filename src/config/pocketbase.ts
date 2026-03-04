@@ -48,7 +48,7 @@ export type Settings = SettingsResponse
 const CACHE_DURATION = 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
 
 // Cache version key for invalidation
-const CACHE_VERSION_KEY = 'pocketbase_cache_version'
+export const CACHE_VERSION_KEY = 'pocketbase_cache_version'
 
 // Cache storage interface - using unknown for type safety
 interface CacheEntry {
@@ -174,6 +174,70 @@ export function clearCache(collection?: string): void {
   }
   catch (error) {
     console.warn('Cache clear error:', error)
+  }
+}
+
+/**
+ * Updates the local cache version to match the server version.
+ * Called when server version differs from local version.
+ */
+export function setLocalCacheVersion(version: number): void {
+  try {
+    localStorage.setItem(CACHE_VERSION_KEY, String(version))
+  }
+  catch (error) {
+    console.warn('Failed to set local cache version:', error)
+  }
+}
+
+/**
+ * Fetches the current data version from the server.
+ * This is a lightweight request that only fetches the Settings record.
+ * Returns the server's data_version, or 1 as fallback.
+ */
+export async function getServerDataVersion(): Promise<number> {
+  try {
+    // Fetch only the first Settings record (there should only be one)
+    const settingsList = await pb.collection('Settings').getList<Settings>(1, 1)
+    const settings = settingsList.items[0]
+    // Use data_version if it exists, otherwise fall back to 1
+    // Using optional chaining and nullish coalescing for safety
+    return (settings as Settings & { data_version?: number })?.data_version ?? 1
+  }
+  catch (error) {
+    console.warn('Failed to fetch server data version:', error)
+    return 1 // Fallback to version 1 if fetch fails
+  }
+}
+
+/**
+ * Increments the server-side data version.
+ * Called by admin actions when data changes.
+ * This signals to all clients that their cache is stale.
+ */
+export async function incrementServerDataVersion(): Promise<void> {
+  try {
+    // Fetch current settings to get the record ID and current version
+    const settingsList = await pb.collection('Settings').getList<Settings>(1, 1)
+    const settings = settingsList.items[0]
+
+    if (!settings) {
+      console.warn('No Settings record found to increment version')
+      return
+    }
+
+    const currentVersion = (settings as Settings & { data_version?: number })?.data_version ?? 1
+
+    // Update the data_version field
+    await pb.collection('Settings').update(settings.id, {
+      data_version: currentVersion + 1,
+    } as Partial<Settings>)
+
+    // Also increment local version for the admin
+    incrementCacheVersion()
+  }
+  catch (error) {
+    console.warn('Failed to increment server data version:', error)
   }
 }
 

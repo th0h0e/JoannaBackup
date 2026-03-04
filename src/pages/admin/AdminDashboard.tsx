@@ -25,7 +25,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import ProjectEditor from '../../components/admin/ProjectEditor'
 import SettingsSidebar from '../../components/admin/SettingsSidebar'
 import UploadQueueIndicator from '../../components/admin/UploadQueueIndicator'
-import pb, { clearCache, getImageUrl } from '../../config/pocketbase'
+import pb, { getImageUrl, incrementServerDataVersion } from '../../config/pocketbase'
 import { UploadQueueProvider } from '../../contexts/UploadQueueContext'
 
 function DashboardContent() {
@@ -161,7 +161,7 @@ function DashboardContent() {
       await pb.collection('Homepage')
         .update(homepageId, formData)
 
-      clearCache('Homepage')
+      await incrementServerDataVersion()
       await fetchHeroImage()
       toast.success('Hero image updated')
     }
@@ -184,7 +184,7 @@ function DashboardContent() {
       await pb.collection('Homepage')
         .update(homepageId, formData)
 
-      clearCache('Homepage')
+      await incrementServerDataVersion()
       await fetchHeroImage()
       toast.success('Mobile hero image updated')
     }
@@ -221,7 +221,7 @@ function DashboardContent() {
           Hero_Title: tempTitle.trim(),
         })
 
-      clearCache('Homepage')
+      await incrementServerDataVersion()
       setHeroTitle(tempTitle.trim())
       setIsEditingTitle(false)
       toast.success('Hero title updated')
@@ -251,7 +251,7 @@ function DashboardContent() {
       await pb
         .collection('Portfolio_Projects')
         .delete(deleteConfirmation.projectId)
-      clearCache('Portfolio_Projects')
+      await incrementServerDataVersion()
       setDeleteConfirmation(null)
       await fetchProjects()
       toast.success('Project deleted successfully')
@@ -273,7 +273,7 @@ function DashboardContent() {
 
   const handleSave = async () => {
     const isCreating = showNewProjectForm
-    clearCache('Portfolio_Projects')
+    await incrementServerDataVersion()
     setEditingProject(null)
     setShowNewProjectForm(false)
     await fetchProjects()
@@ -305,7 +305,7 @@ function DashboardContent() {
       })
 
       await Promise.all(updatePromises)
-      clearCache('Portfolio_Projects')
+      await incrementServerDataVersion()
       toast.success('Projects reordered')
     }
     catch (err: unknown) {

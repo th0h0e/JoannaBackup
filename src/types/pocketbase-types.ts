@@ -86,6 +86,7 @@ export interface PortfolioProjectsRecord<TResponsibility_json = unknown> {
 }
 
 export interface SettingsRecord {
+  data_version?: number
   Desktop_Font_Size?: number
   Large_Desktop_Font_Size?: number
   Mobile_Font_Size?: number

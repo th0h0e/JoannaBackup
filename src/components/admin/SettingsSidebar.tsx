@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import pb, { clearCache, getImageUrl } from '../../config/pocketbase'
+import pb, { getImageUrl, incrementServerDataVersion } from '../../config/pocketbase'
 import AboutPopup from '../AboutPopup'
 
 interface SettingsSidebarProps {
@@ -120,7 +120,7 @@ export default function SettingsSidebar({
       await pb.collection('Settings')
         .update(settingsData.id, formData)
 
-      clearCache('Settings')
+      await incrementServerDataVersion()
 
       // Refresh favicon URL
       const updatedSettings = await pb
@@ -160,7 +160,6 @@ export default function SettingsSidebar({
           .update(homepageData.id, {
             Hero_Title: heroTitle,
           })
-        clearCache('Homepage')
       }
 
       // Update About
@@ -172,7 +171,6 @@ export default function SettingsSidebar({
             Client_List_Json: clientList,
             Contact_Email: contactEmail,
           })
-        clearCache('About')
       }
 
       // Update Settings
@@ -185,8 +183,10 @@ export default function SettingsSidebar({
             Desktop_Font_Size: desktopFontSize,
             Large_Desktop_Font_Size: largeDesktopFontSize,
           })
-        clearCache('Settings')
       }
+
+      // Increment server data version to invalidate visitor cache
+      await incrementServerDataVersion()
 
       onShowToast('Settings saved successfully!', 'success')
       onClose()

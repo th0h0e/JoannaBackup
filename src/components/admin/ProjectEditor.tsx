@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import pb, { clearCache, getImageUrl } from '../../config/pocketbase'
+import pb, { getImageUrl, incrementServerDataVersion } from '../../config/pocketbase'
 import { useUploadQueue } from '../../contexts/UploadQueueContext'
 import ProjectPopupPreview from './ProjectPopupPreview'
 
@@ -149,7 +149,7 @@ export default function ProjectEditor({
           onShowToast('Project saved, uploading images...', 'success')
         }
         else {
-          clearCache('Portfolio_Projects')
+          await incrementServerDataVersion()
           onShowToast('Project saved', 'success')
         }
 

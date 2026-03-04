@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import type { QueueItem } from './uploadQueueTypes'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import pb, { clearCache } from '../config/pocketbase'
+import pb, { incrementServerDataVersion } from '../config/pocketbase'
 import { UploadQueueContext } from './UploadQueueContextDef'
 
 const STORAGE_KEY = 'upload_queue_items'
@@ -117,7 +117,7 @@ export function UploadQueueProvider({ children }: { children: ReactNode }) {
     if (remainingPending.length === 0) {
       const hasCompleted = itemsRef.current.some(i => i.status === 'completed')
       if (hasCompleted) {
-        clearCache('Portfolio_Projects')
+        await incrementServerDataVersion()
       }
     }
   }, [])

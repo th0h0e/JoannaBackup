@@ -7,10 +7,13 @@ import type {
 import type { PreloadProgress } from '../utils/imagePreloader'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import pb, {
+  clearCache,
   getCachedData,
   getCacheVersion,
   getImageUrl,
+  getServerDataVersion,
   setCachedData,
+  setLocalCacheVersion,
   withTimeout,
 } from '../config/pocketbase'
 import { imagePreloader } from '../utils/imagePreloader'
@@ -54,13 +57,14 @@ export function usePortfolioData(): UsePortfolioDataReturn {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [preloadProgress, setPreloadProgress] = useState<PreloadProgress | null>(null)
-  const [sectionsReady, setSectionsReady] = useState(false)
+  const [sectionsReady, setSectionsReady] = useState(true) // Default to true - show content immediately if we have cache
   const [isAdmin, setIsAdmin] = useState(() => pb.authStore.isValid)
 
   const hasPreloadedRef = useRef(false)
   const cacheVersionRef = useRef(getCacheVersion())
   const isMountedRef = useRef(false)
   const isComponentMountedRef = useRef(true)
+  const hasDataRef = useRef(false)
 
   /**
    * Auth state listener - tracks admin login/logout.
@@ -83,28 +87,61 @@ export function usePortfolioData(): UsePortfolioDataReturn {
 
   /**
    * Fetches all data from PocketBase API.
+   * Checks server-side data version before deciding to use cache.
    */
   const fetchData = useCallback(async (forceRefetch = false) => {
     try {
-      setLoading(true)
-
-      // Check cache first (unless forced)
+      // Check server version first (unless forced)
       if (!forceRefetch) {
+        const serverVersion = await getServerDataVersion()
+        const localVersion = getCacheVersion()
+
+        // Check for cached data FIRST (before any cache operations)
         const cachedProjects = getCachedData<PortfolioProject[]>('Portfolio_Projects')
         const cachedHomepage = getCachedData<Homepage[]>('Homepage')
         const cachedAbout = getCachedData<About[]>('About')
         const cachedSettings = getCachedData<Settings[]>('Settings')
+        const hasCachedData = cachedProjects && cachedHomepage && cachedAbout && cachedSettings
 
-        if (cachedProjects && cachedHomepage && cachedAbout && cachedSettings) {
-          const convertedProjects = cachedProjects.map(convertPocketBaseProject)
-          setProjectsData(convertedProjects)
-          setHomepageData(cachedHomepage[0] || null)
-          setAboutData(cachedAbout[0] || null)
-          setSettingsData(cachedSettings[0] || null)
-          setError(null)
-          setLoading(false)
-          return
+        // If server version differs
+        if (serverVersion !== localVersion) {
+          // If we have cached data, show it immediately (even if stale)
+          if (hasCachedData) {
+            const convertedProjects = cachedProjects.map(convertPocketBaseProject)
+            setProjectsData(convertedProjects)
+            setHomepageData(cachedHomepage[0] || null)
+            setAboutData(cachedAbout[0] || null)
+            setSettingsData(cachedSettings[0] || null)
+            setError(null)
+            hasDataRef.current = true
+            setLoading(false) // We have data to show, stop loading
+            setSectionsReady(true) // Images were preloaded before, skip preloading
+          }
+          // Clear cache and update version, then fetch fresh data
+          clearCache()
+          setLocalCacheVersion(serverVersion)
+          cacheVersionRef.current = serverVersion
         }
+        else {
+          // Version matches, use cache
+          if (hasCachedData) {
+            const convertedProjects = cachedProjects.map(convertPocketBaseProject)
+            setProjectsData(convertedProjects)
+            setHomepageData(cachedHomepage[0] || null)
+            setAboutData(cachedAbout[0] || null)
+            setSettingsData(cachedSettings[0] || null)
+            setError(null)
+            hasDataRef.current = true
+            setLoading(false)
+            setSectionsReady(true) // Images were preloaded before
+            return
+          }
+        }
+      }
+
+      // Only show loading if we don't have any data yet
+      if (!hasDataRef.current) {
+        setLoading(true)
       }
 
       // Fetch from API with timeout
@@ -142,6 +179,7 @@ export function usePortfolioData(): UsePortfolioDataReturn {
       setHomepageData(homepageResponse[0] || null)
       setAboutData(aboutResponse[0] || null)
       setSettingsData(settingsResponse[0] || null)
+      hasDataRef.current = true
       setError(null)
     }
     catch (err) {
